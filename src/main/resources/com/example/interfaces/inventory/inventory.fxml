@@ -15,9 +15,9 @@
 <VBox prefHeight="544.0" prefWidth="836.0" spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.library.controller.inventory.inventoryButtonController">
     <children>
         <!-- Top bar with back button and title -->
-        <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="10" style="-fx-padding: 10;">
+        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="60.0" spacing="10" style="-fx-padding: 10;">
             <children>
-                <Button fx:id="backButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="50.0" onAction="#handleBackButtonAction">
+                <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBackButtonAction" prefHeight="40.0" prefWidth="50.0">
                     <graphic>
                         <ImageView fitHeight="28.0" fitWidth="32.0" preserveRatio="true">
                             <image>
@@ -28,7 +28,7 @@
                 </Button>
                 <StackPane HBox.hgrow="ALWAYS">
                     <children>
-                        <Label alignment="CENTER" contentDisplay="LEFT" text="المخزون">
+                        <Label alignment="CENTER" text="المخزون">
                             <font>
                                 <Font name="Segoe UI Bold" size="26.0" />
                             </font>
@@ -60,7 +60,7 @@
                     </rowConstraints>
 
                     <!-- First row buttons -->
-                    <Button fx:id="addNewProductButton" contentDisplay="TOP" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" text="اضافة منتج جديد" onAction="#handleAddNewProductButtonAction" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    <Button fx:id="addNewProductButton" contentDisplay="TOP" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleAddNewProductButtonAction" text="اضافة منتج جديد" GridPane.columnIndex="0" GridPane.rowIndex="0">
                         <font>
                             <Font size="14.0" />
                         </font>
@@ -73,7 +73,7 @@
                         </graphic>
                     </Button>
 
-                    <Button fx:id="viewProductsButton" contentDisplay="TOP" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" text="عرض المنتجات" onAction="#handleViewProductsButtonAction" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                    <Button fx:id="viewProductsButton" contentDisplay="TOP" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleViewProductsButtonAction" text="عرض المنتجات" GridPane.columnIndex="1" GridPane.rowIndex="0">
                         <font>
                             <Font size="14.0" />
                         </font>
@@ -86,7 +86,7 @@
                         </graphic>
                     </Button>
 
-                    <Button fx:id="addNewCategoryButton" contentDisplay="TOP" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" text="اضافة تصنيف جديد" onAction="#handleAddNewCategoryButtonAction" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                    <Button fx:id="addNewCategoryButton" contentDisplay="TOP" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleAddNewCategoryButtonAction" text="اضافة تصنيف جديد" GridPane.columnIndex="2" GridPane.rowIndex="0">
                         <font>
                             <Font size="14.0" />
                         </font>
@@ -100,7 +100,7 @@
                     </Button>
 
                     <!-- Second row buttons -->
-                    <Button fx:id="productExpirationButton" contentDisplay="TOP" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" text="صلاحية المنتجات" onAction="#handleProductExpirationButtonAction" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                    <Button fx:id="productExpirationButton" contentDisplay="TOP" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleProductExpirationButtonAction" text="صلاحية المنتجات" GridPane.columnIndex="0" GridPane.rowIndex="1">
                         <font>
                             <Font size="14.0" />
                         </font>
@@ -113,7 +113,7 @@
                         </graphic>
                     </Button>
 
-                    <Button fx:id="importDataButton" contentDisplay="TOP" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" text="استيراد بيانات المنتجات" onAction="#handleImportDataButtonAction" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <Button fx:id="importDataButton" contentDisplay="TOP" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleImportDataButtonAction" text="استيراد بيانات المنتجات" GridPane.columnIndex="1" GridPane.rowIndex="1">
                         <font>
                             <Font size="14.0" />
                         </font>
@@ -126,7 +126,7 @@
                         </graphic>
                     </Button>
 
-                    <Button fx:id="editPricesButton" contentDisplay="TOP" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" text="تعديل اسعار المنتجات" onAction="#handleEditPricesButtonAction" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                    <Button fx:id="editPricesButton" contentDisplay="TOP" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleEditPricesButtonAction" text="تعديل اسعار المنتجات" GridPane.columnIndex="2" GridPane.rowIndex="1">
                         <font>
                             <Font size="14.0" />
                         </font>

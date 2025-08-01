@@ -32,7 +32,6 @@ public class inventoryButtonController {
 
     @FXML
     public void handleBackButtonAction(ActionEvent event) {
-        System.out.println("Back button clicked!");
         try {
             App.setRoot("interfaces/home/home");
         } catch (IOException e) {
@@ -68,8 +67,11 @@ public class inventoryButtonController {
 
     @FXML
     public void handleViewProductsButtonAction(ActionEvent event) {
-        System.out.println("View Products button clicked!");
-        // Add logic for viewing products
+        try{
+            App.setRoot("interfaces/inventory/getproduct");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
