@@ -25,6 +25,8 @@ import javafx.stage.Stage;
 public class addNewProductController {
 
     @FXML
+    public Button saveButton;
+    @FXML
     private TextField barcodeTextField;
     @FXML
     private Button readButton;
@@ -243,47 +245,66 @@ public class addNewProductController {
 
         if (barcode.isEmpty() || name.isEmpty() || desc.isEmpty() || selectedUnit.equals("Select Unit") ||
                 price1.isEmpty() || price2.isEmpty() || price3.isEmpty() || quantity.isEmpty()) {
-            showAlert("Missing Fields", "Please fill all required fields and select a unit.", Alert.AlertType.WARNING);
+            showSystemAlert("Missing Fields", "Please fill all required fields and select a unit.", Alert.AlertType.WARNING);
             return;
         }
 
-        String sql = "INSERT INTO products (id, barcode, product_name, description, price1, price2, price3, unit, quantity, production_date, expiration_date, image_path) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            // 🔍 Check if product with the same barcode already exists
+            String checkQuery = "SELECT COUNT(*) FROM products WHERE barcode = ?";
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
+                checkStmt.setString(1, barcode);
+                try (java.sql.ResultSet rs = checkStmt.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        showSystemAlert("Product Exists", "هذا المنتج موجود بالفعل!!", Alert.AlertType.WARNING);
+                        return;
+                    }
+                }
+            }
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // ✅ Insert new product
+            String sql = "INSERT INTO products (id, barcode, product_name, description, price1, price2, price3, unit, quantity, production_date, expiration_date, image_path) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-            pstmt.setString(1, uuid);
-            pstmt.setString(2, barcode);
-            pstmt.setString(3, name);
-            pstmt.setString(4, desc);
-            pstmt.setString(5, price1);
-            pstmt.setString(6, price2);
-            pstmt.setString(7, price3);
-            pstmt.setString(8, selectedUnit);
-            pstmt.setInt(9, Integer.parseInt(quantity));
-            pstmt.setDate(10, java.sql.Date.valueOf(productionDate));
-            pstmt.setDate(11, java.sql.Date.valueOf(expirationDate));
-            pstmt.setString(12, imagePath);
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, uuid);
+                pstmt.setString(2, barcode);
+                pstmt.setString(3, name);
+                pstmt.setString(4, desc);
+                pstmt.setString(5, price1);
+                pstmt.setString(6, price2);
+                pstmt.setString(7, price3);
+                pstmt.setString(8, selectedUnit);
+                pstmt.setInt(9, Integer.parseInt(quantity));
+                pstmt.setDate(10, java.sql.Date.valueOf(productionDate));
+                pstmt.setDate(11, java.sql.Date.valueOf(expirationDate));
+                pstmt.setString(12, imagePath);
 
-            int affectedRows = pstmt.executeUpdate();
+                int affectedRows = pstmt.executeUpdate();
 
-            if (affectedRows > 0) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("تنبيه");
-                alert.setHeaderText("✅ تم حفظ المنتح بنجاح");
-                alert.showAndWait();
-                clearFields();
-            } else {
-                showAlert("Warning", "No rows were affected", Alert.AlertType.WARNING);
+                if (affectedRows > 0) {
+                    showSystemAlert("Success", "✅ Product saved successfully.", Alert.AlertType.INFORMATION);
+                    clearFields();
+                } else {
+                    showSystemAlert("Warning", "⚠️ No rows were affected.", Alert.AlertType.WARNING);
+                }
             }
 
         } catch (SQLException e) {
-            showAlert("Database Error", "Failed to save product: " + e.getMessage(), Alert.AlertType.ERROR);
+            showSystemAlert("Database Error", "❌ Failed to save product: " + e.getMessage(), Alert.AlertType.ERROR);
         } catch (NumberFormatException e) {
-            showAlert("Invalid Input", "Please enter a valid quantity.", Alert.AlertType.ERROR);
+            showSystemAlert("Invalid Input", "❌ Please enter a valid quantity.", Alert.AlertType.ERROR);
         }
     }
+
+    private void showSystemAlert(String title, String message, Alert.AlertType alertType) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
 
 
     @FXML

@@ -47,7 +47,7 @@ public class ButtonController {
         try {
             App.setRoot("interfaces/inventory/inventory");
         } catch (IOException e) {
-            e.printStackTrace();
+                e.printStackTrace();
         }
     }
 

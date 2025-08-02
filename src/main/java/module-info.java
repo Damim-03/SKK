@@ -12,6 +12,7 @@ module com.example {
     opens com.example.library.controller.home to javafx.fxml;
     opens com.example.library.controller.inventory to javafx.fxml;
     opens com.example.library.controller.sales to javafx.fxml;
+    opens com.example.library.model to javafx.base;
 
     exports com.example;
     exports com.example.library.controller.inventory;
