@@ -3,6 +3,7 @@ package com.example.library.controller.inventory;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.UUID;
 
 import com.example.library.util.DatabaseConnection;
@@ -185,7 +186,7 @@ public class addNewProductController {
     @FXML
     public void handleDeleteImageAction(ActionEvent event) {
         try {
-            productImageView.setImage(new Image(getClass().getResourceAsStream("/images/image.png")));
+            productImageView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/image.png"))));
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
@@ -320,7 +321,7 @@ public class addNewProductController {
         productionDatePicker.setValue(null);
         expirationDatePicker.setValue(null);
         try {
-            productImageView.setImage(new Image(getClass().getResourceAsStream("/images/image.png")));
+            productImageView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/image.png"))));
         } catch (Exception e) {
             // Silently handle exception, image remains unchanged if load fails
         }

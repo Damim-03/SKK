@@ -137,7 +137,29 @@ public class inventoryButtonController {
 
     @FXML
     public void handleProductExpirationButtonAction(ActionEvent event) {
-        System.out.println("Product Expiration button clicked!");
-        // Add logic for checking product expiration
+        try {
+            // Load the FXML file for the add new product interface
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/interfaces/inventory/expiration.fxml"));
+            javafx.scene.Parent root = loader.load();
+
+            // Create a new stage (window)
+            javafx.stage.Stage newStage = new javafx.stage.Stage();
+            newStage.setTitle("صلاحية المنتجات");
+            newStage.setScene(new javafx.scene.Scene(root));
+
+            // Add icon to the stage
+            newStage.getIcons().add(new javafx.scene.image.Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/date.png"))));
+
+            // Set window properties
+            newStage.setResizable(false);
+            newStage.setMaximized(false);
+
+            // Show the new window
+            newStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Error opening add new product window: " + e.getMessage());
+        }
     }
 }

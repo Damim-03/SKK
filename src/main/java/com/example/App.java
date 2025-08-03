@@ -4,9 +4,11 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * JavaFX App
@@ -19,6 +21,12 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         scene = new Scene(loadFXML("interfaces/home/home"));
         stage.setScene(scene);
+        try {
+            Image icon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/SKK-1.png")));
+            stage.getIcons().add(icon);
+        } catch (Exception e) {
+            System.out.println("Warning: Could not load window icon");
+        }
         stage.show();
     }
 

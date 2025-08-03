@@ -13,13 +13,16 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.*;
-import java.util.Objects;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class getProductController {
 
+    // All your @FXML declarations remain exactly the same
     @FXML private TableView<Product> tableView;
     @FXML private TableColumn<Product, String> barcodeColumn;
     @FXML private TableColumn<Product, String> nameColumn;
@@ -37,9 +40,9 @@ public class getProductController {
     @FXML private TextField unitField;
     @FXML private ImageView productImage;
 
-    @FXML public Button ReadBarcode;
-    @FXML public Button exitButton;
-    @FXML public Button updateListButton;
+    @FXML private Button ReadBarcode;
+    @FXML private Button exitButton;
+    @FXML private Button updateListButton;
 
     private final ObservableList<Product> productList = FXCollections.observableArrayList();
     private final ObservableList<Product> filteredList = FXCollections.observableArrayList();
@@ -48,17 +51,7 @@ public class getProductController {
     public void initialize() {
         setupTableColumns();
         loadDataFromDatabase();
-        filteredList.addAll(productList);
-        tableView.setItems(filteredList);
-        tableView.refresh();
-
-        barcodeField.textProperty().addListener((obs, oldVal, newVal) -> filterTableByBarcode(newVal));
-
-        tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
-            if (newSel != null) {
-                updateFormFields(newSel);
-            }
-        });
+        setupListeners();
     }
 
     private void setupTableColumns() {
@@ -69,12 +62,6 @@ public class getProductController {
         selectColumn.setCellValueFactory(new PropertyValueFactory<>("selected"));
         selectColumn.setCellFactory(CheckBoxTableCell.forTableColumn(selectColumn));
 
-        barcodeColumn.setMinWidth(120);
-        nameColumn.setMinWidth(130);
-        priceColumn.setMinWidth(110);
-        quantityColumn.setMinWidth(120);
-        selectColumn.setMinWidth(40);
-
         priceColumn.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(Double item, boolean empty) {
@@ -84,122 +71,172 @@ public class getProductController {
         });
     }
 
+    private void setupListeners() {
+        barcodeField.textProperty().addListener((obs, oldVal, newVal) -> {
+            filterTableByBarcode(newVal);
+        });
+
+        // Safe selection listener
+        tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
+            if (newSel != null) {
+                updateFormFields(newSel);
+            }
+        });
+    }
+
     private void loadDataFromDatabase() {
-        String query = "SELECT barcode, product_name, price1, price2, price3, quantity, unit, production_date, expiration_date, image_path FROM products";
+        String query = "SELECT barcode, product_name, description, price1, price2, price3, " +
+                "quantity, unit, production_date, expiration_date, image_path FROM products";
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
 
+            productList.clear();
+
             while (rs.next()) {
+                LocalDate productionDate = rs.getDate("production_date") != null ?
+                        rs.getDate("production_date").toLocalDate() : null;
+                LocalDate expirationDate = rs.getDate("expiration_date") != null ?
+                        rs.getDate("expiration_date").toLocalDate() : null;
+
                 Product product = new Product(
                         rs.getString("barcode"),
                         rs.getString("product_name"),
+                        rs.getString("description"),
                         rs.getDouble("price1"),
                         rs.getDouble("price2"),
                         rs.getDouble("price3"),
                         rs.getInt("quantity"),
                         rs.getString("unit"),
-                        rs.getString("production_date") != null ? rs.getString("production_date") : "",
-                        rs.getString("expiration_date") != null ? rs.getString("expiration_date") : "",
-                        rs.getString("image_path") != null ? rs.getString("image_path") : ""
+                        productionDate,
+                        expirationDate,
+                        rs.getString("image_path")
                 );
+
                 productList.add(product);
             }
 
+            filteredList.setAll(productList);
+            tableView.setItems(filteredList);
+
+            // Clear any existing selection
+            tableView.getSelectionModel().clearSelection();
+
+            tableView.refresh();
+
         } catch (SQLException e) {
-            e.printStackTrace();
+            showAlert("Database Error", "Failed to load products: " + e.getMessage());
         }
     }
 
     private void updateFormFields(Product product) {
+        if (product == null) {
+            clearFormFields();
+            return;
+        }
+
         barcodeField.setText(product.getBarcode());
         nameField.setText(product.getProductName());
-        productionDateField.setText(product.getProductionDate());
-        expiryDateField.setText(product.getExpiryDate());
-        price1Field.setText(String.valueOf(product.getPrice1()));
-        price2Field.setText(String.valueOf(product.getPrice2()));
-        price3Field.setText(String.valueOf(product.getPrice3()));
+
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        productionDateField.setText(product.getProductionDate() != null ?
+                dateFormatter.format(product.getProductionDate()) : "");
+        expiryDateField.setText(product.getExpiryDate() != null ?
+                dateFormatter.format(product.getExpiryDate()) : "");
+
+        price1Field.setText(String.format("%.2f", product.getPrice1()));
+        price2Field.setText(String.format("%.2f", product.getPrice2()));
+        price3Field.setText(String.format("%.2f", product.getPrice3()));
+
         unitField.setText(product.getUnit());
 
-        Image image = loadImage(product.getImagePath());
-        if (image == null) {
-            image = loadFallbackImage();
-        }
+        // Load and display the product image
+        Image image = loadProductImage(product.getImagePath());
         productImage.setImage(image);
-
-        if (image != null) {
-            productImage.setVisible(true);
-        } else {
-            productImage.setVisible(false);
-        }
+        productImage.setVisible(image != null);
     }
 
-    private Image loadImage(String path) {
-        if (path == null || path.isBlank()) return null;
+    private Image loadProductImage(String path) {
+        if (path == null || path.isBlank()) {
+            return loadFallbackImage();
+        }
 
         try {
-            // 1. First try to load as absolute path (from database)
-            if (path.startsWith("file:/") || path.contains(":/") || path.contains(":\\")) {
-                try {
-                    File file = new File(new URI(path).getPath());
-                    if (file.exists()) {
-                        return new Image(file.toURI().toString());
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+            // Try loading as resource first (for packaged images)
+            InputStream resourceStream = getClass().getResourceAsStream(path);
+            if (resourceStream != null) {
+                return new Image(resourceStream);
+            }
+
+            // Try with images directory prefix if direct path didn't work
+            if (!path.startsWith("/images/")) {
+                resourceStream = getClass().getResourceAsStream("/images/" + path);
+                if (resourceStream != null) {
+                    return new Image(resourceStream);
                 }
             }
 
-            // 2. Try to load from filesystem relative path
-            File file = new File(path);
-            if (file.exists()) {
-                return new Image(file.toURI().toString());
+            // Try loading as file path (for external images)
+            try {
+                File file = new File(path);
+                if (file.exists()) {
+                    return new Image(file.toURI().toString());
+                }
+
+                // Try creating file from resource URL
+                try {
+                    file = new File(getClass().getResource(path).toURI());
+                    if (file.exists()) {
+                        return new Image(file.toURI().toString());
+                    }
+                } catch (URISyntaxException | NullPointerException e) {
+                    // Ignore and try next method
+                }
+            } catch (Exception e) {
+                System.err.println("Error loading image from file path: " + e.getMessage());
             }
 
-            // 3. Try to load from resources (classpath)
-            String resourcePath = path.replace("\\", "/");
-            // Remove leading slash if present
-            if (resourcePath.startsWith("/")) {
-                resourcePath = resourcePath.substring(1);
-            }
-
-            InputStream resourceStream = getClass().getResourceAsStream("/" + resourcePath);
+            // Try with just the filename in images directory
+            String filename = path.contains("/") ? path.substring(path.lastIndexOf("/") + 1) : path;
+            resourceStream = getClass().getResourceAsStream("/images/" + filename);
             if (resourceStream != null) {
                 return new Image(resourceStream);
             }
 
-            // 4. Try with just the filename in default images folder
-            String fileName = resourcePath.contains("/")
-                    ? resourcePath.substring(resourcePath.lastIndexOf("/") + 1)
-                    : resourcePath;
-
-            resourceStream = getClass().getResourceAsStream("/images/products/" + fileName);
-            if (resourceStream != null) {
-                return new Image(resourceStream);
-            }
-
-            return null;
+            return loadFallbackImage();
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            System.err.println("Error loading image: " + e.getMessage());
+            return loadFallbackImage();
         }
     }
 
     private Image loadFallbackImage() {
         try {
-            // Try multiple possible locations
+            // Try multiple possible locations for fallback image
             InputStream stream = getClass().getResourceAsStream("/images/image.png");
             if (stream == null) {
                 stream = getClass().getResourceAsStream("image.png");
             }
-            if (stream == null) {
-                return null;
+            if (stream != null) {
+                return new Image(stream);
             }
-            return new Image(stream);
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            System.err.println("Error loading fallback image: " + e.getMessage());
         }
+        return null;
+    }
+
+    private void clearFormFields() {
+        barcodeField.clear();
+        nameField.clear();
+        productionDateField.clear();
+        expiryDateField.clear();
+        price1Field.clear();
+        price2Field.clear();
+        price3Field.clear();
+        unitField.clear();
+        productImage.setImage(null);
     }
 
     private void filterTableByBarcode(String barcode) {
@@ -207,35 +244,41 @@ public class getProductController {
         if (barcode == null || barcode.isBlank()) {
             filteredList.addAll(productList);
         } else {
-            for (Product p : productList) {
-                if (p.getBarcode().equalsIgnoreCase(barcode)) {
-                    filteredList.add(p);
-                    tableView.getSelectionModel().select(p);
-                    break;
-                }
-            }
+            productList.stream()
+                    .filter(p -> p.getBarcode().equalsIgnoreCase(barcode))
+                    .findFirst()
+                    .ifPresent(product -> {
+                        filteredList.add(product);
+                        // Safe selection
+                        if (!tableView.getItems().isEmpty()) {
+                            tableView.getSelectionModel().select(product);
+                        }
+                    });
         }
         tableView.refresh();
     }
 
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
     @FXML
-    public void handleReadBarcode() {
+    private void handleReadBarcode() {
         barcodeField.requestFocus();
         barcodeField.clear();
     }
 
     @FXML
-    public void handleExitButton() {
-        Stage stage = (Stage) exitButton.getScene().getWindow();
-        stage.close();
+    private void handleExitButton() {
+        ((Stage) exitButton.getScene().getWindow()).close();
     }
 
     @FXML
-    public void handleUpdateButton() {
-        productList.clear();
+    private void handleUpdateButton() {
         loadDataFromDatabase();
-        filteredList.clear();
-        filteredList.addAll(productList);
-        tableView.refresh();
     }
 }
