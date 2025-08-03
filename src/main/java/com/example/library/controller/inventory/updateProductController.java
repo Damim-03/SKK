@@ -162,7 +162,6 @@ public class updateProductController {
 
     @FXML
     public void handleReadBarcode() {
-        barcodeField.requestFocus();
         barcodeField.clear();
     }
 

@@ -32,11 +32,8 @@ public class updateFormController {
     @FXML private DatePicker productionDatePicker;
     @FXML private DatePicker expirationDatePicker;
     @FXML private ImageView productImageView;
-    @FXML private Button readButton;
     @FXML private Button uploadImageButton;
-    @FXML private Button deleteImageButton;
     @FXML private Button cancelButton;
-    @FXML private Button clearButton;
     @FXML private Button saveButton;
 
     private Product currentProduct;

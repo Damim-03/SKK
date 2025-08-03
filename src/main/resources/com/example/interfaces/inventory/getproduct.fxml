@@ -126,11 +126,11 @@
                   </GridPane>
                   <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                      <children>
-                        <Button fx:id="exitButton" mnemonicParsing="false" onAction="#handleExitButton" prefHeight="26.0" prefWidth="130.0" text="خروج">
+                        <Button fx:id="cleanButton" mnemonicParsing="false" onAction="#handleCleanButton" prefHeight="26.0" prefWidth="130.0" text="افراغ الحقول">
                            <graphic>
                               <ImageView fitHeight="28.0" fitWidth="28.0">
                                  <image>
-                                    <Image url="@../../../../images/exit.png" />
+                                    <Image url="@../../../../images/clean.png" />
                                  </image>
                               </ImageView>
                            </graphic></Button>

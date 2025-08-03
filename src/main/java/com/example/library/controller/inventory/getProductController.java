@@ -10,12 +10,10 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
+import java.net.URL;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -39,10 +37,6 @@ public class getProductController {
     @FXML private TextField price3Field;
     @FXML private TextField unitField;
     @FXML private ImageView productImage;
-
-    @FXML private Button ReadBarcode;
-    @FXML private Button exitButton;
-    @FXML private Button updateListButton;
 
     private final ObservableList<Product> productList = FXCollections.observableArrayList();
     private final ObservableList<Product> filteredList = FXCollections.observableArrayList();
@@ -163,13 +157,14 @@ public class getProductController {
         }
 
         try {
-            // Try loading as resource first (for packaged images)
-            InputStream resourceStream = getClass().getResourceAsStream(path);
+            // Try as internal resource
+            String normalizedPath = path.startsWith("/") ? path : "/" + path;
+            InputStream resourceStream = getClass().getResourceAsStream(normalizedPath);
             if (resourceStream != null) {
                 return new Image(resourceStream);
             }
 
-            // Try with images directory prefix if direct path didn't work
+            // Try with "/images/" prefix
             if (!path.startsWith("/images/")) {
                 resourceStream = getClass().getResourceAsStream("/images/" + path);
                 if (resourceStream != null) {
@@ -177,38 +172,33 @@ public class getProductController {
                 }
             }
 
-            // Try loading as file path (for external images)
-            try {
-                File file = new File(path);
+            // Try external file
+            File file = new File(path);
+            if (file.exists()) {
+                return new Image(file.toURI().toString());
+            }
+
+            // Try getting from classpath as File
+            URL url = getClass().getResource(normalizedPath);
+            if (url != null) {
+                file = new File(url.toURI());
                 if (file.exists()) {
                     return new Image(file.toURI().toString());
                 }
-
-                // Try creating file from resource URL
-                try {
-                    file = new File(getClass().getResource(path).toURI());
-                    if (file.exists()) {
-                        return new Image(file.toURI().toString());
-                    }
-                } catch (URISyntaxException | NullPointerException e) {
-                    // Ignore and try next method
-                }
-            } catch (Exception e) {
-                System.err.println("Error loading image from file path: " + e.getMessage());
             }
 
-            // Try with just the filename in images directory
+            // Try just the filename in images folder
             String filename = path.contains("/") ? path.substring(path.lastIndexOf("/") + 1) : path;
             resourceStream = getClass().getResourceAsStream("/images/" + filename);
             if (resourceStream != null) {
                 return new Image(resourceStream);
             }
 
-            return loadFallbackImage();
         } catch (Exception e) {
             System.err.println("Error loading image: " + e.getMessage());
-            return loadFallbackImage();
         }
+
+        return loadFallbackImage();
     }
 
     private Image loadFallbackImage() {
@@ -273,8 +263,14 @@ public class getProductController {
     }
 
     @FXML
-    private void handleExitButton() {
-        ((Stage) exitButton.getScene().getWindow()).close();
+    private void handleCleanButton() {
+        nameField.clear();
+        productionDateField.clear();
+        expiryDateField.clear();
+        price1Field.clear();
+        price2Field.clear();
+        price3Field.clear();
+        unitField.clear();
     }
 
     @FXML

@@ -1,8 +1,7 @@
 package com.example.library.controller.inventory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.io.File;
+import java.sql.*;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -63,6 +62,8 @@ public class addNewProductController {
     private DatePicker productionDatePicker; // Added for production date
     @FXML
     private DatePicker expirationDatePicker; // Added for expiration date
+
+    private File selectedImageFile;
 
     public void initialize() {
         // Initialize unit menu
@@ -221,82 +222,82 @@ public class addNewProductController {
     }
 
     @FXML
-    public void handleSaveProductAction(ActionEvent event) {
-        String uuid = UUID.randomUUID().toString();
-        String barcode = barcodeTextField.getText().trim();
-        String name = productNameTextField.getText().trim();
-        String desc = descriptionTextField.getText().trim();
-        String selectedUnit = unitMenuButton.getText();
-        String price1 = price1TextField.getText().trim();
-        String price2 = price2TextField.getText().trim();
-        String price3 = price3TextField.getText().trim();
-        String quantity = quantityTextField.getText().trim();
+    private void handleSaveProductAction() {
+        String barcode = barcodeTextField.getText();
+        String name = productNameTextField.getText();
+        String description = descriptionTextField.getText();
+        String price1 = price1TextField.getText();
+        String price2 = price2TextField.getText();
+        String price3 = price3TextField.getText();
+        String quantity = quantityTextField.getText();
+        String unit = unitMenuButton.getText();
+        String productionDate = (productionDatePicker.getValue() != null) ? productionDatePicker.getValue().toString() : null;
+        String expirationDate = (expirationDatePicker.getValue() != null) ? expirationDatePicker.getValue().toString() : null;
+        String imagePath = (selectedImageFile != null) ? selectedImageFile.getAbsolutePath() : null;
 
-        String productionDate = productionDatePicker.getValue() != null
-                ? productionDatePicker.getValue().toString()
-                : java.time.LocalDate.now().toString();
-
-        String expirationDate = expirationDatePicker.getValue() != null
-                ? expirationDatePicker.getValue().toString()
-                : java.time.LocalDate.now().plusYears(1).toString();
-
-        String imagePath = (productImageView.getImage() != null && productImageView.getImage().getUrl() != null)
-                ? productImageView.getImage().getUrl()
-                : null;
-
-        if (barcode.isEmpty() || name.isEmpty() || desc.isEmpty() || selectedUnit.equals("Select Unit") ||
-                price1.isEmpty() || price2.isEmpty() || price3.isEmpty() || quantity.isEmpty()) {
-            showSystemAlert("Missing Fields", "Please fill all required fields and select a unit.", Alert.AlertType.WARNING);
+        if (barcode.isEmpty() || name.isEmpty() || unit.equals("Select Unit") || quantity.isEmpty()) {
+            showSystemAlert("Validation Error", "⚠️ Please fill in all required fields.", Alert.AlertType.WARNING);
             return;
         }
 
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            // 🔍 Check if product with the same barcode already exists
-            String checkQuery = "SELECT COUNT(*) FROM products WHERE barcode = ?";
-            try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
-                checkStmt.setString(1, barcode);
-                try (java.sql.ResultSet rs = checkStmt.executeQuery()) {
-                    if (rs.next() && rs.getInt(1) > 0) {
-                        showSystemAlert("Product Exists", "هذا المنتج موجود بالفعل!!", Alert.AlertType.WARNING);
-                        return;
-                    }
+        String sql = "INSERT INTO products (id, barcode, product_name, description, price1, price2, price3, unit, quantity, production_date, expiration_date, image_path) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            String id = UUID.randomUUID().toString();
+
+            stmt.setString(1, id);
+            stmt.setString(2, barcode);
+            stmt.setString(3, name);
+            stmt.setString(4, description);
+            stmt.setDouble(5, Double.parseDouble(price1));
+            stmt.setDouble(6, Double.parseDouble(price2));
+            stmt.setDouble(7, Double.parseDouble(price3));
+            stmt.setString(8, unit);
+            stmt.setInt(9, Integer.parseInt(quantity));
+
+            if (productionDate != null)
+                stmt.setDate(10, Date.valueOf(productionDate));
+            else
+                stmt.setNull(10, Types.DATE);
+
+            if (expirationDate != null)
+                stmt.setDate(11, Date.valueOf(expirationDate));
+            else
+                stmt.setNull(11, Types.DATE);
+
+            stmt.setString(12, imagePath);
+
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                // Insert product status based on expiration
+                String status = (expirationDate != null &&
+                        java.time.LocalDate.parse(expirationDate).isBefore(java.time.LocalDate.now()))
+                        ? "Expired" : "Valid";
+
+                String statusSql = "INSERT INTO product_status (barcode, status) VALUES (?, ?)";
+
+                try (PreparedStatement statusStmt = conn.prepareStatement(statusSql)) {
+                    statusStmt.setString(1, barcode);
+                    statusStmt.setString(2, status);
+                    statusStmt.executeUpdate();
                 }
+
+                showSystemAlert("Success", "✅ Product saved successfully.", Alert.AlertType.INFORMATION);
+                clearFields();
+            } else {
+                showSystemAlert("Insert Failed", "❌ Failed to save the product.", Alert.AlertType.ERROR);
             }
 
-            // ✅ Insert new product
-            String sql = "INSERT INTO products (id, barcode, product_name, description, price1, price2, price3, unit, quantity, production_date, expiration_date, image_path) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, uuid);
-                pstmt.setString(2, barcode);
-                pstmt.setString(3, name);
-                pstmt.setString(4, desc);
-                pstmt.setString(5, price1);
-                pstmt.setString(6, price2);
-                pstmt.setString(7, price3);
-                pstmt.setString(8, selectedUnit);
-                pstmt.setInt(9, Integer.parseInt(quantity));
-                pstmt.setDate(10, java.sql.Date.valueOf(productionDate));
-                pstmt.setDate(11, java.sql.Date.valueOf(expirationDate));
-                pstmt.setString(12, imagePath);
-
-                int affectedRows = pstmt.executeUpdate();
-
-                if (affectedRows > 0) {
-                    showSystemAlert("Success", "✅ Product saved successfully.", Alert.AlertType.INFORMATION);
-                    clearFields();
-                } else {
-                    showSystemAlert("Warning", "⚠️ No rows were affected.", Alert.AlertType.WARNING);
-                }
-            }
-
-        } catch (SQLException e) {
-            showSystemAlert("Database Error", "❌ Failed to save product: " + e.getMessage(), Alert.AlertType.ERROR);
-        } catch (NumberFormatException e) {
-            showSystemAlert("Invalid Input", "❌ Please enter a valid quantity.", Alert.AlertType.ERROR);
+        } catch (SQLException | NumberFormatException e) {
+            showSystemAlert("Database Error", "❌ " + e.getMessage(), Alert.AlertType.ERROR);
+            e.printStackTrace();
         }
     }
+
 
     private void showSystemAlert(String title, String message, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType);
