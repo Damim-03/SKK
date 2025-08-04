@@ -1,6 +1,8 @@
 package com.example.library.controller.inventory;
 
+import com.example.library.model.CategoryLoader;
 import com.example.library.model.Product;
+import com.example.library.model.UnitLoader;
 import com.example.library.util.DatabaseConnection;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -28,6 +30,7 @@ public class updateFormController {
     @FXML private TextField price2Field;
     @FXML private TextField price3Field;
     @FXML private MenuButton unitMenuButton;
+    @FXML private MenuButton categoryMenuButton;
     @FXML private TextField quantityField;
     @FXML private DatePicker productionDatePicker;
     @FXML private DatePicker expirationDatePicker;
@@ -42,6 +45,13 @@ public class updateFormController {
 
     @FXML
     public void initialize() {
+
+        UnitLoader.loadUnitsIntoMenuButton(unitMenuButton);
+        unitMenuButton.setText("Select Unit");
+
+        CategoryLoader.loadCategoriesIntoMenuButton(categoryMenuButton);
+        categoryMenuButton.setText("Select Category");
+
         setupDatePickerFormatter(productionDatePicker);
         setupDatePickerFormatter(expirationDatePicker);
         setupPriceFieldFormatting(price1Field);
@@ -52,6 +62,7 @@ public class updateFormController {
         if (price2Field.getText().isEmpty()) price2Field.setText("0.00");
         if (price3Field.getText().isEmpty()) price3Field.setText("0.00");
     }
+
 
     private void setupDatePickerFormatter(DatePicker datePicker) {
         datePicker.setConverter(new StringConverter<LocalDate>() {
@@ -111,6 +122,10 @@ public class updateFormController {
 
         if (product.getUnit() != null && !product.getUnit().isEmpty()) {
             unitMenuButton.setText(product.getUnit());
+        }
+
+        if (product.getCategory() != null && !product.getCategory().isEmpty()) {
+            categoryMenuButton.setText(product.getCategory());
         }
 
         productionDatePicker.setValue(product.getProductionDate());
@@ -204,6 +219,7 @@ public class updateFormController {
         price3Field.setText("0.00");
         quantityField.clear();
         unitMenuButton.setText("Select Unit");
+        categoryMenuButton.setText("Select Category");
         productionDatePicker.setValue(null);
         expirationDatePicker.setValue(null);
         productImageView.setImage(null);
@@ -222,6 +238,7 @@ public class updateFormController {
             currentProduct.setPrice3(Double.parseDouble(price3Field.getText()));
             currentProduct.setQuantity(Integer.parseInt(quantityField.getText()));
             currentProduct.setUnit(unitMenuButton.getText());
+            currentProduct.setCategory(categoryMenuButton.getText());
             currentProduct.setProductionDate(productionDatePicker.getValue());
             currentProduct.setExpiryDate(expirationDatePicker.getValue());
             currentProduct.setImagePath(imagePath);
@@ -274,7 +291,8 @@ public class updateFormController {
                 "price1 = ?, price2 = ?, price3 = ?, " +
                 "quantity = ?, unit = ?, " +
                 "production_date = ?, expiration_date = ?, " +
-                "image_path = ? WHERE barcode = ?";
+                "image_path = ?, category = ? " +
+                "WHERE barcode = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -289,9 +307,11 @@ public class updateFormController {
             stmt.setObject(8, product.getProductionDate());
             stmt.setObject(9, product.getExpiryDate());
             stmt.setString(10, product.getImagePath());
-            stmt.setString(11, product.getBarcode());
+            stmt.setString(11, product.getCategory());  // Add this
+            stmt.setString(12, product.getBarcode());   // Move to position 12
 
             return stmt.executeUpdate() > 0;
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

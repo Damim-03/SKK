@@ -45,7 +45,7 @@ public class ButtonController {
     @FXML
     public void handleInventoryButtonAction(ActionEvent event) {
         try {
-            App.setRoot("interfaces/inventory/inventory");
+            App.setRoot("interfaces/inventory/Form/inventory");
         } catch (IOException e) {
                 e.printStackTrace();
         }

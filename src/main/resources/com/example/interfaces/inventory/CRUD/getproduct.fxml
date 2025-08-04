@@ -35,7 +35,7 @@
                      <graphic>
                         <ImageView fitHeight="48.0" fitWidth="48.0" preserveRatio="true">
                            <image>
-                              <Image url="@../../../../images/zoom.png" />
+                              <Image url="@../../../../../images/zoom.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -62,7 +62,7 @@
                <graphic>
                   <ImageView fitHeight="28.0" fitWidth="28.0">
                      <image>
-                        <Image url="@../../../../images/barcode.png" />
+                        <Image url="@../../../../../images/barcode.png" />
                      </image>
                   </ImageView>
                </graphic></Button>
@@ -130,7 +130,7 @@
                            <graphic>
                               <ImageView fitHeight="28.0" fitWidth="28.0">
                                  <image>
-                                    <Image url="@../../../../images/clean.png" />
+                                    <Image url="@../../../../../images/clean.png" />
                                  </image>
                               </ImageView>
                            </graphic></Button>
@@ -138,7 +138,7 @@
                            <graphic>
                               <ImageView fitHeight="28.0" fitWidth="28.0">
                                  <image>
-                                    <Image url="@../../../../images/cycle.png" />
+                                    <Image url="@../../../../../images/cycle.png" />
                                  </image>
                               </ImageView>
                            </graphic></Button>

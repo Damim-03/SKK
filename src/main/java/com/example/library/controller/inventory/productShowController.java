@@ -20,10 +20,10 @@ public class productShowController {
     @FXML private TextField price3Field;
     @FXML private TextField quantityField;
     @FXML private TextField unitField;
+    @FXML private TextField categoryField;
     @FXML private DatePicker productionDatePicker;
     @FXML private DatePicker expirationDatePicker;
     @FXML private ImageView productImageView;
-    @FXML private Button cancelButton;
 
     @FXML
     public void initialize() {
@@ -39,6 +39,7 @@ public class productShowController {
         price3Field.setEditable(false);
         quantityField.setEditable(false);
         unitField.setEditable(false);
+        categoryField.setEditable(false);
         productionDatePicker.setEditable(false);
         expirationDatePicker.setEditable(false);
     }
@@ -61,6 +62,7 @@ public class productShowController {
                 price3Field.setText(String.valueOf(rs.getDouble("price3")));
                 quantityField.setText(String.valueOf(rs.getInt("quantity")));
                 unitField.setText(String.valueOf(rs.getString("unit")));
+                categoryField.setText(String.valueOf(rs.getString("category")));
 
                 Date productionDate = rs.getDate("production_date");
                 if (productionDate != null)
@@ -112,11 +114,6 @@ public class productShowController {
         }
     }
 
-
-    @FXML
-    private void handleCancel() {
-        cancelButton.getScene().getWindow().hide();
-    }
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

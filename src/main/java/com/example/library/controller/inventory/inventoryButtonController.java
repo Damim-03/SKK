@@ -25,6 +25,10 @@ public class inventoryButtonController {
     public Button importDataButton; // استيراد بيانات المنتجات
     @FXML
     public Button productExpirationButton; // صلاحية المنتجات
+    @FXML
+    public Button categoryButton;
+    @FXML
+    public Button unitButton;
 
     @FXML
     public void initialize() {
@@ -44,7 +48,7 @@ public class inventoryButtonController {
     public void handleAddNewProductButtonAction(ActionEvent event) {
         try {
             // Load the FXML file for the add new product interface
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/interfaces/inventory/addnewproduct.fxml"));
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/interfaces/inventory/CRUD/addnewproduct.fxml"));
             javafx.scene.Parent root = loader.load();
 
             // Create a new stage (window)
@@ -71,7 +75,7 @@ public class inventoryButtonController {
     public void handleViewProductsButtonAction(ActionEvent event) {
         try {
             // Load the FXML file for the add new product interface
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/interfaces/inventory/getproduct.fxml"));
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/interfaces/inventory/CRUD/getproduct.fxml"));
             javafx.scene.Parent root = loader.load();
 
             // Create a new stage (window)
@@ -97,15 +101,34 @@ public class inventoryButtonController {
 
     @FXML
     public void handleAddNewCategoryButtonAction(ActionEvent event) {
-        System.out.println("Add New Category button clicked!");
-        // Add logic for adding a new category
+        try {
+            // Load the FXML file for the add new product interface
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/interfaces/inventory/Form/categoryForm.fxml"));
+            javafx.scene.Parent root = loader.load();
+
+            // Create a new stage (window)
+            javafx.stage.Stage newStage = new javafx.stage.Stage();
+            newStage.setTitle("اضافة تصنيف جديد");
+            newStage.setScene(new javafx.scene.Scene(root));
+
+            // Set window properties
+            newStage.setResizable(false);
+            newStage.setMaximized(false);
+
+            // Show the new window
+            newStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Error opening add new product window: " + e.getMessage());
+        }
     }
 
     @FXML
     public void handleEditPricesButtonAction(ActionEvent event) {
         try {
             // Load the FXML file for the add new product interface
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/interfaces/inventory/updateproduct.fxml"));
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/interfaces/inventory/CRUD/updateproduct.fxml"));
             javafx.scene.Parent root = loader.load();
 
             // Create a new stage (window)
@@ -128,18 +151,95 @@ public class inventoryButtonController {
             System.out.println("Error opening add new product window: " + e.getMessage());
         }
     }
+    @FXML
+    public void handleCategoryButtonAction(ActionEvent event){
+        try {
+            // Load the FXML file for the add new product interface
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/interfaces/inventory/Form/addcategory.fxml"));
+            javafx.scene.Parent root = loader.load();
+
+            // Create a new stage (window)
+            javafx.stage.Stage newStage = new javafx.stage.Stage();
+            newStage.setTitle("اضافة تصنيف جديد");
+            newStage.setScene(new javafx.scene.Scene(root));
+
+            // Add icon to the stage
+            newStage.getIcons().add(new javafx.scene.image.Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/category.png"))));
+
+            // Set window properties
+            newStage.setResizable(false);
+            newStage.setMaximized(false);
+
+            // Show the new window
+            newStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Error opening add new product window: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    public void handleUnitButtonAction(ActionEvent event){
+        try {
+            // Load the FXML file for the add new product interface
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/interfaces/inventory/Form/addunit.fxml"));
+            javafx.scene.Parent root = loader.load();
+
+            // Create a new stage (window)
+            javafx.stage.Stage newStage = new javafx.stage.Stage();
+            newStage.setTitle("اضافة وحدة جديدة");
+            newStage.setScene(new javafx.scene.Scene(root));
+
+            // Add icon to the stage
+            newStage.getIcons().add(new javafx.scene.image.Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/unit.png"))));
+
+            // Set window properties
+            newStage.setResizable(false);
+            newStage.setMaximized(false);
+
+            // Show the new window
+            newStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Error opening add new product window: " + e.getMessage());
+        }
+    }
 
     @FXML
     public void handleImportDataButtonAction(ActionEvent event) {
-        System.out.println("Import Data button clicked!");
-        // Add logic for importing product data
+        try {
+            // Load the FXML file for the add new product interface
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/interfaces/inventory/Form/importDataForm.fxml"));
+            javafx.scene.Parent root = loader.load();
+
+            // Create a new stage (window)
+            javafx.stage.Stage newStage = new javafx.stage.Stage();
+            newStage.setTitle("استيراد البيانات");
+            newStage.setScene(new javafx.scene.Scene(root));
+
+            // Add icon to the stage
+            newStage.getIcons().add(new javafx.scene.image.Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/excel.png"))));
+
+            // Set window properties
+            newStage.setResizable(false);
+            newStage.setMaximized(false);
+
+            // Show the new window
+            newStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Error opening add new product window: " + e.getMessage());
+        }
     }
 
     @FXML
     public void handleProductExpirationButtonAction(ActionEvent event) {
         try {
             // Load the FXML file for the add new product interface
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/interfaces/inventory/expiration.fxml"));
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/interfaces/inventory/Form/expiration.fxml"));
             javafx.scene.Parent root = loader.load();
 
             // Create a new stage (window)

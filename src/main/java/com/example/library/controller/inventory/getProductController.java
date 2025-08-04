@@ -20,7 +20,6 @@ import java.time.format.DateTimeFormatter;
 
 public class getProductController {
 
-    // All your @FXML declarations remain exactly the same
     @FXML private TableView<Product> tableView;
     @FXML private TableColumn<Product, String> barcodeColumn;
     @FXML private TableColumn<Product, String> nameColumn;
@@ -37,6 +36,8 @@ public class getProductController {
     @FXML private TextField price3Field;
     @FXML private TextField unitField;
     @FXML private ImageView productImage;
+    @FXML private Label categoryLabel; // ✅ optional label for display
+    @FXML private TextField categoryField; // ✅ optional TextField for form
 
     private final ObservableList<Product> productList = FXCollections.observableArrayList();
     private final ObservableList<Product> filteredList = FXCollections.observableArrayList();
@@ -70,7 +71,6 @@ public class getProductController {
             filterTableByBarcode(newVal);
         });
 
-        // Safe selection listener
         tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             if (newSel != null) {
                 updateFormFields(newSel);
@@ -80,7 +80,7 @@ public class getProductController {
 
     private void loadDataFromDatabase() {
         String query = "SELECT barcode, product_name, description, price1, price2, price3, " +
-                "quantity, unit, production_date, expiration_date, image_path FROM products";
+                "quantity, unit, category, production_date, expiration_date, image_path FROM products";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query);
@@ -103,6 +103,7 @@ public class getProductController {
                         rs.getDouble("price3"),
                         rs.getInt("quantity"),
                         rs.getString("unit"),
+                        rs.getString("category"),
                         productionDate,
                         expirationDate,
                         rs.getString("image_path")
@@ -113,10 +114,7 @@ public class getProductController {
 
             filteredList.setAll(productList);
             tableView.setItems(filteredList);
-
-            // Clear any existing selection
             tableView.getSelectionModel().clearSelection();
-
             tableView.refresh();
 
         } catch (SQLException e) {
@@ -133,11 +131,11 @@ public class getProductController {
         barcodeField.setText(product.getBarcode());
         nameField.setText(product.getProductName());
 
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         productionDateField.setText(product.getProductionDate() != null ?
-                dateFormatter.format(product.getProductionDate()) : "");
+                formatter.format(product.getProductionDate()) : "");
         expiryDateField.setText(product.getExpiryDate() != null ?
-                dateFormatter.format(product.getExpiryDate()) : "");
+                formatter.format(product.getExpiryDate()) : "");
 
         price1Field.setText(String.format("%.2f", product.getPrice1()));
         price2Field.setText(String.format("%.2f", product.getPrice2()));
@@ -145,7 +143,13 @@ public class getProductController {
 
         unitField.setText(product.getUnit());
 
-        // Load and display the product image
+        // ✅ Display category
+        if (categoryField != null) {
+            categoryField.setText(product.getCategory());
+        } else if (categoryLabel != null) {
+            categoryLabel.setText(product.getCategory());
+        }
+
         Image image = loadProductImage(product.getImagePath());
         productImage.setImage(image);
         productImage.setVisible(image != null);
@@ -157,37 +161,33 @@ public class getProductController {
         }
 
         try {
-            // Try as internal resource
             String normalizedPath = path.startsWith("/") ? path : "/" + path;
+
             InputStream resourceStream = getClass().getResourceAsStream(normalizedPath);
             if (resourceStream != null) {
                 return new Image(resourceStream);
             }
 
-            // Try with "/images/" prefix
-            if (!path.startsWith("/images/")) {
+            if (!normalizedPath.startsWith("/images/")) {
                 resourceStream = getClass().getResourceAsStream("/images/" + path);
                 if (resourceStream != null) {
                     return new Image(resourceStream);
                 }
             }
 
-            // Try external file
             File file = new File(path);
             if (file.exists()) {
                 return new Image(file.toURI().toString());
             }
 
-            // Try getting from classpath as File
             URL url = getClass().getResource(normalizedPath);
             if (url != null) {
-                file = new File(url.toURI());
-                if (file.exists()) {
-                    return new Image(file.toURI().toString());
+                File classpathFile = new File(url.toURI());
+                if (classpathFile.exists()) {
+                    return new Image(classpathFile.toURI().toString());
                 }
             }
 
-            // Try just the filename in images folder
             String filename = path.contains("/") ? path.substring(path.lastIndexOf("/") + 1) : path;
             resourceStream = getClass().getResourceAsStream("/images/" + filename);
             if (resourceStream != null) {
@@ -203,7 +203,6 @@ public class getProductController {
 
     private Image loadFallbackImage() {
         try {
-            // Try multiple possible locations for fallback image
             InputStream stream = getClass().getResourceAsStream("/images/image.png");
             if (stream == null) {
                 stream = getClass().getResourceAsStream("image.png");
@@ -226,6 +225,7 @@ public class getProductController {
         price2Field.clear();
         price3Field.clear();
         unitField.clear();
+        if (categoryField != null) categoryField.clear(); // ✅
         productImage.setImage(null);
     }
 
@@ -239,7 +239,6 @@ public class getProductController {
                     .findFirst()
                     .ifPresent(product -> {
                         filteredList.add(product);
-                        // Safe selection
                         if (!tableView.getItems().isEmpty()) {
                             tableView.getSelectionModel().select(product);
                         }
@@ -264,13 +263,7 @@ public class getProductController {
 
     @FXML
     private void handleCleanButton() {
-        nameField.clear();
-        productionDateField.clear();
-        expiryDateField.clear();
-        price1Field.clear();
-        price2Field.clear();
-        price3Field.clear();
-        unitField.clear();
+        clearFormFields();
     }
 
     @FXML

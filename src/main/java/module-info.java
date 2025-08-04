@@ -7,6 +7,8 @@ module com.example {
     requires com.google.zxing.javase;
     requires usb4java;
     requires mysql.connector.j;
+    requires org.apache.poi.poi;
+    requires org.apache.poi.ooxml;
 
     opens com.example to javafx.fxml;
     opens com.example.library.controller.home to javafx.fxml;

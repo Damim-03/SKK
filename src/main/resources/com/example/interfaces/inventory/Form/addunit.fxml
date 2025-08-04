@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.library.controller.inventory.addCategoryUnitController"
+            prefHeight="250.0" prefWidth="450.0"
+            style="-fx-background-color: #fdfdfd; -fx-background-radius: 12;">
+
+    <VBox spacing="20" alignment="CENTER"
+          AnchorPane.topAnchor="20.0"
+          AnchorPane.leftAnchor="20.0"
+          AnchorPane.rightAnchor="20.0"
+          AnchorPane.bottomAnchor="20.0"
+          style="-fx-padding: 20;">
+
+        <Label text="➕ إضافة وحدة قياس"
+               style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #34495e;" />
+
+        <TextField fx:id="unitNameField"
+                   promptText="ادخل اسم الوحدة (مثلاً: كغ، لتر...)"
+                   maxWidth="280.0"
+                   style="-fx-font-size: 14px; -fx-background-radius: 6; -fx-border-radius: 6;" />
+
+        <HBox spacing="15" alignment="CENTER">
+            <Button text="💾 حفظ" onAction="#handleSaveUnit"
+                    style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 8 15;" />
+
+            <Button text="🧹 مسح" onAction="#handleClearunit"
+                    style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 8 15;" />
+
+            <Button text="❌ إغلاق" onAction="#handleCloseUnit"
+                    style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 8 15;" />
+        </HBox>
+    </VBox>
+</AnchorPane>

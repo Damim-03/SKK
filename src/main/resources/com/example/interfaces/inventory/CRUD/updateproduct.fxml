@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="544.0" prefWidth="836.0" spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.library.controller.inventory.expirationController">
+<VBox prefHeight="544.0" prefWidth="836.0" spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.library.controller.inventory.updateProductController">
     <padding>
         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
     </padding>
@@ -26,14 +26,14 @@
             <children>
                 <StackPane HBox.hgrow="ALWAYS">
                     <children>
-                        <Label alignment="CENTER" text="صلاحية المنتجات">
+                        <Label alignment="CENTER" text="تعديل اسعار المنتجات">
                             <font>
                                 <Font name="Segoe UI Bold" size="26.0" />
                             </font>
                             <graphic>
                                 <ImageView fitHeight="48.0" fitWidth="48.0" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../../../images/date.png" />
+                                        <Image url="@../../../../../images/cycle.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -60,7 +60,7 @@
                     <graphic>
                         <ImageView fitHeight="28.0" fitWidth="28.0">
                             <image>
-                                <Image url="@../../../../images/barcode.png" />
+                                <Image url="@../../../../../images/barcode.png" />
                             </image>
                         </ImageView>
                     </graphic></Button>
@@ -71,9 +71,11 @@
                         <TableColumn fx:id="selectColumn" minWidth="40.0" prefWidth="40.0" text="تحديد" />
                         <TableColumn fx:id="barcodeColumn" minWidth="120.0" prefWidth="120.0" text="رقم المنتج (BarCode)" />
                         <TableColumn fx:id="nameColumn" minWidth="130.0" prefWidth="130.0" text="اسم المنتج" />
-                        <TableColumn fx:id="productionDateColumn" minWidth="110.0" prefWidth="110.0" text="تاريخ الانتاج" />
-                        <TableColumn fx:id="expiryDateColumn" minWidth="110.0" prefWidth="110.0" text="تاريخ انتهاء الصلاحية" />
-                  <TableColumn fx:id="expiryDateColumn1" minWidth="110.0" prefWidth="110.0" text="الحالة" />
+                        <TableColumn fx:id="priceColumn" minWidth="110.0" prefWidth="110.0" text="السعر1" />
+                        <TableColumn fx:id="priceColumn1" minWidth="110.0" prefWidth="110.0" text="السعر2" />
+                        <TableColumn fx:id="priceColumn2" minWidth="110.0" prefWidth="110.0" text="السعر3" />
+                        <TableColumn fx:id="quantityColumn" minWidth="110.0" prefWidth="110.0" text="الكمية" />
+                        <TableColumn fx:id="categoryColumn" minWidth="110.0" prefWidth="110.0" text="التصنيف" />
                     </columns>
                 </TableView>
             </children>
@@ -84,7 +86,7 @@
                     <graphic>
                         <ImageView fitHeight="28.0" fitWidth="28.0">
                             <image>
-                                <Image url="@../../../../images/exit.png" />
+                                <Image url="@../../../../../images/exit.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -93,20 +95,29 @@
                     <graphic>
                         <ImageView fitHeight="28.0" fitWidth="28.0">
                             <image>
-                                <Image url="@../../../../images/cycle.png" />
+                                <Image url="@../../../../../images/cycle.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="infoProductButton" mnemonicParsing="false" onAction="#handleInfoButton" prefHeight="26.0" prefWidth="130.0" text="معلومات المنتج">
-                    <graphic>
-                        <ImageView fitHeight="28.0" fitWidth="28.0">
-                            <image>
-                                <Image url="@../../../../images/details.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
+            <Button mnemonicParsing="false" onAction="#handleUpdateProductButton" prefHeight="36.0" prefWidth="130.0" text="تحديث المنتج">
+               <graphic>
+                  <ImageView fitHeight="28.0" fitWidth="28.0">
+                     <image>
+                        <Image url="@../../../../../images/edit.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#handleDeleteProductButton" prefHeight="36.0" prefWidth="130.0" text="حذف المنتج">
+               <graphic>
+                  <ImageView fitHeight="28.0" fitWidth="28.0">
+                     <image>
+                        <Image url="@../../../../../images/delete.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             </children>
         </HBox>
     </children>

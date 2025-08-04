@@ -12,6 +12,7 @@ public class Product {
     private final DoubleProperty price3 = new SimpleDoubleProperty();
     private final IntegerProperty quantity = new SimpleIntegerProperty();
     private final StringProperty unit = new SimpleStringProperty();
+    private final StringProperty category = new SimpleStringProperty(); // ✅ new field
     private final ObjectProperty<LocalDate> productionDate = new SimpleObjectProperty<>();
     private final ObjectProperty<LocalDate> expiryDate = new SimpleObjectProperty<>();
     private final StringProperty imagePath = new SimpleStringProperty();
@@ -23,7 +24,7 @@ public class Product {
 
     public Product(String barcode, String productName, String description,
                    double price1, double price2, double price3,
-                   int quantity, String unit,
+                   int quantity, String unit, String category,
                    LocalDate productionDate, LocalDate expiryDate,
                    String imagePath) {
         setBarcode(barcode);
@@ -34,6 +35,7 @@ public class Product {
         setPrice3(price3);
         setQuantity(quantity);
         setUnit(unit);
+        setCategory(category); // ✅
         setProductionDate(productionDate);
         setExpiryDate(expiryDate);
         setImagePath(imagePath);
@@ -48,6 +50,7 @@ public class Product {
     public DoubleProperty price3Property() { return price3; }
     public IntegerProperty quantityProperty() { return quantity; }
     public StringProperty unitProperty() { return unit; }
+    public StringProperty categoryProperty() { return category; } // ✅
     public ObjectProperty<LocalDate> productionDateProperty() { return productionDate; }
     public ObjectProperty<LocalDate> expiryDateProperty() { return expiryDate; }
     public StringProperty imagePathProperty() { return imagePath; }
@@ -62,7 +65,7 @@ public class Product {
     public double getPrice3() { return price3.get(); }
     public int getQuantity() { return quantity.get(); }
     public String getUnit() { return unit.get(); }
-    // Change these in your Product class:
+    public String getCategory() { return category.get(); } // ✅
     public LocalDate getProductionDate() { return productionDate.get(); }
     public LocalDate getExpiryDate() { return expiryDate.get(); }
     public String getImagePath() { return imagePath.get(); }
@@ -77,6 +80,7 @@ public class Product {
     public void setPrice3(double price3) { this.price3.set(price3); }
     public void setQuantity(int quantity) { this.quantity.set(quantity); }
     public void setUnit(String unit) { this.unit.set(unit); }
+    public void setCategory(String category) { this.category.set(category); } // ✅
     public void setProductionDate(LocalDate productionDate) { this.productionDate.set(productionDate); }
     public void setExpiryDate(LocalDate expiryDate) { this.expiryDate.set(expiryDate); }
     public void setImagePath(String imagePath) { this.imagePath.set(imagePath); }

@@ -285,7 +285,7 @@ public class expirationController {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/interfaces/inventory/productForm.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/interfaces/inventory/Form/productForm.fxml"));
             Parent root = loader.load();
 
             // Get the controller and pass barcode

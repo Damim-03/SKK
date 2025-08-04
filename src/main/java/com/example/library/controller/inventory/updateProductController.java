@@ -13,22 +13,20 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class updateProductController {
 
-    @FXML public Button ReadBarcode;
-    @FXML public Button exitButton;
-    @FXML public Button updateListButton;
-    @FXML public TextField barcodeTextField;
-    @FXML public Button readButton;
+    @FXML private Button exitButton;
+    @FXML private TextField barcodeField;
+
     @FXML private TableView<Product> tableView;
     @FXML private TableColumn<Product, String> barcodeColumn;
     @FXML private TableColumn<Product, String> nameColumn;
@@ -36,9 +34,8 @@ public class updateProductController {
     @FXML private TableColumn<Product, Double> priceColumn1;
     @FXML private TableColumn<Product, Double> priceColumn2;
     @FXML private TableColumn<Product, Integer> quantityColumn;
+    @FXML private TableColumn<Product, String> categoryColumn;
     @FXML private TableColumn<Product, Boolean> selectColumn;
-
-    @FXML private TextField barcodeField;
 
     private final ObservableList<Product> productList = FXCollections.observableArrayList();
     private final ObservableList<Product> filteredList = FXCollections.observableArrayList();
@@ -48,6 +45,7 @@ public class updateProductController {
         setupTableColumns();
         loadDataFromDatabase();
         setupListeners();
+        tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
     private void setupTableColumns() {
@@ -57,44 +55,24 @@ public class updateProductController {
         priceColumn1.setCellValueFactory(new PropertyValueFactory<>("price2"));
         priceColumn2.setCellValueFactory(new PropertyValueFactory<>("price3"));
         quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
         selectColumn.setCellValueFactory(new PropertyValueFactory<>("selected"));
         selectColumn.setCellFactory(CheckBoxTableCell.forTableColumn(selectColumn));
-
-        barcodeColumn.setMinWidth(120);
-        nameColumn.setMinWidth(130);
-        priceColumn.setMinWidth(110);
-        quantityColumn.setMinWidth(120);
-        selectColumn.setMinWidth(40);
-
-        priceColumn.setCellFactory(new Callback<>() {
-            @Override
-            public TableCell<Product, Double> call(TableColumn<Product, Double> param) {
-                return new TableCell<>() {
-                    @Override
-                    protected void updateItem(Double item, boolean empty) {
-                        super.updateItem(item, empty);
-                        setText(empty || item == null ? null : String.format("%.2f", item));
-                    }
-                };
-            }
-        });
     }
 
     private void setupListeners() {
-        barcodeField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filterTableByBarcode(newValue);
-        });
+        barcodeField.textProperty().addListener((obs, oldVal, newVal) -> filterTableByBarcode(newVal));
 
-        tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                barcodeField.setText(newSelection.getBarcode());
+        tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
+            if (newSel != null) {
+                barcodeField.setText(newSel.getBarcode());
             }
         });
     }
 
     private void loadDataFromDatabase() {
         String query = "SELECT barcode, product_name, description, price1, price2, price3, " +
-                "quantity, unit, production_date, expiration_date, image_path FROM products";
+                "quantity, unit, category, production_date, expiration_date, image_path FROM products";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query);
@@ -103,10 +81,8 @@ public class updateProductController {
             productList.clear();
 
             while (rs.next()) {
-                LocalDate productionDate = rs.getDate("production_date") != null ?
-                        rs.getDate("production_date").toLocalDate() : null;
-                LocalDate expirationDate = rs.getDate("expiration_date") != null ?
-                        rs.getDate("expiration_date").toLocalDate() : null;
+                LocalDate prodDate = rs.getDate("production_date") != null ? rs.getDate("production_date").toLocalDate() : null;
+                LocalDate expDate = rs.getDate("expiration_date") != null ? rs.getDate("expiration_date").toLocalDate() : null;
 
                 productList.add(new Product(
                         rs.getString("barcode"),
@@ -117,46 +93,34 @@ public class updateProductController {
                         rs.getDouble("price3"),
                         rs.getInt("quantity"),
                         rs.getString("unit"),
-                        productionDate,
-                        expirationDate,
+                        rs.getString("category"),
+                        prodDate,
+                        expDate,
                         rs.getString("image_path")
                 ));
             }
 
             filteredList.setAll(productList);
             tableView.setItems(filteredList);
-
-            if (filteredList.isEmpty()) {
-                tableView.getSelectionModel().clearSelection();
-            }
-
             tableView.refresh();
 
         } catch (SQLException e) {
-            showAlert("Database Error", "Failed to load products: " + e.getMessage(), Alert.AlertType.ERROR);
-            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to load products:\n" + e.getMessage());
         }
     }
 
     private void filterTableByBarcode(String barcode) {
         filteredList.clear();
+
         if (barcode == null || barcode.trim().isEmpty()) {
             filteredList.addAll(productList);
         } else {
-            Product matchingProduct = productList.stream()
-                    .filter(p -> p.getBarcode() != null && p.getBarcode().equals(barcode.trim()))
+            productList.stream()
+                    .filter(p -> p.getBarcode() != null && p.getBarcode().equalsIgnoreCase(barcode.trim()))
                     .findFirst()
-                    .orElse(null);
-
-            if (matchingProduct != null) {
-                filteredList.add(matchingProduct);
-                if (!filteredList.isEmpty()) {
-                    tableView.getSelectionModel().clearAndSelect(0);
-                }
-            } else {
-                tableView.getSelectionModel().clearSelection();
-            }
+                    .ifPresent(filteredList::add);
         }
+
         tableView.refresh();
     }
 
@@ -172,11 +136,47 @@ public class updateProductController {
 
     @FXML
     public void handleUpdateButton() {
-        productList.clear();
         loadDataFromDatabase();
-        filteredList.clear();
-        filteredList.addAll(productList);
+        filteredList.setAll(productList);
         tableView.refresh();
+    }
+
+    @FXML
+    private void handleDeleteProductButton() {
+        ObservableList<Product> selectedItems = tableView.getSelectionModel().getSelectedItems();
+
+        if (selectedItems == null || selectedItems.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "تحذير", "يرجى تحديد صفوف للحذف.");
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("تأكيد الحذف");
+        confirm.setHeaderText("هل تريد حذف المنتجات المحددة؟");
+        confirm.setContentText("عدد الصفوف المحددة: " + selectedItems.size());
+
+        confirm.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                List<Product> toDelete = new ArrayList<>(selectedItems);
+                for (Product product : toDelete) {
+                    deleteProductFromDatabase(product.getBarcode());
+                    productList.remove(product); // ✅ Only remove from master list
+                }
+                showAlert(Alert.AlertType.INFORMATION, "تم الحذف", "تم حذف الصفوف المحددة.");
+            }
+        });
+    }
+
+    private void deleteProductFromDatabase(String barcode) {
+        String query = "DELETE FROM products WHERE barcode = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, barcode);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -184,15 +184,13 @@ public class updateProductController {
         Product selectedProduct = tableView.getSelectionModel().getSelectedItem();
 
         if (selectedProduct == null) {
-            showAlert("No Selection", "Please select a product to update", Alert.AlertType.WARNING);
+            showAlert(Alert.AlertType.WARNING, "Warning", "Please select a product to update.");
             return;
         }
 
         try {
-            URL fxmlLocation = getClass().getResource("/com/example/interfaces/inventory/updateForm.fxml");
-            if (fxmlLocation == null) {
-                throw new IOException("FXML file not found at the specified location");
-            }
+            URL fxmlLocation = getClass().getResource("/com/example/interfaces/inventory/Form/updateForm.fxml");
+            if (fxmlLocation == null) throw new IOException("FXML file not found.");
 
             FXMLLoader loader = new FXMLLoader(fxmlLocation);
             Parent root = loader.load();
@@ -201,26 +199,24 @@ public class updateProductController {
             controller.setProductData(selectedProduct);
 
             Stage stage = new Stage();
-            stage.setTitle("تحديث المنتج");
+            stage.setTitle("Update Product");
             stage.setScene(new Scene(root));
-
             try {
                 Image icon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/cycle.png")));
                 stage.getIcons().add(icon);
             } catch (Exception e) {
-                System.out.println("Could not load window icon");
+                System.out.println("Icon not loaded.");
             }
 
             stage.setResizable(false);
             stage.show();
 
         } catch (IOException e) {
-            showAlert("Error", "Failed to open update form:\n" + e.getMessage(), Alert.AlertType.ERROR);
-            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to open update form:\n" + e.getMessage());
         }
     }
 
-    private void showAlert(String title, String message, Alert.AlertType type) {
+    private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);

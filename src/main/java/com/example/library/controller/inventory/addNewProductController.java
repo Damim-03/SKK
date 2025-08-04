@@ -5,6 +5,8 @@ import java.sql.*;
 import java.util.Objects;
 import java.util.UUID;
 
+import com.example.library.model.CategoryLoader;
+import com.example.library.model.UnitLoader;
 import com.example.library.util.DatabaseConnection;
 
 import javafx.event.ActionEvent;
@@ -62,20 +64,17 @@ public class addNewProductController {
     private DatePicker productionDatePicker; // Added for production date
     @FXML
     private DatePicker expirationDatePicker; // Added for expiration date
+    @FXML
+    private MenuButton categoryMenuButton;
 
     private File selectedImageFile;
 
     public void initialize() {
-        // Initialize unit menu
-        unitMenuButton.getItems().clear();
-        MenuItem item1 = new MenuItem("Piece");
-        MenuItem item2 = new MenuItem("Kilogram");
-
-        item1.setOnAction(e -> unitMenuButton.setText("Piece"));
-        item2.setOnAction(e -> unitMenuButton.setText("Kilogram"));
-
-        unitMenuButton.getItems().addAll(item1, item2);
+        UnitLoader.loadUnitsIntoMenuButton(unitMenuButton);
         unitMenuButton.setText("Select Unit");
+
+        CategoryLoader.loadCategoriesIntoMenuButton(categoryMenuButton);
+        categoryMenuButton.setText("Select Category");
 
         // Allow only numeric input in the barcode field
         barcodeTextField.textProperty().addListener((obs, oldText, newText) -> {
@@ -171,8 +170,9 @@ public class addNewProductController {
                     new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp")
             );
             Stage stage = (Stage) uploadImageButton.getScene().getWindow();
-            java.io.File selectedFile = fileChooser.showOpenDialog(stage);
+            File selectedFile = fileChooser.showOpenDialog(stage);
             if (selectedFile != null) {
+                this.selectedImageFile = selectedFile; // ✅ IMPORTANT
                 Image image = new Image(selectedFile.toURI().toString());
                 productImageView.setImage(image);
             }
@@ -231,17 +231,18 @@ public class addNewProductController {
         String price3 = price3TextField.getText();
         String quantity = quantityTextField.getText();
         String unit = unitMenuButton.getText();
+        String category = categoryMenuButton.getText(); // <-- Get selected category
         String productionDate = (productionDatePicker.getValue() != null) ? productionDatePicker.getValue().toString() : null;
         String expirationDate = (expirationDatePicker.getValue() != null) ? expirationDatePicker.getValue().toString() : null;
         String imagePath = (selectedImageFile != null) ? selectedImageFile.getAbsolutePath() : null;
 
-        if (barcode.isEmpty() || name.isEmpty() || unit.equals("Select Unit") || quantity.isEmpty()) {
+        if (barcode.isEmpty() || name.isEmpty() || unit.equals("Select Unit") || category.equals("Select Category") || quantity.isEmpty()) {
             showSystemAlert("Validation Error", "⚠️ Please fill in all required fields.", Alert.AlertType.WARNING);
             return;
         }
 
-        String sql = "INSERT INTO products (id, barcode, product_name, description, price1, price2, price3, unit, quantity, production_date, expiration_date, image_path) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO products (id, barcode, product_name, description, price1, price2, price3, unit, quantity, production_date, expiration_date, image_path, category) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -257,29 +258,19 @@ public class addNewProductController {
             stmt.setDouble(7, Double.parseDouble(price3));
             stmt.setString(8, unit);
             stmt.setInt(9, Integer.parseInt(quantity));
-
-            if (productionDate != null)
-                stmt.setDate(10, Date.valueOf(productionDate));
-            else
-                stmt.setNull(10, Types.DATE);
-
-            if (expirationDate != null)
-                stmt.setDate(11, Date.valueOf(expirationDate));
-            else
-                stmt.setNull(11, Types.DATE);
-
+            stmt.setDate(10, (productionDate != null) ? Date.valueOf(productionDate) : null);
+            stmt.setDate(11, (expirationDate != null) ? Date.valueOf(expirationDate) : null);
             stmt.setString(12, imagePath);
+            stmt.setString(13, category);
 
             int affectedRows = stmt.executeUpdate();
 
             if (affectedRows > 0) {
-                // Insert product status based on expiration
                 String status = (expirationDate != null &&
                         java.time.LocalDate.parse(expirationDate).isBefore(java.time.LocalDate.now()))
                         ? "Expired" : "Valid";
 
                 String statusSql = "INSERT INTO product_status (barcode, status) VALUES (?, ?)";
-
                 try (PreparedStatement statusStmt = conn.prepareStatement(statusSql)) {
                     statusStmt.setString(1, barcode);
                     statusStmt.setString(2, status);
@@ -326,9 +317,5 @@ public class addNewProductController {
         } catch (Exception e) {
             // Silently handle exception, image remains unchanged if load fails
         }
-    }
-
-    private void showAlert(String success, String product_saved_successfully, Alert.AlertType alertType) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

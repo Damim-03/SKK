@@ -4,7 +4,6 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
@@ -12,12 +11,9 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<ScrollPane fitToWidth="true" prefHeight="600.0"
-            prefWidth="800.0" xmlns="http://javafx.com/javafx/23.0.1"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.library.controller.inventory.updateFormController">
+<ScrollPane fitToWidth="true" prefHeight="579.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.library.controller.inventory.updateFormController">
     <content>
-        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="913.0" prefWidth="738.0">
+        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="968.0" prefWidth="798.0">
             <children>
                 <!-- Title -->
                 <Label alignment="CENTER" layoutX="228.0" layoutY="14.0" prefHeight="17.0" prefWidth="261.0" text="تحديث المنتج">
@@ -74,49 +70,48 @@
                         <Font name="System Bold" size="13.0" />
                     </font>
                 </Label>
-                <MenuButton fx:id="unitMenuButton" layoutX="64.0" layoutY="376.0"
-                            mnemonicParsing="false" prefHeight="25.0" prefWidth="529.0"
-                            text="Select Unit">
-                    <items>
-                        <MenuItem mnemonicParsing="false" text="Piece" />
-                        <MenuItem mnemonicParsing="false" text="Kilogram" />
-                    </items>
-                </MenuButton>
-                <!-- Quantity Section -->
-                <Label alignment="CENTER" contentDisplay="CENTER" layoutX="620.0" layoutY="450.0" prefHeight="17.0" prefWidth="63.0" text="الكمية :">
+                <MenuButton fx:id="unitMenuButton" layoutX="64.0" layoutY="376.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="529.0" text="Select Unit" />
+                <Label alignment="CENTER" contentDisplay="CENTER" layoutX="623.0" layoutY="450.0" prefHeight="17.0" prefWidth="63.0" text="الصنف :">
                     <font>
                         <Font name="System Bold" size="13.0" />
                     </font>
                 </Label>
-                <TextField fx:id="quantityField" alignment="CENTER" layoutX="64.0" layoutY="447.0" prefHeight="25.0" prefWidth="529.0" promptText="0" />
+                <MenuButton fx:id="categoryMenuButton" layoutX="64.0" layoutY="447.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="529.0" text="Select Category" />
+                <!-- Quantity Section -->
+                <Label alignment="CENTER" contentDisplay="CENTER" layoutX="623.0" layoutY="519.0" prefHeight="17.0" prefWidth="63.0" text="الكمية :">
+                    <font>
+                        <Font name="System Bold" size="13.0" />
+                    </font>
+                </Label>
+                <TextField fx:id="quantityField" alignment="CENTER" layoutX="64.0" layoutY="516.0" prefHeight="25.0" prefWidth="529.0" promptText="0" />
 
                 <!-- Date Section -->
-                <Label alignment="CENTER" contentDisplay="CENTER" layoutX="623.0" layoutY="541.0" prefHeight="17.0" prefWidth="63.0" text="التاريخ :">
+                <Label alignment="CENTER" contentDisplay="CENTER" layoutX="623.0" layoutY="602.0" prefHeight="17.0" prefWidth="63.0" text="التاريخ :">
                     <font>
                         <Font name="System Bold" size="13.0" />
                     </font>
                 </Label>
-                <Label layoutX="465.0" layoutY="513.0" prefHeight="17.0" prefWidth="56.0" text="تاريخ الإنتاج" />
-                <Label layoutX="107.0" layoutY="513.0" prefHeight="17.0" prefWidth="109.0" text="تاريخ الانتهاء" />
+                <Label layoutX="465.0" layoutY="575.0" prefHeight="17.0" prefWidth="56.0" text="تاريخ الإنتاج" />
+                <Label layoutX="118.0" layoutY="575.0" prefHeight="17.0" prefWidth="63.0" text="تاريخ الانتهاء" />
 
                 <!-- Fixed fx:id here -->
-                <DatePicker fx:id="productionDatePicker" editable="false" layoutX="391.0" layoutY="538.0" prefHeight="25.0" prefWidth="203.0" promptText="DD/MM/YYYY" />
+                <DatePicker fx:id="productionDatePicker" editable="false" layoutX="391.0" layoutY="599.0" prefHeight="25.0" prefWidth="203.0" promptText="DD/MM/YYYY" />
                 <!-- Expiration Date -->
-                <DatePicker fx:id="expirationDatePicker" editable="false" layoutX="64.0" layoutY="538.0" prefHeight="25.0" prefWidth="203.0" promptText="DD/MM/YYYY" />
+                <DatePicker fx:id="expirationDatePicker" editable="false" layoutX="64.0" layoutY="599.0" prefHeight="25.0" prefWidth="203.0" promptText="DD/MM/YYYY" />
 
                 <!-- Image Section -->
-                <Button fx:id="uploadImageButton" layoutX="116.0" layoutY="678.0" mnemonicParsing="false" onAction="#handleUploadImage" prefHeight="45.0" prefWidth="99.0" text="تحميل الصورة" />
-                <Button fx:id="deleteImageButton" layoutX="511.0" layoutY="678.0" mnemonicParsing="false" onAction="#handleDeleteImage" prefHeight="45.0" prefWidth="99.0" text="حذف الصورة" />
-                <ImageView fx:id="productImageView" fitHeight="200.0" fitWidth="207.0" layoutX="249.0" layoutY="597.0" preserveRatio="true">
+                <Button fx:id="uploadImageButton" layoutX="150.0" layoutY="732.0" mnemonicParsing="false" onAction="#handleUploadImage" prefHeight="45.0" prefWidth="99.0" text="تحميل الصورة" />
+                <Button fx:id="deleteImageButton" layoutX="521.0" layoutY="732.0" mnemonicParsing="false" onAction="#handleDeleteImage" prefHeight="45.0" prefWidth="99.0" text="حذف الصورة" />
+                <ImageView fx:id="productImageView" fitHeight="200.0" fitWidth="207.0" layoutX="287.0" layoutY="655.0" preserveRatio="true">
                     <image>
-                        <Image url="@../../../../images/image.png" />
+                        <Image url="@../../../../../images/image.png" />
                     </image>
                 </ImageView>
 
                 <!-- Action Buttons -->
-                <Button fx:id="cancelButton" layoutX="111.0" layoutY="848.0" mnemonicParsing="false" onAction="#handleCancel" prefHeight="25.0" prefWidth="99.0" text="إلغاء" />
-                <Button fx:id="clearButton" layoutX="309.0" layoutY="848.0" mnemonicParsing="false" onAction="#handleClear" prefHeight="25.0" prefWidth="99.0" text="إفراغ الحقول" />
-                <Button fx:id="saveButton" layoutX="511.0" layoutY="848.0" mnemonicParsing="false" onAction="#handleSave" prefHeight="25.0" prefWidth="99.0" text="حفظ" />
+                <Button fx:id="cancelButton" layoutX="150.0" layoutY="902.0" mnemonicParsing="false" onAction="#handleCancel" prefHeight="25.0" prefWidth="99.0" text="إلغاء" />
+                <Button fx:id="clearButton" layoutX="332.0" layoutY="902.0" mnemonicParsing="false" onAction="#handleClear" prefHeight="25.0" prefWidth="99.0" text="إفراغ الحقول" />
+                <Button fx:id="saveButton" layoutX="521.0" layoutY="902.0" mnemonicParsing="false" onAction="#handleSave" prefHeight="25.0" prefWidth="99.0" text="حفظ" />
             </children>
         </Pane>
     </content>
