@@ -12,6 +12,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -105,7 +107,7 @@ public class updateProductController {
             tableView.refresh();
 
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to load products:\n" + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "خطأ في قاعد البيانات", "فشل تحميل المنتج:\n" + e.getMessage());
         }
     }
 
@@ -184,7 +186,7 @@ public class updateProductController {
         Product selectedProduct = tableView.getSelectionModel().getSelectedItem();
 
         if (selectedProduct == null) {
-            showAlert(Alert.AlertType.WARNING, "Warning", "Please select a product to update.");
+            showAlert(Alert.AlertType.WARNING, "تحذير", "الرجاء تحديد المنتج المراد حذفه.");
             return;
         }
 
@@ -212,7 +214,7 @@ public class updateProductController {
             stage.show();
 
         } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Failed to open update form:\n" + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "خطأ", "فشل في فتح التحديث:\n" + e.getMessage());
         }
     }
 

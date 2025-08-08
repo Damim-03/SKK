@@ -47,10 +47,10 @@ public class updateFormController {
     public void initialize() {
 
         UnitLoader.loadUnitsIntoMenuButton(unitMenuButton);
-        unitMenuButton.setText("Select Unit");
+        unitMenuButton.setText("حدد الوحدة");
 
         CategoryLoader.loadCategoriesIntoMenuButton(categoryMenuButton);
-        categoryMenuButton.setText("Select Category");
+        categoryMenuButton.setText("حدد الفئة");
 
         setupDatePickerFormatter(productionDatePicker);
         setupDatePickerFormatter(expirationDatePicker);
@@ -174,7 +174,7 @@ public class updateFormController {
                 productImageView.setImage(null);
             }
         } catch (Exception e) {
-            System.err.println("Error loading image: " + e.getMessage());
+            System.err.println("خطأ في تحميل الصورة: " + e.getMessage());
             productImageView.setImage(null);
         }
     }
@@ -187,7 +187,7 @@ public class updateFormController {
     @FXML
     public void handleUploadImage(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select Product Image");
+        fileChooser.setTitle("حدد صورة المنتج");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
         );
@@ -218,8 +218,8 @@ public class updateFormController {
         price2Field.setText("0.00");
         price3Field.setText("0.00");
         quantityField.clear();
-        unitMenuButton.setText("Select Unit");
-        categoryMenuButton.setText("Select Category");
+        unitMenuButton.setText("حدد الوحدة");
+        categoryMenuButton.setText("حدد الفئة");
         productionDatePicker.setValue(null);
         expirationDatePicker.setValue(null);
         productImageView.setImage(null);
@@ -244,13 +244,13 @@ public class updateFormController {
             currentProduct.setImagePath(imagePath);
 
             if (updateProductInDatabase(currentProduct)) {
-                showAlert(Alert.AlertType.INFORMATION, "Success", "Product updated successfully!");
+                showAlert(Alert.AlertType.INFORMATION, "نجاح", "تم تحديث المنتج بنجاح!");
                 ((Stage) saveButton.getScene().getWindow()).close();
             } else {
                 throw new Exception("Failed to update product in database");
             }
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Failed to update product: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "خطأ", "فشل في تحديث المنتج: " + e.getMessage());
         }
     }
 
@@ -258,16 +258,16 @@ public class updateFormController {
         if (productNameField.getText().isEmpty() ||
                 price1Field.getText().isEmpty() ||
                 quantityField.getText().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Validation Error",
-                    "Please fill all required fields (Product Name, Price 1, Quantity)");
+            showAlert(Alert.AlertType.WARNING, "خطأ التحقق",
+                    "يرجى ملء جميع الحقول المطلوبة (اسم المنتج، السعر 1، الكمية)");
             return false;
         }
 
         if (productionDatePicker.getValue() != null &&
                 expirationDatePicker.getValue() != null &&
                 productionDatePicker.getValue().isAfter(expirationDatePicker.getValue())) {
-            showAlert(Alert.AlertType.WARNING, "Date Error",
-                    "Production date cannot be after expiration date");
+            showAlert(Alert.AlertType.WARNING, "خطأ التاريخ",
+                    "لا يمكن أن يكون تاريخ الإنتاج بعد تاريخ انتهاء الصلاحية");
             return false;
         }
 
@@ -277,8 +277,8 @@ public class updateFormController {
             if (!price3Field.getText().isEmpty()) Double.parseDouble(price3Field.getText());
             Integer.parseInt(quantityField.getText());
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.WARNING, "Validation Error",
-                    "Please enter valid numbers for prices and quantity");
+            showAlert(Alert.AlertType.WARNING, "خطأ التحقق",
+                    "الرجاء إدخال أرقام صحيحة للأسعار والكمية");
             return false;
         }
 
