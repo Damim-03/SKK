@@ -5,28 +5,34 @@ import com.example.library.util.DatabaseConnection;
 import javafx.animation.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.*;
-import javafx.print.*;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Objects;
 
 public class salesController {
 
     @FXML private TableView<SaleItem> salesTable;
     @FXML private TableColumn<SaleItem, String> colNumber;
+    @FXML private TableColumn<SaleItem, String> colBarcode;
     @FXML private TableColumn<SaleItem, String> colProductName;
     @FXML private TableColumn<SaleItem, String> colQuantity;
     @FXML private TableColumn<SaleItem, String> colPrice;
@@ -39,12 +45,18 @@ public class salesController {
 
     @FXML private Button addButton, billButton, printButton, saveButton, clearListButton, refreshButton;
     @FXML private Button billsReportButton, searchButton, helpButton, infoButton, deleteButton, editButton, payButton;
-
     @FXML private Button barcodeButton;
 
-    @FXML private TextField arabictotalField;
+    @FXML private TextField debtField2;
 
+    @FXML private MenuButton taxMenuButton;
+
+    @FXML private Label discountRateLabel;
+    @FXML private MenuButton discountMenuButton;
+
+    @FXML private TextField arabictotalField;
     @FXML private TextField quantityField;
+
 
     @FXML private MenuItem taxMenuItem1, taxMenuItem2, discountMenuItem1, discountMenuItem2;
 
@@ -52,7 +64,9 @@ public class salesController {
 
     @FXML
     public void initialize() {
+        // Initialize table columns
         colNumber.setCellValueFactory(new PropertyValueFactory<>("number"));
+        colBarcode.setCellValueFactory(new PropertyValueFactory<>("barcode"));
         colProductName.setCellValueFactory(new PropertyValueFactory<>("productName"));
         colQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
@@ -60,11 +74,27 @@ public class salesController {
 
         salesTable.setItems(productList);
 
-        productSearchField.setOnAction(e -> handleBarcodeScan());
+        // Setup event handlers
+        setupEventHandlers();
 
+        // Initialize UI components
+        initializeUIComponents();
+
+        // Setup listeners
+        setupListeners();
+
+        // Update initial display
+        updateDateTime();
+        setupTaxMenu();
+        setupDiscountMenu();
+        setupDebtField();
+    }
+
+    private void setupEventHandlers() {
+        if (productSearchField != null) productSearchField.setOnAction(e -> handleBarcodeScan());
         if (addButton != null) addButton.setOnAction(e -> handleAddButtonAction());
         if (billButton != null) billButton.setOnAction(e -> handleBill());
-        if (printButton != null) printButton.setOnAction(e -> handlePrint());
+        if (printButton != null) printButton.setOnAction(e -> handlePrintButton());
         if (saveButton != null) saveButton.setOnAction(e -> handleSave());
         if (clearListButton != null) clearListButton.setOnAction(e -> handleClearList());
         if (refreshButton != null) refreshButton.setOnAction(e -> handleRefresh());
@@ -75,40 +105,52 @@ public class salesController {
         if (deleteButton != null) deleteButton.setOnAction(e -> handleDelete());
         if (editButton != null) editButton.setOnAction(e -> handleEdit());
         if (payButton != null) payButton.setOnAction(e -> handlePay());
+        if (barcodeButton != null) barcodeButton.setOnAction(e -> handleBarcodeButtonAction());
 
-        if (taxMenuItem1 != null) taxMenuItem1.setOnAction(e -> handleTaxMenuItem1());
-        if (taxMenuItem2 != null) taxMenuItem2.setOnAction(e -> handleTaxMenuItem2());
-        if (discountMenuItem1 != null) discountMenuItem1.setOnAction(e -> handleDiscountMenuItem1());
-        if (discountMenuItem2 != null) discountMenuItem2.setOnAction(e -> handleDiscountMenuItem2());
+        if (taxMenuItem1 != null) taxMenuItem1.setOnAction(e -> handleTaxSelection(5));
+        if (taxMenuItem2 != null) taxMenuItem2.setOnAction(e -> handleTaxSelection(10));
+        if (discountMenuItem1 != null) discountMenuItem1.setOnAction(e -> handleDiscountSelection(5));
+        if (discountMenuItem2 != null) discountMenuItem2.setOnAction(e -> handleDiscountSelection(10));
+    }
 
+    private void initializeUIComponents() {
+        arabictotalField.setStyle("-fx-font-weight: bold; -fx-background-color: #faa2ea; -fx-font-size: 17px;");
+        arabictotalField.setText("صفر دينار جزائري");
+        productSearchField.requestFocus();
+    }
+
+    private void setupListeners() {
         salesTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
                 quantityField.setText(newSelection.getQuantity());
                 productSearchField.setText(newSelection.getBarcode());
+                loadProductImage(newSelection.getBarcode());
+            } else {
+                quantityField.clear();
+                productSearchField.clear();
+                productImageView.setImage(new Image(getClass().getResource("/images/image.png").toExternalForm()));
             }
         });
 
         quantityField.textProperty().addListener((obs, oldVal, newVal) -> {
             SaleItem selectedItem = salesTable.getSelectionModel().getSelectedItem();
             if (selectedItem != null && newVal.matches("\\d+")) {
-                int newQuantity = Integer.parseInt(newVal);
-                double price = Double.parseDouble(selectedItem.getPrice());
-                selectedItem.setQuantity(String.valueOf(newQuantity));
-                selectedItem.setTotal(String.format("%.2f", price * newQuantity));
-                salesTable.refresh(); // reflect the changes in the table
-                updateTotals();       // update subtotal and total
+                try {
+                    int newQuantity = Integer.parseInt(newVal);
+                    double price = Double.parseDouble(selectedItem.getPrice());
+                    selectedItem.setQuantity(String.valueOf(newQuantity));
+                    selectedItem.setTotal(String.format("%.2f", price * newQuantity));
+                    salesTable.refresh();
+                    updateTotals();
+                } catch (NumberFormatException e) {
+                    quantityField.setText(oldVal);
+                }
             }
         });
 
-        salesTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                loadProductImage(newSelection.getBarcode());
-            }
-        });
-
-        arabictotalField.setText("صفر دينار جزائري");
-
-        updateDateTime();
+        debtField2.textProperty().addListener((obs, oldVal, newVal) -> updateTotals());
+        debtField.textProperty().addListener((obs, oldVal, newVal) -> updateTotals());
+        discountField.textProperty().addListener((obs, oldVal, newVal) -> updateTotals());
     }
 
     private void loadProductImage(String barcode) {
@@ -120,54 +162,176 @@ public class salesController {
 
             if (rs.next()) {
                 String imagePath = rs.getString("image_path");
-
                 if (imagePath != null && !imagePath.isEmpty()) {
                     File file = new File(imagePath);
-                    if (file.exists()) {
-                        productImageView.setImage(new Image(file.toURI().toString()));
-                    } else {
-                        productImageView.setImage(new Image(getClass().getResource("/images/image_not_found.png").toExternalForm()));
-                    }
+                    productImageView.setImage(file.exists() ?
+                            new Image(file.toURI().toString()) :
+                            new Image(getClass().getResource("/images/image_not_found.png").toExternalForm()));
                 } else {
                     productImageView.setImage(new Image(getClass().getResource("/images/image.png").toExternalForm()));
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            showFailedAlert("فشل", "تعذر تحميل الصورة!");
         }
+    }
+
+    private void setupDebtField() {
+        debtField2.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null || !newValue.matches("\\d*(\\.\\d{0,2})?")) {
+                debtField2.setText(oldValue != null ? oldValue : "");
+            } else {
+                try {
+                    double value = newValue.isEmpty() ? 0.0 : Double.parseDouble(newValue);
+                    debtField.setText(String.format("%.2f DZ", value)); // Update debtField with formatted value
+                    updateTotals(); // Recalculate totals
+                } catch (NumberFormatException e) {
+                    debtField.setText("0.00 DZ");
+                    debtField2.setText("0.00");
+                }
+            }
+        });
+
+        debtField2.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal) {
+                formatDebtField();
+            }
+        });
+    }
+
+    private void formatDebtField() {
+        if (debtField2.getText().isEmpty()) {
+            debtField2.setText("0.00");
+            debtField.setText("0.00 DZ");
+        } else {
+            try {
+                double value = Double.parseDouble(debtField2.getText());
+                debtField2.setText(String.format("%.2f", value));
+                debtField.setText(String.format("%.2f DZ", value));
+            } catch (NumberFormatException e) {
+                debtField2.setText("0.00");
+                debtField.setText("0.00 DZ");
+            }
+        }
+        updateTotals(); // Ensure totals reflect the formatted value
+    }
+
+    private void setupTaxMenu() {
+        taxMenuButton.getItems().clear();
+        MenuItem tax5 = new MenuItem("5%");
+        tax5.setOnAction(e -> handleTaxSelection(5));
+        MenuItem tax10 = new MenuItem("10%");
+        tax10.setOnAction(e -> handleTaxSelection(10));
+        MenuItem custom = new MenuItem("ادخال...");
+        custom.setOnAction(e -> {
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("نسبة الشحن");
+            dialog.setHeaderText("ادخل نسبة الشحن");
+            dialog.setContentText("الشحن %:");
+            dialog.showAndWait().ifPresent(value -> {
+                try {
+                    // استبدال أي فاصلة بنقطة لضمان التحليل الصحيح
+                    String normalizedValue = value.replace(',', '.');
+                    double tax = Double.parseDouble(normalizedValue);
+                    handleTaxSelection(tax);
+                } catch (NumberFormatException ex) {
+                    showWarningAlert("تنبيه", "يرجى إدخال نسبة الشحن صحيحة (مثال: 5.5 أو 5,5)!");
+                }
+            });
+        });
+        taxMenuButton.getItems().addAll(tax5, tax10, custom);
+        taxMenuButton.setText("0%");
+    }
+
+    private void setupDiscountMenu() {
+        discountMenuButton.getItems().clear();
+        MenuItem discount5 = new MenuItem("5%");
+        discount5.setOnAction(e -> handleDiscountSelection(5));
+        MenuItem discount10 = new MenuItem("10%");
+        discount10.setOnAction(e -> handleDiscountSelection(10));
+        MenuItem custom = new MenuItem("ادخال...");
+        custom.setOnAction(e -> {
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("اختر الخصم");
+            dialog.setHeaderText("ادخل نسبة الخصم");
+            dialog.setContentText("الخصم %:");
+            dialog.showAndWait().ifPresent(value -> {
+                try {
+                    // استبدال الفواصل بنقاط إذا كانت مدخلة بالعربية
+                    String normalizedValue = value.replace(',', '.');
+                    double discount = Double.parseDouble(normalizedValue);
+                    handleDiscountSelection(discount);
+                } catch (NumberFormatException ex) {
+                    showWarningAlert("تنبيه", "يرجى إدخال قيمة خصم صحيحة!");
+                }
+            });
+        });
+        discountMenuButton.getItems().addAll(discount5, discount10, custom);
+        discountMenuButton.setText("0%");
+    }
+
+    private void handleTaxSelection(double percent) {
+        taxMenuButton.setText(percent + "%");
+        //taxPercentLabel.setText("");
+        updateTotals();
+    }
+
+    private void handleDiscountSelection(double percent) {
+        discountMenuButton.setText(percent + "%");
+        discountRateLabel.setText("معدل الخصم :");
+        updateTotals();
     }
 
     public void refreshTable() {
-        salesTable.refresh();
+        try {
+            salesTable.refresh();
+            showSuccessAlert("نجاح", "تم تحديث القائمة!");
+        } catch (Exception e) {
+            showFailedAlert("فشل", "تعذر تحديث القائمة!");
+        }
     }
-
 
     public void updateTotals() {
         double subtotal = 0.0;
-        for (SaleItem item : salesTable.getItems()) {
-            subtotal += Double.parseDouble(item.getTotalPrice());
+        for (SaleItem item : productList) {
+            try {
+                subtotal += Double.parseDouble(item.getTotalPrice());
+            } catch (NumberFormatException e) {
+                // Skip invalid values
+            }
         }
 
-        double discount = 0.0;
-        double debt = 0.0;
+        double flatDiscount = parseDoubleOrZero(discountField.getText());
+        flatDiscount = Math.min(flatDiscount, subtotal);
 
-        try {
-            if (!discountField.getText().isEmpty())
-                discount = Double.parseDouble(discountField.getText());
-            if (!debtField.getText().isEmpty())
-                debt = Double.parseDouble(debtField.getText());
-        } catch (NumberFormatException ignored) {
-        }
+        double debt = parseDoubleOrZero(debtField.getText());
+        double shipping = parseDoubleOrZero(debtField2.getText());
 
-        double total = subtotal - discount + debt;
+        double taxRate = parseDoubleOrZero(taxMenuButton.getText().replace("%", ""));
+        taxRate = Math.min(taxRate, 100);
+        double taxAmount = subtotal * taxRate / 100;
 
+        double discountRate = parseDoubleOrZero(discountMenuButton.getText().replace("%", ""));
+        discountRate = Math.min(discountRate, 100);
+        double discountAmount = subtotal * discountRate / 100;
+
+        double total = subtotal - flatDiscount - discountAmount + debt + shipping + taxAmount;
+        total = Math.max(total, 0);
+
+        discountField.setText(String.format("%.2f DZ", discountAmount));
         subtotalField.setText(String.format("%.2f DZ", subtotal));
         totalField.setText(String.format("%.2f DZ", total));
-
         arabictotalField.setText(amountToArabicWords(total));
     }
 
-    // --- تحويل المبلغ الكلي إلى كلمات عربية (يدعم الدينار والسنتيم) ---
+    private double parseDoubleOrZero(String text) {
+        try {
+            return text.isEmpty() ? 0.0 : Double.parseDouble(text.trim());
+        } catch (NumberFormatException e) {
+            return 0.0;
+        }
+    }
+
     private String amountToArabicWords(double amount) {
         long dinars = (long) amount;
         int centimes = (int) Math.round((amount - dinars) * 100);
@@ -183,7 +347,6 @@ public class salesController {
         return result;
     }
 
-    // تحويل عدد صحيح (0..999999999...) إلى كلمات عربية مبسطة
     private String integerToArabicWords(long number) {
         if (number == 0) return "صفر";
 
@@ -194,7 +357,6 @@ public class salesController {
 
         StringBuilder words = new StringBuilder();
 
-        // مقامات الألوف
         long billion = number / 1_000_000_000L;
         if (billion > 0) {
             words.append(threeDigitsToWords((int) billion, units, tens, hundreds))
@@ -215,14 +377,10 @@ public class salesController {
 
         long thousand = number / 1000L;
         if (thousand > 0) {
-            if (thousand == 1) {
-                words.append("ألف ");
-            } else if (thousand == 2) {
-                words.append("ألفان ");
-            } else {
-                words.append(threeDigitsToWords((int) thousand, units, tens, hundreds))
-                        .append(" ألف ");
-            }
+            words.append(thousand == 1 ? "ألف" :
+                            thousand == 2 ? "ألفان" :
+                                    threeDigitsToWords((int) thousand, units, tens, hundreds) + " ألف")
+                    .append(" ");
             number %= 1000L;
         }
 
@@ -230,16 +388,13 @@ public class salesController {
             words.append(threeDigitsToWords((int) number, units, tens, hundreds));
         }
 
-        // تنظيف المسافات الزائدة
         return words.toString().trim().replaceAll("\\s+", " ");
     }
 
-    // تحويل جزئي (0..999) إلى كلمات
     private String threeDigitsToWords(int num, String[] units, String[] tens, String[] hundreds) {
         StringBuilder part = new StringBuilder();
         if (num >= 100) {
-            int h = num / 100;
-            part.append(hundreds[h]);
+            part.append(hundreds[num / 100]);
             num %= 100;
             if (num > 0) part.append(" و ");
         }
@@ -263,35 +418,27 @@ public class salesController {
 
     private String getCurrencyWord(long number, String singular, String dual, String plural, String accusativeSingular) {
         if (number == 0) return plural;
-        if (number == 1) return accusativeSingular; // "ديناراً"
-        if (number == 2) return dual; // "ديناران"
-        if (number >= 3 && number <= 10) return plural; // "دنانير"
-        return singular; // for >10 use singular noun after number phrase (قواعد عربية مبسطة)
-    }
-
-
-    private void showAlert(String title, String msg) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(msg);
-        alert.show();
+        if (number == 1) return accusativeSingular;
+        if (number == 2) return dual;
+        if (number >= 3 && number <= 10) return plural;
+        return singular;
     }
 
     @FXML
     private void handleBarcodeScan() {
         String barcode = productSearchField.getText();
-        if (barcode == null || barcode.isEmpty()) return;
+        if (barcode == null || barcode.trim().isEmpty()) {
+            showWarningAlert("تنبيه", "يرجى إدخال رمز الباركود!");
+            return;
+        }
 
         SaleItem scannedItem = getProductByBarcode(barcode);
         if (scannedItem != null) {
-            // Check if product already exists in the table
-            for (SaleItem item : salesTable.getItems()) {
+            for (SaleItem item : productList) {
                 if (item.getProductId().equals(scannedItem.getProductId())) {
-                    // Update quantity and total price
                     int currentQty = Integer.parseInt(item.getQuantity());
                     double unitPrice = Double.parseDouble(item.getPrice());
-                    currentQty += 1;
+                    currentQty++;
                     item.setQuantity(String.valueOf(currentQty));
                     item.setTotal(String.format("%.2f", currentQty * unitPrice));
                     salesTable.refresh();
@@ -300,14 +447,11 @@ public class salesController {
                     return;
                 }
             }
-
-            // Add as a new item if not already in the list
-            salesTable.getItems().add(scannedItem);
+            productList.add(scannedItem);
             updateTotals();
         } else {
-            showAlert("تنبيه", "لم يتم العثور على المنتج!");
+            showFailedAlert("فشل", "لم يتم العثور على المنتج!");
         }
-
         productSearchField.clear();
         quantityField.clear();
     }
@@ -319,64 +463,70 @@ public class salesController {
             stmt.setString(1, barcode);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                String number = String.valueOf(salesTable.getItems().size() + 1);
-
-                // Load image from DB path
-                String imagePath = rs.getString("image_path"); // assuming this column exists
-
-                if (imagePath != null && !imagePath.isEmpty()) {
-                    File file = new File(imagePath);
-                    if (file.exists()) {
-                        Image image = new Image(file.toURI().toString());
-                        productImageView.setImage(image);
-                    } else {
-                        productImageView.setImage(new Image(getClass().getResource("/images/image_not_found.png").toExternalForm()));
-                    }
-                } else {
-                    productImageView.setImage(new Image(getClass().getResource("/images/image.png").toExternalForm()));
-                }
-
+                String number = String.valueOf(productList.size() + 1);
                 return new SaleItem(
                         number,
                         rs.getString("id"),
                         rs.getString("product_name"),
-                        rs.getString("barcode"), // <-- Fix here: use actual barcode from DB
+                        rs.getString("barcode"),
                         "1",
                         String.format("%.2f", rs.getDouble("price1")),
                         String.format("%.2f", rs.getDouble("price1"))
                 );
-
-
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            showFailedAlert("فشل", "خطأ في قاعدة البيانات: " + e.getMessage());
         }
         return null;
     }
 
+    public void addProductToTable(String name, String barcode, double price, int quantity, double total, boolean isFromDatabase) {
+        String number = String.valueOf(productList.size() + 1);
 
-    public void addProductToTable(String name, String barcode, double price, int quantity, double total) {
-        String number = String.valueOf(salesTable.getItems().size() + 1);
+        String productId = isFromDatabase ? getProductIdFromDatabase(barcode) : barcode;
+
         SaleItem newItem = new SaleItem(
                 number,
-                "TEMP", // Replace with actual product ID if available
+                productId,  // Use the correct ID based on source
                 name,
-                barcode,
+                barcode,    // Always preserve the original barcode
                 String.valueOf(quantity),
                 String.format("%.2f", price),
                 String.format("%.2f", total)
         );
-        salesTable.getItems().add(newItem);
 
-        productImageView.setImage(new Image(getClass().getResource("/images/image.png").toExternalForm()));
-
+        productList.add(newItem);
         updateTotals();
+        productImageView.setImage(new Image(getClass().getResource("/images/image.png").toExternalForm()));
+    }
+
+    private String getProductIdFromDatabase(String barcode) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                     "SELECT id FROM products WHERE barcode = ?")) {
+
+            stmt.setString(1, barcode);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("id");  // Return the UUID from database
+            }
+            return barcode; // Fallback if not found
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return barcode; // Fallback on error
+        }
     }
 
     @FXML
     private void handleBarcodeButtonAction() {
-        productSearchField.clear();
-        productSearchField.requestFocus();
+        try {
+            productSearchField.clear();
+            productSearchField.requestFocus();
+            showSuccessAlert("نجاح", "تم إفراغ حقل الباركود!");
+        } catch (Exception e) {
+            showFailedAlert("فشل", "تعذر إفراغ حقل الباركود!");
+        }
     }
 
     @FXML
@@ -384,137 +534,533 @@ public class salesController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/interfaces/sales/CRUD/addproductSales.fxml"));
             Parent root = loader.load();
-
             addProductTableController controller = loader.getController();
             controller.setMainController(this);
 
             Stage stage = new Stage();
             stage.setTitle("إضافة منتج");
             stage.setScene(new Scene(root));
-            stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/addproduct.png"))));
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/addproduct.png")));
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
+            showFailedAlert("فشل", "تعذر فتح نافذة إضافة المنتج: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleBill() {
+        try {
+            // Prompt for customer details if not already set
+            String customerName = showInputDialog("اسم العميل");
+            String customerId = showInputDialog("رقم العميل");
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/interfaces/sales/Form/bill.fxml"));
+            Parent root = loader.load();
+
+            // Get the bill controller
+            billController controller = loader.getController();
+
+            // Prepare data to pass
+            ObservableList<SaleItem> items = productList; // Current items from salesTable
+            String subtotal = subtotalField.getText();    // Current subtotal
+            String discount = discountField.getText();    // Current discount
+            String debt = debtField.getText();            // Current debt
+            String total = totalField.getText();          // Current total
+            String date = dateField.getText();            // Current date (e.g., "2025-08-09")
+            String time = timeField.getText();            // Current time (e.g., "00:56")
+
+            // Set the data in the bill controller
+            controller.setSalesData(items, subtotal, discount, debt, total, date, time, customerName, customerId);
+
+            Stage stage = new Stage();
+            stage.setTitle("الفاتورة");
+            stage.setScene(new Scene(root));
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/bill.png")));
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e) {
+            showFailedAlert("فشل", "تعذر فتح نافذة الفاتورة: " + e.getMessage());
+        }
+    }
+
+    private String generate13DigitBarcode() {
+        // Use current timestamp and append a random digit to ensure 13 digits
+        long timestamp = System.currentTimeMillis();
+        int randomDigit = (int) (Math.random() * 10); // Random digit 0-9
+        String barcode = String.format("%012d%d", timestamp % 1000000000000L, randomDigit); // 12 digits from timestamp + 1 random digit
+        return barcode.substring(0, 13); // Ensure exactly 13 digits
+    }
+
+    private String showInputDialog(String prompt) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("إدخال بيانات");
+        dialog.setHeaderText(null);
+
+        // Create custom layout
+        VBox content = new VBox(10);
+        Label label = new Label(prompt + ":");
+        TextField editor = dialog.getEditor();
+
+        // Add barcode button only for "رقم العميل"
+        if (prompt.equals("رقم العميل")) {
+            Button generateBarcodeButton = new Button("توليد باركود");
+            generateBarcodeButton.setOnAction(e -> {
+                String generatedBarcode = generate13DigitBarcode();
+                editor.setText(generatedBarcode);
+            });
+            content.getChildren().addAll(label, editor, generateBarcodeButton);
+        } else {
+            content.getChildren().addAll(label, editor);
+        }
+
+        // Set the custom content, replacing the default
+        dialog.getDialogPane().setContent(content);
+
+        return dialog.showAndWait().orElse("غير محدد");
+    }
+
+    @FXML
+    private void handlePrintButton() {
+        try {
+            // Prompt for customer details if not already set
+            String customerName = showInputDialog("اسم العميل");
+            String customerId = showInputDialog("رقم العميل");
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/interfaces/sales/Form/printForm.fxml"));
+            Parent root = loader.load();
+
+            // Get the bill controller
+            printFormController controller = loader.getController();
+
+            // Prepare data to pass
+            ObservableList<SaleItem> items = productList; // Current items from salesTable
+            String subtotal = subtotalField.getText();    // Current subtotal
+            String discount = discountField.getText();    // Current discount
+            String debt = debtField.getText();            // Current debt
+            String total = totalField.getText();          // Current total
+            String date = dateField.getText();            // Current date (e.g., "2025-08-09")
+            String time = timeField.getText();            // Current time (e.g., "00:56")
+
+            // Set the data in the bill controller
+            controller.setSalesData(items, subtotal, discount, debt, total, date, time, customerName, customerId);
+
+            Stage stage = new Stage();
+            stage.setTitle("الفاتورة");
+            stage.setScene(new Scene(root));
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/bill.png")));
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e) {
+            showFailedAlert("فشل", "تعذر فتح نافذة الفاتورة: " + e.getMessage());
+        }
+    }
+
+    private ObservableList<SaleItem> getCurrentSaleItems() {
+        // Implement this based on your data structure
+        // Example: return salesTableView.getItems();
+        return FXCollections.observableArrayList(); // replace with actual implementation
+    }
+
+    @FXML
+    private void handleSave() {
+        if (productList.isEmpty()) {
+            showWarningAlert("تنبيه", "لا توجد منتجات لحفظها!");
+            return;
+        }
+
+        try {
+            // Prompt for customer details
+            String customerName = showInputDialog("اسم العميل");
+            String customerId = showInputDialog("رقم العميل");
+
+            if (customerName == null || customerName.isEmpty() ||
+                    customerId == null || customerId.isEmpty()) {
+                showWarningAlert("تنبيه", "الرجاء إدخال جميع بيانات العميل!");
+                return;
+            }
+
+            // Get and format values from UI fields
+            String subtotalText = subtotalField.getText().replace(" DZ", "").trim();
+            String discountText = discountField.getText().replace(" DZ", "").trim();
+            String debtText = debtField.getText().replace(" DZ", "").trim();
+            String totalText = totalField.getText().replace(" DZ", "").trim();
+
+            // Parse values safely
+            double subtotal = parseDoubleSafely(subtotalText);
+            double discount = parseDoubleSafely(discountText);
+            double debt = parseDoubleSafely(debtText);
+            double total = parseDoubleSafely(totalText);
+
+            // Get current date/time
+            String date = LocalDate.now().toString();
+            String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
+            // Show bill preview before saving
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/interfaces/sales/Form/bill.fxml"));
+            Parent root = loader.load();
+
+            // Get controller and set data with formatted values
+            billController controller = loader.getController();
+            controller.setSalesData(
+                    productList,
+                    formatCurrency(subtotal),
+                    formatCurrency(discount),
+                    formatCurrency(debt),
+                    formatCurrency(total),
+                    date,
+                    time,
+                    customerName,
+                    customerId
+            );
+
+            // Create and show the bill stage
+            Stage billStage = new Stage();
+            billStage.setTitle("معاينة الفاتورة");
+            billStage.setScene(new Scene(root));
+            billStage.initModality(Modality.APPLICATION_MODAL);
+            billStage.getIcons().add(new Image(getClass().getResourceAsStream("/images/bill.png")));
+            billStage.setResizable(false);
+
+            // Add confirmation button to the bill view
+            Button confirmButton = new Button("تأكيد الحفظ");
+            confirmButton.setStyle("-fx-font-size: 16; -fx-padding: 10 20;");
+            confirmButton.setOnAction(e -> {
+                try {
+                    saveSaleToDatabase(
+                            customerId,
+                            customerName,
+                            subtotal,
+                            discount,
+                            debt,
+                            total,
+                            date,
+                            time
+                    );
+                    showSuccessAlert("نجاح", "تم حفظ الفاتورة بنجاح!");
+                    billStage.close();
+                } catch (Exception ex) {
+                    showFailedAlert("خطأ", "تعذر حفظ الفاتورة: " + ex.getMessage());
+                }
+            });
+
+            // Add button to bill view - safer approach
+            if (root instanceof ScrollPane) {
+                ScrollPane scrollPane = (ScrollPane) root;
+                Parent content = (Parent) scrollPane.getContent();
+
+                if (content instanceof AnchorPane) {
+                    AnchorPane anchorContent = (AnchorPane) content;
+                    anchorContent.getChildren().add(confirmButton);
+                    AnchorPane.setBottomAnchor(confirmButton, 20.0);
+                    AnchorPane.setRightAnchor(confirmButton, 20.0);
+                } else {
+                    // Fallback if content isn't AnchorPane
+                    VBox container = new VBox(content, confirmButton);
+                    scrollPane.setContent(container);
+                }
+            } else if (root instanceof AnchorPane) {
+                ((AnchorPane) root).getChildren().add(confirmButton);
+                AnchorPane.setBottomAnchor(confirmButton, 20.0);
+                AnchorPane.setRightAnchor(confirmButton, 20.0);
+            } else {
+                throw new RuntimeException("Unsupported root container type in bill.fxml");
+            }
+
+            billStage.showAndWait();
+
+        } catch (Exception e) {
+            showFailedAlert("خطأ", "تعذر حفظ الفاتورة: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private void handleBill() { }
-    private void handlePrint() { }
-    private void handleSave() { }
+    // Add this helper method for consistent currency formatting
+    private String formatCurrency(double value) {
+        return String.format(Locale.US, "%.2f DZ", value);
+    }
+
+// Rest of your methods (parseDoubleSafely, parseIntSafely, saveSaleToDatabase) remain the same
+
+    private double parseDoubleSafely(String value) {
+        try {
+            return Double.parseDouble(value.replaceAll("[^\\d.]", ""));
+        } catch (NumberFormatException e) {
+            return 0.0;
+        }
+    }
+
+    private int parseIntSafely(String value) {
+        try {
+            return Integer.parseInt(value.trim());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    private void saveSaleToDatabase(String customerId, String customerName,
+                                    double subtotal, double discount,
+                                    double debt, double total,
+                                    String date, String time) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            conn.setAutoCommit(false);
+
+            // 1. Insert sale header
+            String salesQuery = "INSERT INTO sales (sale_date, sale_time, subtotal, discount, debt, total, customer_name, customer_id) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+            try (PreparedStatement salesStmt = conn.prepareStatement(salesQuery, Statement.RETURN_GENERATED_KEYS)) {
+                // Parse date and time from strings
+                LocalDate saleDate = LocalDate.parse(date);
+                LocalTime saleTime = LocalTime.parse(time);
+
+                salesStmt.setDate(1, Date.valueOf(saleDate));
+                salesStmt.setTime(2, Time.valueOf(saleTime));
+                salesStmt.setDouble(3, subtotal);
+                salesStmt.setDouble(4, discount);
+                salesStmt.setDouble(5, debt);
+                salesStmt.setDouble(6, total);
+                salesStmt.setString(7, customerName);
+                salesStmt.setString(8, customerId);
+
+                salesStmt.executeUpdate();
+
+                // 2. Get generated ID and insert items
+                try (ResultSet rs = salesStmt.getGeneratedKeys();
+                     PreparedStatement itemsStmt = conn.prepareStatement(
+                             "INSERT INTO sale_items (sale_id, product_id, number, product_name, quantity, price, total_price) " +
+                                     "VALUES (?, ?, ?, ?, ?, ?, ?)")) {  // Fixed: 7 parameters now
+
+                    if (!rs.next()) throw new SQLException("Failed to get sale ID");
+                    int saleId = rs.getInt(1);
+
+                    int itemNum = 1;
+                    for (SaleItem item : productList) {
+                        itemsStmt.setInt(1, saleId);
+                        itemsStmt.setString(2, item.getProductId());  // product_id
+                        itemsStmt.setString(3, String.valueOf(itemNum++));  // number
+                        itemsStmt.setString(4, item.getProductName());  // product_name
+                        itemsStmt.setInt(5, parseIntSafely(item.getQuantity()));  // quantity
+                        itemsStmt.setDouble(6, parseDoubleSafely(item.getPrice()));  // price
+                        itemsStmt.setDouble(7, parseDoubleSafely(item.getTotalPrice()));  // total_price
+                        itemsStmt.addBatch();
+                    }
+                    itemsStmt.executeBatch();
+                }
+                conn.commit();
+            }
+        } catch (SQLException e) {
+            showFailedAlert("فشل", "تعذر حفظ الفاتورة: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            showFailedAlert("خطأ", "حدث خطأ غير متوقع: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
     private void handleClearList() {
-        salesTable.getItems().clear();
-        updateTotals();
-        productSearchField.clear();
-        productSearchField.requestFocus();
+        try {
+            productList.clear();
+            updateTotals();
+            productSearchField.clear();
+            quantityField.clear();
+            productImageView.setImage(new Image(getClass().getResource("/images/image.png").toExternalForm()));
+            productSearchField.requestFocus();
+            debtField.clear();
+            debtField2.clear();
 
-        quantityField.clear();
+            // Reset labels
+            // Reset discount and tax to 0%
+            discountMenuButton.setText("0%");
+            taxMenuButton.setText("0%");
 
-        productImageView.setImage(new Image(getClass().getResource("/images/image.png").toExternalForm()));
+
+            showSuccessAlert("نجاح", "تم مسح القائمة بنجاح!");
+        } catch (Exception e) {
+            showFailedAlert("فشل", "تعذر مسح القائمة: " + e.getMessage());
+        }
     }
+
+    @FXML
     private void handleRefresh() {
-        // Refresh the table view to reflect any changes
         salesTable.refresh();
-
-        // Recalculate totals to ensure they're up-to-date
+        // Reset discount and tax to 0%
+        discountMenuButton.setText("0%");
+        taxMenuButton.setText("0%");
+        debtField.clear();
+        debtField2.clear();
         updateTotals();
-
-        // Clear the search field but keep all table data
         productSearchField.clear();
-
-        // Clear the quantity field
         quantityField.clear();
-
-        // Remove selection from table
         salesTable.getSelectionModel().clearSelection();
-
-        // Reset product image to default
         productImageView.setImage(new Image(getClass().getResource("/images/image.png").toExternalForm()));
-
-        // Update the date/time display
         updateDateTime();
-
-        // Set focus back to search field for convenience
         productSearchField.requestFocus();
+
+        showSuccessAlert("نجاح", "تم تحديث الصفحة بنجاح!");
     }
 
-    private void handleBillsReport() { }
-    private void handleSearch() { }
-    private void handleHelp() { }
-    private void handleInfo() { }
-    private void handleDelete() {
-        // Get all selected items from the table
-        ObservableList<SaleItem> selectedItems = salesTable.getSelectionModel().getSelectedItems();
+    @FXML
+    private void handleBillsReport() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/interfaces/sales/CRUD/getRaports.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("كشف الفواتير");
+            stage.setScene(new Scene(root));
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/report-file.png")));
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e) {
+            showFailedAlert("فشل", "تعذر فتح تقرير الفواتير: " + e.getMessage());
+        }
+    }
 
-        // Check if any items are selected
+    @FXML
+    private void handleSearch() {
+        try {
+            // Load the FXML file for the add new product interface
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/interfaces/sales/CRUD/searchproduct.fxml"));
+            javafx.scene.Parent root = loader.load();
+
+            // Create a new stage (window)
+            javafx.stage.Stage newStage = new javafx.stage.Stage();
+            newStage.setTitle("البحث");
+            newStage.setScene(new javafx.scene.Scene(root));
+
+            // Add icon to the stage
+            newStage.getIcons().add(new javafx.scene.image.Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/search.png"))));
+
+            // Set window properties
+            newStage.setResizable(false);
+            newStage.setMaximized(false);
+
+            // Show the new window
+            newStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Error opening add new product window: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleHelp() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/interfaces/sales/help.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("مساعدة");
+            stage.setScene(new Scene(root));
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/help.png")));
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e) {
+            showFailedAlert("فشل", "تعذر فتح نافذة المساعدة: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleInfo() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/interfaces/sales/Form/productshowUI.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("معلومات المنتج");
+            stage.setScene(new Scene(root));
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/info.png")));
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e) {
+            showFailedAlert("فشل", "تعذر فتح نافذة معلومات المنتج: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleDelete() {
+        ObservableList<SaleItem> selectedItems = salesTable.getSelectionModel().getSelectedItems();
         if (selectedItems.isEmpty()) {
-            showAlert("تنبيه", "يرجى اختيار منتج أو أكثر للحذف");
+            showWarningAlert("تنبيه", "يرجى اختيار منتج أو أكثر للحذف!");
             return;
         }
 
-        // Confirm deletion with user
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
         confirmation.setTitle("تأكيد الحذف");
-        confirmation.setHeaderText(null);
         confirmation.setContentText("هل أنت متأكد من حذف " + selectedItems.size() + " منتج(ات)؟");
+        Stage stage = (Stage) confirmation.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/warning.png")));
 
-        // Show confirmation dialog and wait for response
-        confirmation.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                // Remove all selected items from the table
-                productList.removeAll(selectedItems);
-
-                // Update the item numbers after deletion
-                for (int i = 0; i < productList.size(); i++) {
-                    productList.get(i).setNumber(String.valueOf(i + 1));
-                }
-
-                // Refresh the table and update totals
-                salesTable.refresh();
-                updateTotals();
-
-                // Clear selection and reset fields
-                salesTable.getSelectionModel().clearSelection();
-                productSearchField.clear();
-                quantityField.clear();
-                productImageView.setImage(new Image(getClass().getResource("/images/image.png").toExternalForm()));
-
-                showAlert("تم", "تم حذف المنتج(ات) المحدد بنجاح");
+        if (confirmation.showAndWait().filter(ButtonType.OK::equals).isPresent()) {
+            productList.removeAll(selectedItems);
+            for (int i = 0; i < productList.size(); i++) {
+                productList.get(i).setNumber(String.valueOf(i + 1));
             }
-        });
+            salesTable.refresh();
+            updateTotals();
+            productSearchField.clear();
+            quantityField.clear();
+            productImageView.setImage(new Image(getClass().getResource("/images/image.png").toExternalForm()));
+            showSuccessAlert("نجاح", "تم حذف المنتج(ات) بنجاح!");
+        }
     }
+
+    @FXML
     private void handleEdit() {
         SaleItem selectedItem = salesTable.getSelectionModel().getSelectedItem();
         if (selectedItem == null) {
-            showAlert("تنبيه", "يرجى اختيار منتج لتعديله!");
+            showWarningAlert("تنبيه", "يرجى اختيار منتج لتعديله!");
             return;
         }
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/interfaces/sales/CRUD/updateproductSales.fxml"));
             Parent root = loader.load();
-
             updateProductTableController controller = loader.getController();
             controller.setMainController(this);
-            controller.setProductData(selectedItem); // 👈 Pass product data to edit
+            controller.setProductData(selectedItem);
 
             Stage stage = new Stage();
             stage.setTitle("تعديل منتج");
             stage.setScene(new Scene(root));
-            stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/addproduct.png"))));
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/addproduct.png")));
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            showFailedAlert("فشل", "تعذر فتح نافذة تعديل المنتج: " + e.getMessage());
         }
     }
 
-    private void handlePay() { }
-
-    private void handleTaxMenuItem1() { }
-    private void handleTaxMenuItem2() { }
-    private void handleDiscountMenuItem1() { }
-    private void handleDiscountMenuItem2() { }
+    @FXML
+    private void handlePay() {
+        if (productList.isEmpty()) {
+            showWarningAlert("تنبيه", "لا توجد منتجات للدفع!");
+            return;
+        }
+        try {
+            double total = parseDoubleOrZero(totalField.getText().replace(" DZ", ""));
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("الدفع");
+            dialog.setHeaderText("إدخال مبلغ الدفع");
+            dialog.setContentText("المبلغ المدفوع:");
+            dialog.showAndWait().ifPresent(amount -> {
+                try {
+                    double paid = Double.parseDouble(amount);
+                    if (paid >= total) {
+                        showSuccessAlert("نجاح", "تم الدفع بنجاح! التبقي: " + String.format("%.2f DZ", paid - total));
+                        handleSave();
+                        handleClearList();
+                    } else {
+                        showWarningAlert("تنبيه", "المبلغ المدفوع غير كافٍ!");
+                    }
+                } catch (NumberFormatException e) {
+                    showWarningAlert("تنبيه", "يرجى إدخال مبلغ صحيح!");
+                }
+            });
+        } catch (Exception e) {
+            showFailedAlert("فشل", "تعذر معالجة الدفع: " + e.getMessage());
+        }
+    }
 
     private void updateDateTime() {
         Timeline timeline = new Timeline(
@@ -527,5 +1073,38 @@ public class salesController {
         );
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
+    }
+
+    private void showSuccessAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/success.png")));
+        alert.getDialogPane().setStyle("-fx-background-color: #e8f5e9;");
+        alert.showAndWait();
+    }
+
+    private void showWarningAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/warning.png")));
+        alert.getDialogPane().setStyle("-fx-background-color: #fff8e1;");
+        alert.showAndWait();
+    }
+
+    private void showFailedAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/fail.png")));
+        alert.getDialogPane().setStyle("-fx-background-color: #ffebee;");
+        alert.showAndWait();
     }
 }

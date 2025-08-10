@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Random;
 import java.util.function.UnaryOperator;
 
 public class addProductTableController {
@@ -25,6 +26,7 @@ public class addProductTableController {
     @FXML private Button cancelButton;
 
     private salesController mainController;
+    private boolean isFromDatabase;
 
     public void setMainController(salesController controller) {
         this.mainController = controller;
@@ -125,7 +127,7 @@ public class addProductTableController {
 
         // Add product to main table
         if (mainController != null) {
-            mainController.addProductToTable(name, barcode, priceVal, quantityVal, total);
+            mainController.addProductToTable(name, barcode, priceVal, quantityVal, total, isFromDatabase);
         }
 
         // Close the window
@@ -136,7 +138,7 @@ public class addProductTableController {
         String barcode;
         int attempts = 0;
         do {
-            barcode = generateRandom13DigitBarcode();
+            barcode = generateValid13DigitBarcode();
             attempts++;
             if (attempts > 100) {
                 showAlert(Alert.AlertType.ERROR, "Barcode Error", "Could not generate unique barcode after 100 attempts");
@@ -146,11 +148,18 @@ public class addProductTableController {
         return barcode;
     }
 
-    private String generateRandom13DigitBarcode() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 13; i++) {
-            sb.append((int) (Math.random() * 10));
+    private String generateValid13DigitBarcode() {
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(13);
+
+        // First digit (1-9 to avoid leading zero)
+        sb.append(random.nextInt(9) + 1);
+
+        // Remaining 12 digits (0-9)
+        for (int i = 0; i < 12; i++) {
+            sb.append(random.nextInt(10));
         }
+
         return sb.toString();
     }
 

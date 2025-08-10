@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<ScrollPane prefHeight="842.0" prefWidth="595.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.library.controller.sales.billController">
+<ScrollPane prefHeight="800.0" prefWidth="595.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.library.controller.sales.billController">
    <content>
       <AnchorPane prefHeight="842.0" prefWidth="595.0">
          <children>
@@ -59,7 +59,7 @@
             <TableView fx:id="itemsTableView" layoutX="14.0" layoutY="185.0" prefHeight="400.0" prefWidth="558.0">
                <columns>
                   <TableColumn fx:id="idColumn" prefWidth="75.0" text="الرقم" />
-                  <TableColumn fx:id="productIdColumn" prefWidth="75.0" text="رقم المنتج" />
+                  <TableColumn fx:id="productIdColumn" prefWidth="75.0" text="Barcode" />
                   <TableColumn fx:id="productNameColumn" prefWidth="117.60005187988281" text="اسم المنتج" />
                   <TableColumn fx:id="quantityColumn" prefWidth="63.199951171875" text="الكمية" />
                   <TableColumn fx:id="priceColumn" prefWidth="63.199951171875" text="السعر" />
