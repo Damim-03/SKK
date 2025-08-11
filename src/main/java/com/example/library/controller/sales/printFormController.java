@@ -6,7 +6,6 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
 import javafx.print.*;
 import javafx.scene.Node;
@@ -496,14 +495,5 @@ public class printFormController {
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/fail.png")));
         alert.getDialogPane().setStyle("-fx-background-color: #ffebee;");
         alert.showAndWait();
-    }
-
-    // Getters for fields if needed by other controllers
-    public TextField getCustomerIdField() {
-        return customerIdField;
-    }
-
-    public TextField getCustomerNameField() {
-        return customerNameField;
     }
 }
