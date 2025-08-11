@@ -2,24 +2,26 @@ package com.example.library.controller.sales;
 
 import com.example.library.model.Sale;
 import com.example.library.model.SaleItem;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.geometry.NodeOrientation;
-import javafx.print.PageLayout;
-import javafx.print.PageOrientation;
-import javafx.print.Paper;
-import javafx.print.PrinterJob;
+import javafx.geometry.Pos;
+import javafx.print.*;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.transform.Transform;
 import javafx.stage.Stage;
 
+import java.lang.reflect.Constructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -217,83 +219,282 @@ public class printFormController {
     @FXML
     private void handlePrint() {
         if (itemsTableView.getItems() == null || itemsTableView.getItems().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "تنبيه", "لا توجد عناصر للطباعة!");
+            showAlert(Alert.AlertType.WARNING, "تنبيه", null, "لا توجد عناصر للطباعة!");
             return;
         }
 
-        try {
-            Node rootNode = anchorPaneId;
-            PrinterJob printerJob = PrinterJob.createPrinterJob();
+        // Create a new Stage for the print preview
+        Stage printStage = new Stage();
+        VBox printLayout = createPrintLayout();
 
-            if (printerJob != null && printerJob.showPrintDialog(rootNode.getScene().getWindow())) {
-                Paper a4Paper = Paper.A4;
-                PageLayout pageLayout = printerJob.getPrinter().createPageLayout(
-                        a4Paper, PageOrientation.PORTRAIT, 0, 0, 0, 0
+        // Wrap in a centered container
+        StackPane centeredLayout = new StackPane();
+        centeredLayout.setPadding(new Insets(20));
+        centeredLayout.getChildren().add(printLayout);
+        StackPane.setAlignment(printLayout, Pos.TOP_CENTER);
+
+        Scene printScene = new Scene(centeredLayout);
+        printStage.setScene(printScene);
+
+        // Show the stage and wait for it to be rendered
+        printStage.show();
+
+        // Print after the stage is shown
+        Platform.runLater(() -> {
+            printHighQualityNode(printLayout, printStage);
+            printStage.close();
+        });
+    }
+
+    private VBox createPrintLayout() {
+        VBox mainContainer = new VBox(5); // تقليل المسافة بين العناصر
+        mainContainer.setPadding(new Insets(10));
+        mainContainer.setMaxWidth(300);
+        mainContainer.setStyle("-fx-background-color: white; -fx-border-color: lightgray; -fx-border-width: 1;");
+
+        // Header Section
+        GridPane headerGrid = new GridPane();
+        headerGrid.setAlignment(Pos.CENTER);
+        headerGrid.setHgap(10);
+        headerGrid.setVgap(5);
+
+        Label titleEng = new Label("Soubirate Kamel kir");
+        titleEng.setStyle("-fx-font-size: 16; -fx-font-weight: bold;");
+        Label titleAr = new Label("سوبيرات كمال كير");
+        titleAr.setStyle("-fx-font-size: 16; -fx-font-weight: bold; -fx-alignment: center-right;");
+        Label addressEng = new Label("Quartier Chouhada Gummar-El Oued");
+        addressEng.setStyle("-fx-font-size: 12;");
+        Label addressAr = new Label("حي الشهداء -x- قمار-الوادي");
+        addressAr.setStyle("-fx-font-size: 12; -fx-alignment: center-right;");
+
+        headerGrid.add(titleEng, 0, 0);
+        headerGrid.add(titleAr, 1, 0);
+        headerGrid.add(addressEng, 0, 1);
+        headerGrid.add(addressAr, 1, 1);
+
+        // Customer Info Section
+        GridPane customerInfoGrid = new GridPane();
+        customerInfoGrid.setHgap(10);
+        customerInfoGrid.setVgap(5);
+        customerInfoGrid.addRow(0, new Label("Customer Name:"), new Label(getSafeText(customerNameField)));
+        customerInfoGrid.addRow(1, new Label("Customer ID:"), new Label(getSafeText(customerIdField)));
+        customerInfoGrid.addRow(2, new Label("Date:"), new Label(getSafeText(issueDateField)));
+        customerInfoGrid.addRow(3, new Label("Time:"), new Label(getSafeText(issueTimeField)));
+        customerInfoGrid.setStyle("-fx-font-size: 12;");
+
+        // Items Table - Improved with null checks
+        GridPane itemsGrid = new GridPane();
+        itemsGrid.setHgap(5);
+        itemsGrid.setVgap(2);
+        itemsGrid.setGridLinesVisible(true);
+        itemsGrid.setStyle("-fx-font-size: 12;");
+
+        ColumnConstraints productCol = new ColumnConstraints(150); // المنتج (زاد من 120 إلى 150)
+        ColumnConstraints qtyCol = new ColumnConstraints(45);     // الكمية
+        ColumnConstraints priceCol = new ColumnConstraints(100);  // السعر (زاد من 80 إلى 100)
+        ColumnConstraints totalCol = new ColumnConstraints(120);  // الإجمالي (زاد من 90 إلى 120)
+
+        itemsGrid.getColumnConstraints().addAll(productCol, qtyCol , priceCol, totalCol);
+
+        // Headers (right-to-left)
+        itemsGrid.add(new Label("منتج"), 0, 0);     // Product
+        itemsGrid.add(new Label("كمية"), 1, 0);     // Quantity
+        itemsGrid.add(new Label("سعر"), 2, 0);      // Price
+        itemsGrid.add(new Label("إجمالي"), 3, 0);   // Total
+
+        // Add items data with null checks
+        int row = 1;
+        for (SaleItem item : itemsTableView.getItems()) {
+            // الحصول على القيم مع معالجة القيم الفارغة
+            String productName = item.getProductName() != null ? item.getProductName() : "";
+            String quantity = item.getQuantity() != null ? item.getQuantity() : "";
+            String price = item.getPrice() != null ? formatCurrency(item.getPrice()) : "0.00";
+            String total = item.getTotalPrice() != null ? formatCurrency(item.getTotalPrice()) : "0.00";
+
+            // إضافة البيانات إلى الجدول
+            itemsGrid.add(createDataLabel(productName), 0, row);
+            itemsGrid.add(createDataLabel(quantity), 1, row);
+            itemsGrid.add(createDataLabel(price + " DZ"), 2, row);
+            itemsGrid.add(createDataLabel(total + " DZ"), 3, row);
+            row++;
+        }
+
+        VBox totalsBox = new VBox(5);
+        totalsBox.setAlignment(Pos.CENTER_LEFT);
+
+        // استخراج القيم من الحقول مع معالجة القيم الفارغة
+        String subtotal = subtotalField.getText() != null ?
+                subtotalField.getText().replace(" DZ", "") : "0.00";
+        String discount = discountField.getText() != null ?
+                discountField.getText().replace(" DZ", "") : "0.00";
+        String debt = debtField.getText() != null ?
+                debtField.getText().replace(" DZ", "") : "0.00";
+        String total = totalField.getText() != null ?
+                totalField.getText().replace(" DZ", "") : "0.00";
+
+        // إنشاء التسميات مع تنسيق العملة
+        totalsBox.getChildren().addAll(
+                new Label("المجموع الفرعي: " + formatCurrency(subtotal) + " DZ"),
+                new Label("مبلغ الخصم: " + formatCurrency(discount) + " DZ"),
+                new Label("الديون: " + formatCurrency(debt) + " DZ"),
+                new Label("المبلغ الإجمالي الكلي: " + formatCurrency(total) + " DZ")
+        );
+        totalsBox.setStyle("-fx-font-size: 12; -fx-font-weight: bold;");
+
+        // Footer Section
+        VBox footerBox = new VBox(5);
+        footerBox.setAlignment(Pos.CENTER);
+        footerBox.getChildren().addAll(
+                new Label("في حالة طلب ارجاع المنتجات الرجاء التأكد من عدم التأخر في ارجاعها"),
+                new Label("المدة لاخر الاجال هي 24 ساعة و لاتقبل في حالة استهلاكها"),
+                new Label("S.K.K All rights reserved")
+        );
+        footerBox.setStyle("-fx-font-size: 10;");
+
+        // Assemble all sections
+        mainContainer.getChildren().addAll(
+                headerGrid,
+                new Separator(),
+                customerInfoGrid,
+                new Separator(),
+                itemsGrid,
+                new Separator(),
+                totalsBox,
+                new Separator(),
+                footerBox,
+                new Label("شكرا!!!")
+        );
+
+        return mainContainer;
+    }
+
+    private String getSafeText(TextField field) {
+        return field != null && field.getText() != null ? field.getText() : "";
+    }
+
+    private Label createDataLabel(String text) {
+        Label label = new Label(text);
+        label.setStyle("-fx-alignment: center; -fx-padding: 0 5px;");
+        return label;
+    }
+
+    private void printHighQualityNode(Node node, Stage ownerWindow) {
+        PrinterJob job = PrinterJob.createPrinterJob();
+        if (job == null) {
+            showAlert(Alert.AlertType.ERROR, "Error", null, "Cannot create print job");
+            return;
+        }
+
+        if (job.showPrintDialog(ownerWindow)) {
+            try {
+                // 1. Force layout calculation
+                node.snapshot(null, null); // Ensures proper layout
+
+                // 2. Get node dimensions including footer
+                double nodeWidth = node.getBoundsInParent().getWidth();
+                double nodeHeight = node.getBoundsInParent().getHeight();
+
+                // 3. Create paper size (80mm width, dynamic height with footer space)
+                double paperWidth = 80; // 80mm standard width
+                double paperHeight = (nodeHeight * 0.35) + 20; // Extra 20mm for footer
+
+                // 4. Create custom paper
+                Paper thermalPaper = createCustomPaper("RECEIPT", paperWidth, paperHeight);
+
+                // 5. Create layout with minimal margins
+                PageLayout layout = job.getPrinter().createPageLayout(
+                        thermalPaper,
+                        PageOrientation.PORTRAIT,
+                        Printer.MarginType.HARDWARE_MINIMUM
                 );
 
-                double pageWidth = pageLayout.getPrintableWidth();
-                double pageHeight = pageLayout.getPrintableHeight();
+                // 6. Calculate scaling (width-only to maintain proportions)
+                double scale = layout.getPrintableWidth() / nodeWidth;
 
-                double contentWidth = anchorPaneId.getPrefWidth();
-                double contentHeight = anchorPaneId.getPrefHeight();
-
-                double scaleX = pageWidth / contentWidth;
-                double scaleY = pageHeight / contentHeight;
-                double scale = Math.min(scaleX, scaleY);
-
-                // Layout the node fully before snapshot
-                anchorPaneId.applyCss();
-                anchorPaneId.layout();
-
-                // ✅ Increase DPI for high quality
-                final double PRINTER_DPI = 300; // High-quality print resolution
-                final double SCREEN_DPI = 96;   // Typical screen DPI
-                double scaleFactor = PRINTER_DPI / SCREEN_DPI;
-
+                // 7. Create high-quality snapshot
                 SnapshotParameters params = new SnapshotParameters();
-                params.setTransform(Transform.scale(scale * scaleFactor, scale * scaleFactor));
+                params.setTransform(Transform.scale(scale, scale));
 
-                // Create high-res image
                 WritableImage image = new WritableImage(
-                        (int) Math.round(contentWidth * scale * scaleFactor),
-                        (int) Math.round(contentHeight * scale * scaleFactor)
+                        (int)(nodeWidth * scale),
+                        (int)(nodeHeight * scale)
                 );
-                anchorPaneId.snapshot(params, image);
+                node.snapshot(params, image);
 
-                // Create image view for printing
+                // 8. Prepare print content
                 ImageView imageView = new ImageView(image);
-                imageView.setFitWidth(pageWidth);
-                imageView.setFitHeight(pageHeight);
+                imageView.setSmooth(false); // Better for thermal text
 
-                // Print
-                boolean success = printerJob.printPage(pageLayout, imageView);
-                if (success) {
-                    printerJob.endJob();
-                    showAlert(Alert.AlertType.INFORMATION, "نجاح", "تمت الطباعة بنجاح");
-                    ((Stage) printButton.getScene().getWindow()).close();
+                StackPane printContent = new StackPane(imageView);
+                printContent.setStyle("-fx-background-color: white;");
+
+                // 9. Print
+                if (job.printPage(layout, printContent)) {
+                    job.endJob();
+                    showAlert(Alert.AlertType.INFORMATION, "Success", null, "Receipt printed");
                 } else {
-                    showAlert(Alert.AlertType.ERROR, "خطأ", "فشل عملية الطباعة");
+                    showAlert(Alert.AlertType.ERROR, "Error", null, "Print failed");
                 }
-            } else {
-                showAlert(Alert.AlertType.WARNING, "تنبيه", "تم إلغاء الطباعة");
+            } catch (Exception e) {
+                showAlert(Alert.AlertType.ERROR, "Error", "Print Exception", e.getMessage());
             }
+        }
+    }
 
-
-
-
+    private Paper createCustomPaper(String name, double width, double height) {
+        try {
+            // Java 8u60+ method
+            Constructor<Paper> constructor = Paper.class.getDeclaredConstructor(
+                    String.class, double.class, double.class);
+            constructor.setAccessible(true);
+            return constructor.newInstance(name, width, height);
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "خطأ", "حدث خطأ أثناء الطباعة: " + e.getMessage());
-            e.printStackTrace();
+            // Fallback to A4 if custom paper can't be created
+            return Paper.A4;
         }
     }
 
 
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
+    private void showAlert(Alert.AlertType type, String title, String header, String content) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(type);
+            alert.setTitle(title);
+            alert.setHeaderText(header);
+            alert.setContentText(content);
+            alert.show();
+        });
+    }
+
+    private void showSuccessAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
-        alert.getDialogPane().setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/success.png")));
+        alert.getDialogPane().setStyle("-fx-background-color: #e8f5e9;");
+        alert.showAndWait();
+    }
+
+    private void showWarningAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/warning.png")));
+        alert.getDialogPane().setStyle("-fx-background-color: #fff8e1;");
+        alert.showAndWait();
+    }
+
+    private void showFailedAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/fail.png")));
+        alert.getDialogPane().setStyle("-fx-background-color: #ffebee;");
         alert.showAndWait();
     }
 

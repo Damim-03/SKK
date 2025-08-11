@@ -107,6 +107,6 @@
       <!-- زر استيراد البيانات -->
       <Button fx:id="importButton" layoutX="558.0" layoutY="643.0"
               mnemonicParsing="false" prefHeight="38.0" prefWidth="194.0"
-              text="استيراد البيانات" onAction="#handleImportData" />
+              text="استيراد البيانات" onAction="#handleImportData" disable="true" />
    </children>
 </AnchorPane>

@@ -54,7 +54,7 @@ public class salesController {
     @FXML private Label discountRateLabel;
     @FXML private MenuButton discountMenuButton;
 
-    @FXML private TextField arabictotalField;
+    @FXML private TextField ArabicTotalField;
     @FXML private TextField quantityField;
 
 
@@ -114,8 +114,8 @@ public class salesController {
     }
 
     private void initializeUIComponents() {
-        arabictotalField.setStyle("-fx-font-weight: bold; -fx-background-color: #faa2ea; -fx-font-size: 17px;");
-        arabictotalField.setText("صفر دينار جزائري");
+        ArabicTotalField.setStyle("-fx-font-weight: bold; -fx-background-color: #faa2ea; -fx-font-size: 17px;");
+        ArabicTotalField.setText("صفر دينار جزائري");
         productSearchField.requestFocus();
     }
 
@@ -321,7 +321,7 @@ public class salesController {
         discountField.setText(String.format("%.2f DZ", discountAmount));
         subtotalField.setText(String.format("%.2f DZ", subtotal));
         totalField.setText(String.format("%.2f DZ", total));
-        arabictotalField.setText(amountToArabicWords(total));
+        ArabicTotalField.setText(amountToArabicWords(total));
     }
 
     private double parseDoubleOrZero(String text) {

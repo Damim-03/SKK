@@ -1,31 +1,44 @@
 package com.example.library.controller.inventory;
 
 import com.example.library.util.DatabaseConnection;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Button;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import javafx.collections.ObservableList;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.UUID;
+
+import static com.example.library.Alert.alert.*;
 
 public class importDataController {
 
     @FXML
     private TextField pathField;
 
+    private Stage previewStage = null;
+
     @FXML
     private Button browseButton, checkButton, importButton;
+
+    // متغير لتتبع إذا تم التحقق
+    private boolean isDataChecked = false;
 
     private File selectedFile;
 
@@ -42,27 +55,44 @@ public class importDataController {
     }
 
     @FXML
-    private void handleCheckData() {
-        if (!validateFile()) return;
-        readExcelFile(selectedFile, false);
+    private void handleCheckData(javafx.event.ActionEvent event) {
+        boolean checkPassed = validateFile();
+
+        if (checkPassed) {
+            isDataChecked = true;
+            importButton.setDisable(false); // تفعيل زر الاستيراد
+            readExcelFile(selectedFile, false);
+        } else {
+            isDataChecked = false;
+            importButton.setDisable(true); // إيقاف زر الاستيراد
+            showFailedAlert("خطأ", "فشل التحقق من البيانات. الرجاء التصحيح قبل الاستيراد.");
+        }
     }
 
+
     @FXML
-    private void handleImportData() {
+    private void handleImportData(javafx.event.ActionEvent event) {
+        // إذا لم يتم التحقق، أوقف العملية وأظهر رسالة
+        if (!isDataChecked) {
+            return;
+        }
+
+        // منطق الاستيراد
         if (!validateFile()) return;
         readExcelFile(selectedFile, true);
     }
 
+
     private boolean validateFile() {
         String path = pathField.getText();
         if (path == null || path.trim().isEmpty()) {
-            showAlert("خطأ", "يرجى اختيار ملف Excel أولاً.");
+            showFailedAlert("خطأ", "يرجى اختيار ملف Excel أولاً.");
             return false;
         }
 
         selectedFile = new File(path);
         if (!selectedFile.exists() || !selectedFile.getName().endsWith(".xlsx")) {
-            showAlert("خطأ", "الملف غير صالح أو ليس بصيغة xlsx.");
+            showFailedAlert("خطأ", "الملف غير صالح أو ليس بصيغة xlsx.");
             return false;
         }
 
@@ -117,12 +147,23 @@ public class importDataController {
                                 .append(" (باركود: ").append(barcode).append(")\n");
                     }
                 } else {
-                    System.out.println("✔ التحقق: " + id + " | " + barcode + " | " + name + " | " +
-                            description + " | " + price1 + " | " + price2 + " | " +
-                            price3 + " | " + unit + " | " + quantity + " | " +
-                            productionDate + " | " + expirationDate + " | " +
-                            imagePath + " | " + category);
+                    ObservableList<ObservableList<String>> excelData = FXCollections.observableArrayList();
+                    int columnCount = 0;
+
+                    for (Row sheetRow : sheet) {
+                        ObservableList<String> rowData = FXCollections.observableArrayList();
+                        for (Cell cell : sheetRow) {
+                            rowData.add(getStringCell(cell)); // ترجع String
+                        }
+                        excelData.add(rowData);
+                        if (sheetRow.getLastCellNum() > columnCount) {
+                            columnCount = sheetRow.getLastCellNum();
+                        }
+                    }
+
+                    showExcelPreview(excelData, columnCount);
                 }
+
             }
 
             String alertMessage = saveToDatabase
@@ -134,11 +175,94 @@ public class importDataController {
                 alertMessage += "\n\nالمنتجات المتخطاة:\n" + skippedProducts.toString();
             }
 
-            showAlert("نتيجة", alertMessage);
+            showSuccessAlert("نتيجة", alertMessage);
 
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("خطأ", "حدث خطأ أثناء قراءة الملف: " + e.getMessage());
+        }
+    }
+
+
+    private void showExcelPreview(ObservableList<ObservableList<String>> data, int columnCount) {
+        if (previewStage == null) {
+            previewStage = new Stage();
+            previewStage.setTitle("معاينة بيانات Excel");
+
+            TableView<ObservableList<String>> tableView = new TableView<>();
+
+            // إنشاء الأعمدة مع CellFactory لتلوين الخلايا الفارغة بالبرتقالي
+            for (int i = 0; i < columnCount; i++) {
+                final int colIndex = i;
+                TableColumn<ObservableList<String>, String> col = new TableColumn<>("عمود " + (i + 1));
+                col.setCellValueFactory(param ->
+                        new SimpleStringProperty(
+                                param.getValue().size() > colIndex ? param.getValue().get(colIndex) : ""
+                        )
+                );
+
+                col.setCellFactory(tc -> new TableCell<>() {
+                    @Override
+                    protected void updateItem(String value, boolean empty) {
+                        super.updateItem(value, empty);
+                        if (empty) {
+                            setText(null);
+                            setStyle("");
+                        } else {
+                            setText(value);
+                            if (value == null || value.trim().isEmpty()) {
+                                setStyle("-fx-background-color: #FFD580;"); // برتقالي فاتح
+                            } else {
+                                setStyle("");
+                            }
+                        }
+                    }
+                });
+
+                col.setPrefWidth(120);
+                col.setMinWidth(80);
+                tableView.getColumns().add(col);
+            }
+
+            // تلوين الصفوف حسب الحالة
+            tableView.setRowFactory(tv -> new TableRow<>() {
+                @Override
+                protected void updateItem(ObservableList<String> row, boolean empty) {
+                    super.updateItem(row, empty);
+                    if (empty || row == null) {
+                        setStyle("");
+                        return;
+                    }
+
+                    boolean allEmpty = row.stream().allMatch(cell -> cell == null || cell.trim().isEmpty());
+                    boolean hasEmptyCell = row.stream().anyMatch(cell -> cell == null || cell.trim().isEmpty());
+
+                    if (allEmpty) {
+                        setStyle(""); // اللون الافتراضي
+                    } else if (hasEmptyCell) {
+                        setStyle("-fx-background-color: #FFCCCC;"); // أحمر فاتح
+                    } else {
+                        setStyle("-fx-background-color: #CCFFCC;"); // أخضر فاتح
+                    }
+                }
+            });
+
+            VBox root = new VBox(tableView);
+            VBox.setVgrow(tableView, Priority.ALWAYS);
+            Scene scene = new Scene(root, 900, 600);
+            previewStage.setScene(scene);
+            previewStage.setResizable(true);
+            previewStage.getIcons().add(new javafx.scene.image.Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/excel.png"))));
+        }
+
+        // Update the table data in the existing stage
+        TableView<ObservableList<String>> tableView = (TableView<ObservableList<String>>) previewStage.getScene().getRoot().getChildrenUnmodifiable().get(0);
+        tableView.setItems(data);
+
+        if (!previewStage.isShowing()) {
+            previewStage.show();
+        } else {
+            previewStage.toFront();
         }
     }
 
@@ -153,6 +277,37 @@ public class importDataController {
             e.printStackTrace();
         }
         return false;
+    }
+
+    private String getStringCell(Cell cell) {
+        if (cell == null) return "";
+
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue().trim();
+            case NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return new SimpleDateFormat("yyyy-MM-dd").format(cell.getDateCellValue());
+                }
+                double num = cell.getNumericCellValue();
+                // Remove decimal if the number is a whole number
+                if (num == (long) num) {
+                    return String.format("%d", (long) num);
+                }
+                return String.valueOf(num);
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue());
+            case FORMULA:
+                try {
+                    return cell.getStringCellValue().trim();
+                } catch (IllegalStateException e) {
+                    num = cell.getNumericCellValue();
+                    return num == (long) num ? String.format("%d", (long) num) : String.valueOf(num);
+                }
+            case BLANK:
+            default:
+                return "";
+        }
     }
 
     private String getBarcodeCell(Row row, int index) {
@@ -232,17 +387,14 @@ public class importDataController {
         return cleaned.isEmpty() ? "غير مصنف" : cleaned;
     }
 
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
-
     private boolean insertProduct(String id, String barcode, String name, String description,
                                   double price1, double price2, double price3, String unit, int quantity,
                                   String productionDate, String expirationDate, String imagePath, String category) {
+
+        // Generate UUID if id is null, empty, or invalid
+        if (id == null || id.trim().isEmpty() || !isValidUUID(id)) {
+            id = UUID.randomUUID().toString();
+        }
 
         String query = "INSERT INTO products (" +
                 "id, barcode, product_name, description, " +
@@ -253,36 +405,59 @@ public class importDataController {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setString(1, id.isEmpty() ? UUID.randomUUID().toString() : id);
+            stmt.setString(1, id);
             stmt.setString(2, barcode);
             stmt.setString(3, name);
             stmt.setString(4, description);
             stmt.setDouble(5, price1);
             stmt.setDouble(6, price2);
             stmt.setDouble(7, price3);
-            stmt.setString(8, unit.isEmpty() ? "N/A" : unit);
+            stmt.setString(8, unit != null && !unit.trim().isEmpty() ? unit : "N/A");
             stmt.setInt(9, quantity);
 
+            // Handle production date
             if (productionDate != null && !productionDate.trim().isEmpty()) {
-                stmt.setDate(10, Date.valueOf(productionDate));
+                try {
+                    stmt.setDate(10, Date.valueOf(productionDate));
+                } catch (IllegalArgumentException e) {
+                    stmt.setNull(10, Types.DATE);
+                    System.err.println("⚠ Invalid production date format for " + name + ": " + productionDate);
+                }
             } else {
                 stmt.setNull(10, Types.DATE);
             }
 
+            // Handle expiration date
             if (expirationDate != null && !expirationDate.trim().isEmpty()) {
-                stmt.setDate(11, Date.valueOf(expirationDate));
+                try {
+                    stmt.setDate(11, Date.valueOf(expirationDate));
+                } catch (IllegalArgumentException e) {
+                    stmt.setNull(11, Types.DATE);
+                    System.err.println("⚠ Invalid expiration date format for " + name + ": " + expirationDate);
+                }
             } else {
                 stmt.setNull(11, Types.DATE);
             }
 
-            stmt.setString(12, (imagePath == null || imagePath.trim().isEmpty()) ? null : imagePath);
-            stmt.setString(13, category);
+            stmt.setString(12, imagePath != null && !imagePath.trim().isEmpty() ? imagePath : null);
+            stmt.setString(13, category != null && !category.trim().isEmpty() ? category : "غير مصنف");
 
             stmt.executeUpdate();
             return true;
 
-        } catch (SQLException | IllegalArgumentException e) {
+        } catch (SQLException e) {
             System.err.println("⚠ خطأ أثناء إدخال المنتج: " + name + " - " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Helper method to validate UUID
+    private boolean isValidUUID(String uuid) {
+        if (uuid == null) return false;
+        try {
+            UUID.fromString(uuid);
+            return true;
+        } catch (IllegalArgumentException e) {
             return false;
         }
     }

@@ -9,6 +9,7 @@ module com.example {
     requires mysql.connector.j;
     requires org.apache.poi.poi;
     requires org.apache.poi.ooxml;
+    requires eu.hansolo.toolbox;
 
     opens com.example to javafx.fxml;
     opens com.example.library.controller.home to javafx.fxml;

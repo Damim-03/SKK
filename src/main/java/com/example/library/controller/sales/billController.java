@@ -112,27 +112,6 @@ public class billController {
         }
     }
 
-    public void setSaleData(Sale sale, ObservableList<SaleItem> saleItems) {
-        if (sale == null) return;
-
-        // Set customer info
-        customerNameField.setText(sale.getCustomerName());
-        customerIdField.setText(sale.getCustomerId());
-
-        // Set date/time
-        issueDateField.setText(sale.getSaleDate().toString());
-        issueTimeField.setText(sale.getSaleTime().toString());
-
-        // Set totals
-        subtotalField.setText(String.format("%.2f DZ", sale.getSubtotal()));
-        discountField.setText(String.format("%.2f DZ", sale.getDiscount()));
-        debtField.setText(String.format("%.2f DZ", sale.getDebt()));
-        totalField.setText(String.format("%.2f DZ", sale.getTotal()));
-
-        // Set table data
-        itemsTableView.setItems(saleItems);
-    }
-
 
     public void setSalesData(ObservableList<SaleItem> items, String subtotal, String discount,
                              String debt, String total, String date, String time,

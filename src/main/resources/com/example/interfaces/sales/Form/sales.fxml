@@ -140,7 +140,7 @@
                   <Font name="System Bold" size="30.0" />
                </font>
             </TextField>
-            <TextField fx:id="arabictotalField" alignment="CENTER" editable="false" layoutX="9.0" layoutY="147.0" prefHeight="57.0" prefWidth="387.0" style="-fx-background-color: #faa2ea;" />
+            <TextField fx:id="ArabicTotalField" alignment="CENTER" editable="false" layoutX="9.0" layoutY="147.0" prefHeight="57.0" prefWidth="387.0" style="-fx-background-color: #faa2ea;" />
          </children>
       </Pane>
 
