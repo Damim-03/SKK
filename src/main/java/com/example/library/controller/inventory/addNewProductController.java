@@ -4,25 +4,22 @@ import java.io.File;
 import java.sql.*;
 import java.util.Objects;
 import java.util.UUID;
-
 import com.example.library.model.CategoryLoader;
 import com.example.library.model.UnitLoader;
 import com.example.library.util.DatabaseConnection;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import static com.example.library.Alert.alert.*;
 
 public class addNewProductController {
 
@@ -39,8 +36,6 @@ public class addNewProductController {
     @FXML
     private MenuButton unitMenuButton;
     @FXML
-    private Button backButton;
-    @FXML
     private TextField price1TextField;
     @FXML
     private TextField price2TextField;
@@ -50,8 +45,6 @@ public class addNewProductController {
     private TextField quantityTextField;
     @FXML
     private ImageView productImageView;
-    @FXML
-    private StackPane imageDisplayPane;
     @FXML
     private Button uploadImageButton;
     @FXML
@@ -98,27 +91,6 @@ public class addNewProductController {
         setupPriceFieldFormatting(price2TextField);
         setupPriceFieldFormatting(price3TextField);
         setupQuantityFieldFormatting(quantityTextField);
-    }
-
-    // Extract the longest consecutive numeric sequence
-    private String extractNumericBarcode(String input) {
-        if (input == null || input.isEmpty()) return "";
-        StringBuilder numericSeq = new StringBuilder();
-        StringBuilder currentSeq = new StringBuilder();
-        for (char c : input.toCharArray()) {
-            if (Character.isDigit(c)) {
-                currentSeq.append(c);
-            } else {
-                if (currentSeq.length() > numericSeq.length()) {
-                    numericSeq = new StringBuilder(currentSeq);
-                }
-                currentSeq.setLength(0);
-            }
-        }
-        if (currentSeq.length() > numericSeq.length()) {
-            numericSeq = currentSeq;
-        }
-        return numericSeq.toString();
     }
 
     private void setupPriceFieldFormatting(TextField priceField) {
@@ -177,10 +149,7 @@ public class addNewProductController {
                 productImageView.setImage(image);
             }
         } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setContentText("Failed to load image: " + e.getMessage());
-            alert.showAndWait();
+            showFailedAlert("خطأ", "فشل تحميل الصورة");
         }
     }
 
@@ -189,10 +158,7 @@ public class addNewProductController {
         try {
             productImageView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/image.png"))));
         } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setContentText("Failed to load default image.");
-            alert.showAndWait();
+            showFailedAlert("خطأ", "فشل حذف الصورة");
         }
     }
 
@@ -205,12 +171,6 @@ public class addNewProductController {
                 javafx.application.Platform.runLater(() -> barcodeTextField.requestFocus());
             }
         }, 100);
-    }
-
-    @FXML
-    private void handleUnitSelection(ActionEvent event) {
-        MenuItem selectedItem = (MenuItem) event.getSource();
-        unitMenuButton.setText(selectedItem.getText());
     }
 
     @FXML
@@ -237,7 +197,7 @@ public class addNewProductController {
         String imagePath = (selectedImageFile != null) ? selectedImageFile.getAbsolutePath() : null;
 
         if (barcode.isEmpty() || name.isEmpty() || unit.equals("Select Unit") || category.equals("Select Category") || quantity.isEmpty()) {
-            showSystemAlert("Validation Error", "⚠️ Please fill in all required fields.", Alert.AlertType.WARNING);
+            showWarningAlert("تنبيه", "يجب ادخال جميع المعلومات المطلوبة!");
             return;
         }
 
@@ -277,45 +237,34 @@ public class addNewProductController {
                     statusStmt.executeUpdate();
                 }
 
-                showSystemAlert("Success", "✅ Product saved successfully.", Alert.AlertType.INFORMATION);
+                showSuccessAlert("نجاح", "تم حفظ المنتج بنجاح.");
                 clearFields();
             } else {
-                showSystemAlert("Insert Failed", "❌ Failed to save the product.", Alert.AlertType.ERROR);
+                showFailedAlert("خطأ", "فضل في حفظ المنتج!!");
             }
 
         } catch (SQLException | NumberFormatException e) {
-            showSystemAlert("Database Error", "❌ " + e.getMessage(), Alert.AlertType.ERROR);
-            e.printStackTrace();
+            showFailedAlert("خطأ في قاعدة البيانات", "هنالك خطأ في قاعدة البيانات الرجاء التحقق من سلامة قاعدة البيانات. " + e.getMessage());
         }
     }
 
-
-    private void showSystemAlert(String title, String message, Alert.AlertType alertType) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-
-
     @FXML
     private void clearFields() {
+        try {
         barcodeTextField.clear();
         productNameTextField.clear();
         descriptionTextField.clear();
         unitMenuButton.setText("Select Unit");
+        categoryMenuButton.setText("Select Unit");
         price1TextField.clear();
         price2TextField.clear();
         price3TextField.clear();
         quantityTextField.clear();
         productionDatePicker.setValue(null);
         expirationDatePicker.setValue(null);
-        try {
-            productImageView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/image.png"))));
+        productImageView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/image.png"))));
         } catch (Exception e) {
-            // Silently handle exception, image remains unchanged if load fails
+            showFailedAlert("خطأ", "فشل في تصفية الحقول المعلومات");
         }
     }
 }

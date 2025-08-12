@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.*;
+import java.time.LocalTime;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -161,6 +162,9 @@ public class getRaportsController {
 
             rapotsController controller = loader.getController();
             ObservableList<SaleItem> saleItems = loadSaleItems(sale.getSaleId());
+            if (saleItems.isEmpty()) {
+                showAlert("تحذير", "لا توجد منتجات لهذه الفاتورة (Sale ID: " + sale.getSaleId() + ")", Alert.AlertType.WARNING);
+            }
             controller.setSaleData(sale, saleItems);
 
             Stage raportStage = new Stage();
@@ -171,9 +175,12 @@ public class getRaportsController {
 
             raportStage.showAndWait();
 
-        } catch (IOException | SQLException e) {
+        } catch (IOException e) {
             showAlert("خطأ", "تعذر فتح نافذة الفاتورة: " + e.getMessage(), Alert.AlertType.ERROR);
-            LOGGER.log(Level.SEVERE, "Error opening bill window", e);
+            LOGGER.log(Level.SEVERE, "Error opening bill window due to IOException", e);
+        } catch (SQLException e) {
+            showAlert("خطأ", "تعذر تحميل بيانات الفاتورة: " + e.getMessage(), Alert.AlertType.ERROR);
+            LOGGER.log(Level.SEVERE, "Error loading bill data due to SQLException", e);
         }
     }
 
@@ -188,15 +195,19 @@ public class getRaportsController {
 
             while (rs.next()) {
                 items.add(new SaleItem(
-                        rs.getString("number"),
-                        rs.getString("product_id"),
-                        rs.getString("product_name"),
-                        null,
-                        String.valueOf(rs.getInt("quantity")),
-                        String.format("%.2f", rs.getDouble("price")),
-                        String.format("%.2f", rs.getDouble("total_price"))
+                        rs.getString("number"),              // number
+                        rs.getString("product_id"),          // product_id
+                        rs.getString("product_name"),        // product_name
+                        null,                                // barcode (set to null if not in query)
+                        String.valueOf(rs.getInt("quantity")), // quantity as String
+                        String.format("%.2f", rs.getDouble("price")), // price as formatted String
+                        String.format("%.2f", rs.getDouble("total_price")) // total_price as formatted String
                 ));
             }
+            System.out.println("Loaded " + items.size() + " items for sale_id: " + saleId + " at " + LocalTime.now());
+        } catch (SQLException e) {
+            System.err.println("SQLException in loadSaleItems for sale_id " + saleId + ": " + e.getMessage());
+            throw e; // Re-throw to be handled by the caller
         }
         return items;
     }

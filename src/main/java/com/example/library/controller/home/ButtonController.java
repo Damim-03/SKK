@@ -10,6 +10,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
+import static com.example.library.Alert.alert.showFailedAlert;
+
 public class ButtonController {
 
     @FXML
@@ -57,8 +59,7 @@ public class ButtonController {
             newStage.show();
 
         } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("خطأ في فتح قائمة المبيعات" + e.getMessage());
+            showFailedAlert("خطأ", "تعذر فتح شاشة المبيعات.");
         }
     }
 
@@ -67,7 +68,7 @@ public class ButtonController {
         try {
             App.setRoot("interfaces/inventory/Form/inventory");
         } catch (IOException e) {
-                e.printStackTrace();
+            showFailedAlert("خطأ", "تعذر الانتقال الى شاشة المخزن.");
         }
     }
 

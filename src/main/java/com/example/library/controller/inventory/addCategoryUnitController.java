@@ -10,6 +10,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import static com.example.library.Alert.alert.*;
+
 public class addCategoryUnitController {
 
     @FXML
@@ -23,7 +25,7 @@ public class addCategoryUnitController {
         String name = categoryNameField.getText().trim();
 
         if (name.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "يرجى إدخال اسم التصنيف!");
+            showWarningAlert("تحذير", "يرجى إدخال اسم التصنيف!");
             return;
         }
 
@@ -35,11 +37,11 @@ public class addCategoryUnitController {
             stmt.setString(1, name);
             stmt.executeUpdate();
 
-            showAlert(Alert.AlertType.INFORMATION, "تم حفظ التصنيف بنجاح!");
+            showSuccessAlert("نجاح", "تم حفظ التصنيف بنجاح!");
             categoryNameField.clear();
 
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "فشل في حفظ التصنيف: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل في حفظ التصنيف: " + e.getMessage());
         }
     }
 
@@ -48,7 +50,7 @@ public class addCategoryUnitController {
         String name = unitNameField.getText().trim();
 
         if (name.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "يرجى إدخال اسم الوحدة!");
+            showWarningAlert("تحذير", "يرجى إدخال اسم الوحدة!");
             return;
         }
 
@@ -60,11 +62,11 @@ public class addCategoryUnitController {
             stmt.setString(1, name);
             stmt.executeUpdate();
 
-            showAlert(Alert.AlertType.INFORMATION, "تم حفظ الوحدة بنجاح!");
+            showSuccessAlert("نجاح", "تم حفظ الوحدة بنجاح!");
             unitNameField.clear();
 
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "فشل في حفظ الوحدة: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل في حفظ الوحدة: ");
         }
     }
 
@@ -90,10 +92,4 @@ public class addCategoryUnitController {
         stage.close();
     }
 
-    private void showAlert(Alert.AlertType type, String message) {
-        Alert alert = new Alert(type);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
 }

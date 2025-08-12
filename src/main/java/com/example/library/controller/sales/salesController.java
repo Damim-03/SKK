@@ -20,6 +20,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -44,7 +46,7 @@ public class salesController {
     @FXML private ImageView productImageView;
 
     @FXML private Button addButton, billButton, printButton, saveButton, clearListButton, refreshButton;
-    @FXML private Button billsReportButton, searchButton, helpButton, infoButton, deleteButton, editButton, payButton;
+    @FXML private Button billsReportButton, searchButton, helpButton, calculButton, deleteButton, editButton, payButton;
     @FXML private Button barcodeButton;
 
     @FXML private TextField debtField2;
@@ -101,7 +103,7 @@ public class salesController {
         if (billsReportButton != null) billsReportButton.setOnAction(e -> handleBillsReport());
         if (searchButton != null) searchButton.setOnAction(e -> handleSearch());
         if (helpButton != null) helpButton.setOnAction(e -> handleHelp());
-        if (infoButton != null) infoButton.setOnAction(e -> handleInfo());
+        if (calculButton != null) calculButton.setOnAction(e -> handleCalculator());
         if (deleteButton != null) deleteButton.setOnAction(e -> handleDelete());
         if (editButton != null) editButton.setOnAction(e -> handleEdit());
         if (payButton != null) payButton.setOnAction(e -> handlePay());
@@ -962,18 +964,34 @@ public class salesController {
     }
 
     @FXML
-    private void handleInfo() {
+    private void handleCalculator() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/interfaces/sales/Form/productshowUI.fxml"));
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/com/example/interfaces/sales/Form/Calculator.fxml"));
             Parent root = loader.load();
+
             Stage stage = new Stage();
-            stage.setTitle("معلومات المنتج");
+            stage.setTitle("Calculator");
             stage.setScene(new Scene(root));
-            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/info.png")));
             stage.setResizable(false);
+
+            // Set icon if available
+            try {
+                Image icon = new Image(getClass().getResourceAsStream("/images/calculator.png"));
+                stage.getIcons().add(icon);
+            } catch (Exception e) {
+                System.out.println("Icon not found, using default");
+            }
+
             stage.show();
         } catch (IOException e) {
-            showFailedAlert("فشل", "تعذر فتح نافذة معلومات المنتج: " + e.getMessage());
+            e.printStackTrace();
+            // Show error alert
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Failed to open calculator");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
         }
     }
 
@@ -1033,32 +1051,221 @@ public class salesController {
 
     @FXML
     private void handlePay() {
+        System.out.println("handlePay started at " + LocalTime.now() + " on " + LocalDate.now());
         if (productList.isEmpty()) {
             showWarningAlert("تنبيه", "لا توجد منتجات للدفع!");
             return;
         }
+
         try {
+            // 1️⃣ Prompt for customer details
+            String customerName = showInputDialog("اسم العميل");
+            String customerId = showInputDialog("رقم العميل");
+
+            // 2️⃣ Validate customer details
+            if (customerName == null || customerId == null ||
+                    customerName.trim().isEmpty() || customerId.trim().isEmpty()) {
+                showWarningAlert("تنبيه", "الرجاء إدخال اسم العميل ورقم العميل بشكل صحيح!");
+                System.out.println("Exiting handlePay: Invalid or empty customer details - Name: '" + customerName + "', ID: '" + customerId + "'");
+                return;
+            }
+            System.out.println("Validated Customer Name: '" + customerName.trim() + "', Customer ID: '" + customerId.trim() + "'");
+
+            // 3️⃣ Get total from UI
             double total = parseDoubleOrZero(totalField.getText().replace(" DZ", ""));
-            TextInputDialog dialog = new TextInputDialog();
-            dialog.setTitle("الدفع");
-            dialog.setHeaderText("إدخال مبلغ الدفع");
-            dialog.setContentText("المبلغ المدفوع:");
-            dialog.showAndWait().ifPresent(amount -> {
-                try {
-                    double paid = Double.parseDouble(amount);
-                    if (paid >= total) {
-                        showSuccessAlert("نجاح", "تم الدفع بنجاح! التبقي: " + String.format("%.2f DZ", paid - total));
-                        handleSave();
-                        handleClearList();
-                    } else {
-                        showWarningAlert("تنبيه", "المبلغ المدفوع غير كافٍ!");
-                    }
-                } catch (NumberFormatException e) {
-                    showWarningAlert("تنبيه", "يرجى إدخال مبلغ صحيح!");
-                }
-            });
+            if (total <= 0) {
+                showWarningAlert("تنبيه", "المبلغ الإجمالي غير صحيح!");
+                return;
+            }
+
+            // 4️⃣ Set paid amount to total (no prompt, assuming full payment)
+            double paidAmount = total; // Automatically set to total, no user input
+
+            // 5️⃣ Calculate change
+            double change = paidAmount - total; // Will be 0.0 since paidAmount = total
+            if (change < 0) {
+                showWarningAlert("تنبيه", "المبلغ المدفوع أقل من المبلغ الإجمالي!"); // Redundant but kept for consistency
+                return;
+            }
+
+            // 6️⃣ Save the sale and get sale_id
+            int saleId = saveSaleAndGetId(customerName, customerId);
+
+            // 7️⃣ Save the payment
+            savePaymentToDatabase(saleId, total, paidAmount, change);
+
+            // 8️⃣ Show success and clear the list
+            handleClearList();
+
         } catch (Exception e) {
+            e.printStackTrace();
             showFailedAlert("فشل", "تعذر معالجة الدفع: " + e.getMessage());
+        }
+    }
+
+    private void savePaymentToDatabase(int saleId, double total, double paid, double change) {
+        System.out.println("Attempting to save payment - saleId: " + saleId +
+                ", total: " + total + ", paid: " + paid + ", change: " + change +
+                " at " + LocalTime.now() + " on " + LocalDate.now());
+
+        // Validate input parameters
+        if (saleId <= 0) {
+            System.err.println("Invalid saleId: " + saleId);
+            showFailedAlert("خطأ في البيانات", "رقم عملية البيع غير صالح");
+            return;
+        }
+        if (Double.isNaN(total) || Double.isNaN(paid) || Double.isNaN(change) ||
+                Double.isInfinite(total) || Double.isInfinite(paid) || Double.isInfinite(change)) {
+            System.err.println("Invalid numeric values detected: total=" + total + ", paid=" + paid + ", change=" + change);
+            showFailedAlert("خطأ في البيانات", "القيم المدخلة غير صالحة");
+            return;
+        }
+
+        // Format monetary values to 2 decimal places
+        BigDecimal formattedTotal = BigDecimal.valueOf(total).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal formattedPaid = BigDecimal.valueOf(paid).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal formattedChange = BigDecimal.valueOf(change).setScale(2, RoundingMode.HALF_UP);
+        System.out.println("Formatted values - total: " + formattedTotal + ", paid: " + formattedPaid + ", change: " + formattedChange);
+
+        String sql = "INSERT INTO payments (sale_id, total_amount, paid_amount, change_amount) VALUES (?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            if (conn == null) {
+                System.err.println("Database connection is null at " + LocalTime.now());
+                showFailedAlert("خطأ في الاتصال", "فشل الاتصال بقاعدة البيانات");
+                return;
+            }
+            System.out.println("Database connection established at " + LocalTime.now());
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, saleId);
+                pstmt.setBigDecimal(2, formattedTotal); // Use BigDecimal to preserve scale
+                pstmt.setBigDecimal(3, formattedPaid);  // Use BigDecimal to preserve scale
+                pstmt.setBigDecimal(4, formattedChange); // Use BigDecimal to preserve scale
+
+                int rowsAffected = pstmt.executeUpdate();
+                System.out.println("Rows affected in skj.payments table: " + rowsAffected + " at " + LocalTime.now());
+                if (rowsAffected == 0) {
+                    System.out.println("No rows inserted into skj.payments table for sale_id: " + saleId);
+                    showWarningAlert("تنبيه", "لم يتم إدراج الدفع في قاعدة البيانات");
+                } else {
+                    System.out.println("Successfully inserted payment for sale_id: " + saleId + " at " + LocalTime.now());
+                    showSuccessAlert("نجاح", "تم حفظ الدفع بنجاح");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("SQL Exception in savePaymentToDatabase at " + LocalTime.now() + ": " + e.getMessage());
+            e.printStackTrace();
+            String errorMessage = "تعذر حفظ الدفع: " + (e.getMessage() != null ? e.getMessage() : "خطأ غير محدد");
+            showFailedAlert("خطأ في قاعدة البيانات", errorMessage);
+        }
+    }
+
+    private int saveSaleAndGetId(String customerName, String customerId) throws SQLException {
+        System.out.println("saveSaleAndGetId started for customer: " + customerName + ", ID: " + customerId);
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            if (conn == null) {
+                System.err.println("Database connection is null");
+                throw new SQLException("Database connection failed");
+            }
+            System.out.println("Database connection established");
+            conn.setAutoCommit(false);
+
+            // 1️⃣ Get and format values from UI fields
+            String subtotalText = subtotalField.getText().replace(" DZ", "").trim();
+            String discountText = discountField.getText().replace(" DZ", "").trim();
+            String debtText = debtField.getText().replace(" DZ", "").trim();
+            String totalText = totalField.getText().replace(" DZ", "").trim();
+
+            double subtotal = parseDoubleSafely(subtotalText);
+            double discount = parseDoubleSafely(discountText);
+            double debt = parseDoubleSafely(debtText);
+            double total = parseDoubleSafely(totalText);
+            System.out.println("Sale details - Subtotal: " + subtotal + ", Discount: " + discount + ", Debt: " + debt + ", Total: " + total);
+
+            // 2️⃣ Get current date/time
+            String date = LocalDate.now().toString();
+            String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+            System.out.println("Sale date: " + date + ", Time: " + time);
+
+            // 3️⃣ Insert sale header
+            String salesQuery = "INSERT INTO sales (sale_date, sale_time, subtotal, discount, debt, total, customer_name, customer_id) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement salesStmt = conn.prepareStatement(salesQuery, Statement.RETURN_GENERATED_KEYS)) {
+                salesStmt.setDate(1, Date.valueOf(LocalDate.parse(date)));
+                salesStmt.setTime(2, Time.valueOf(LocalTime.parse(time)));
+                salesStmt.setDouble(3, subtotal);
+                salesStmt.setDouble(4, discount);
+                salesStmt.setDouble(5, debt);
+                salesStmt.setDouble(6, total);
+                salesStmt.setString(7, customerName);
+                salesStmt.setString(8, customerId);
+
+                int rowsAffected = salesStmt.executeUpdate();
+                System.out.println("Rows affected in sales table: " + rowsAffected);
+                if (rowsAffected == 0) {
+                    System.out.println("No rows inserted into sales table");
+                    throw new SQLException("No rows inserted into sales table");
+                }
+
+                // 4️⃣ Get generated sale_id
+                try (ResultSet rs = salesStmt.getGeneratedKeys()) {
+                    if (!rs.next()) {
+                        throw new SQLException("تعذر الحصول على رقم عملية البيع");
+                    }
+                    int saleId = rs.getInt(1);
+                    System.out.println("Generated sale_id: " + saleId);
+
+                    // 5️⃣ Insert sale items
+                    try (PreparedStatement itemsStmt = conn.prepareStatement(
+                            "INSERT INTO sale_items (sale_id, product_id, number, product_name, quantity, price, total_price) " +
+                                    "VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+                        System.out.println("Attempting to save " + productList.size() + " sale items for sale_id: " + saleId +
+                                " at " + LocalTime.now());
+                        int itemNum = 1;
+                        boolean itemsInserted = false;
+
+                        for (SaleItem item : productList) {
+                            try {
+                                itemsStmt.setInt(1, saleId);
+                                itemsStmt.setString(2, item.getProductId());
+                                itemsStmt.setString(3, String.valueOf(itemNum++));
+                                itemsStmt.setString(4, item.getProductName());
+                                itemsStmt.setInt(5, parseIntSafely(item.getQuantity()));
+                                itemsStmt.setDouble(6, parseDoubleSafely(item.getPrice()));
+                                itemsStmt.setDouble(7, parseDoubleSafely(item.getTotalPrice()));
+                                itemsStmt.addBatch(); // Add each item to the batch
+                                System.out.println("Added to batch: " + item.getProductName() + ", Quantity: " + item.getQuantity() +
+                                        ", Price: " + item.getPrice() + " for sale_id: " + saleId);
+                                itemsInserted = true;
+                            } catch (SQLException e) {
+                                System.err.println("Failed to add item to batch: " + item.getProductName() + ", Error: " + e.getMessage());
+                                e.printStackTrace();
+                            }
+                        }
+
+                        if (itemsInserted) {
+                            int[] itemRowsAffected = itemsStmt.executeBatch();
+                            System.out.println("Rows affected in sale_items table: " + itemRowsAffected.length + " at " + LocalTime.now());
+                            for (int i = 0; i < itemRowsAffected.length; i++) {
+                                if (itemRowsAffected[i] == 0) {
+                                    System.err.println("Warning: Item " + (i + 1) + " not inserted for sale_id: " + saleId);
+                                }
+                            }
+                        } else {
+                            System.err.println("No items added to batch for sale_id: " + saleId);
+                            throw new SQLException("No sale items were successfully added to the batch");
+                        }
+                    }
+
+                    conn.commit();
+                    System.out.println("Transaction committed for sale_id: " + saleId);
+                    return saleId;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("SQLException in saveSaleAndGetId: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
         }
     }
 

@@ -10,13 +10,10 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import javafx.collections.ObservableList;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.sql.*;
@@ -178,7 +175,6 @@ public class importDataController {
             showSuccessAlert("نتيجة", alertMessage);
 
         } catch (Exception e) {
-            e.printStackTrace();
             showAlert("خطأ", "حدث خطأ أثناء قراءة الملف: " + e.getMessage());
         }
     }
@@ -274,7 +270,7 @@ public class importDataController {
             ResultSet rs = stmt.executeQuery();
             return rs.next() && rs.getInt(1) > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            showFailedAlert("خطأ", "Barcode غير موجود");
         }
         return false;
     }
@@ -421,7 +417,10 @@ public class importDataController {
                     stmt.setDate(10, Date.valueOf(productionDate));
                 } catch (IllegalArgumentException e) {
                     stmt.setNull(10, Types.DATE);
-                    System.err.println("⚠ Invalid production date format for " + name + ": " + productionDate);
+                    showWarningAlert("تحذير", "خطأ في صيغة التاريخ الانتاج."
+                            + name + ": " + productionDate
+                    );
+
                 }
             } else {
                 stmt.setNull(10, Types.DATE);
@@ -433,7 +432,10 @@ public class importDataController {
                     stmt.setDate(11, Date.valueOf(expirationDate));
                 } catch (IllegalArgumentException e) {
                     stmt.setNull(11, Types.DATE);
-                    System.err.println("⚠ Invalid expiration date format for " + name + ": " + expirationDate);
+                    showWarningAlert("تحذير",
+                            "خطأ في صيغة التاريخ انتهاء الصلاحية."
+                                    + name + ": " + expirationDate
+                    );
                 }
             } else {
                 stmt.setNull(11, Types.DATE);
@@ -446,7 +448,10 @@ public class importDataController {
             return true;
 
         } catch (SQLException e) {
-            System.err.println("⚠ خطأ أثناء إدخال المنتج: " + name + " - " + e.getMessage());
+            showWarningAlert("تحذير",
+                    "خطأ أثناء إدخال المنتج:"
+                            + name + " - " + e.getMessage()
+            );
             return false;
         }
     }

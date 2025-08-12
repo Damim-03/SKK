@@ -12,10 +12,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
@@ -23,6 +20,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static com.example.library.Alert.alert.*;
 
 public class updateProductController {
 
@@ -107,7 +106,7 @@ public class updateProductController {
             tableView.refresh();
 
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "خطأ في قاعد البيانات", "فشل تحميل المنتج:\n" + e.getMessage());
+            showFailedAlert("خطأ في قاعد البيانات", "فشل تحميل المنتج:\n" + e.getMessage());
         }
     }
 
@@ -148,7 +147,7 @@ public class updateProductController {
         ObservableList<Product> selectedItems = tableView.getSelectionModel().getSelectedItems();
 
         if (selectedItems == null || selectedItems.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "تحذير", "يرجى تحديد صفوف للحذف.");
+            showWarningAlert("تحذير", "يرجى تحديد صفوف للحذف.");
             return;
         }
 
@@ -164,7 +163,7 @@ public class updateProductController {
                     deleteProductFromDatabase(product.getBarcode());
                     productList.remove(product); // ✅ Only remove from master list
                 }
-                showAlert(Alert.AlertType.INFORMATION, "تم الحذف", "تم حذف الصفوف المحددة.");
+                showSuccessAlert("تم الحذف", "تم حذف المنتج.");
             }
         });
     }
@@ -177,7 +176,7 @@ public class updateProductController {
             stmt.setString(1, barcode);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            showFailedAlert("خطأ في قاعدة البيانات", "خطأ في حذف المنتج من قاعدة البيانات");
         }
     }
 
@@ -186,13 +185,13 @@ public class updateProductController {
         Product selectedProduct = tableView.getSelectionModel().getSelectedItem();
 
         if (selectedProduct == null) {
-            showAlert(Alert.AlertType.WARNING, "تحذير", "الرجاء تحديد المنتج المراد حذفه.");
+            showWarningAlert("تحذير", "الرجاء تحديد المنتج المراد حذفه.");
             return;
         }
 
         try {
             URL fxmlLocation = getClass().getResource("/com/example/interfaces/inventory/Form/updateForm.fxml");
-            if (fxmlLocation == null) throw new IOException("FXML file not found.");
+            if (fxmlLocation == null) showFailedAlert("خطأ", "فشل في فتح النافذة.");
 
             FXMLLoader loader = new FXMLLoader(fxmlLocation);
             Parent root = loader.load();
@@ -201,28 +200,20 @@ public class updateProductController {
             controller.setProductData(selectedProduct);
 
             Stage stage = new Stage();
-            stage.setTitle("Update Product");
+            stage.setTitle("تحديث المنتج");
             stage.setScene(new Scene(root));
             try {
                 Image icon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/cycle.png")));
                 stage.getIcons().add(icon);
             } catch (Exception e) {
-                System.out.println("Icon not loaded.");
+                showFailedAlert("خطأ", "لم يتم تحميل صورة المنتج.");
             }
 
             stage.setResizable(false);
             stage.show();
 
         } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR, "خطأ", "فشل في فتح التحديث:\n" + e.getMessage());
+            showFailedAlert("خطأ", "فشل في فتح التحديث:\n" + e.getMessage());
         }
-    }
-
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }

@@ -9,6 +9,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
+import static com.example.library.Alert.alert.showFailedAlert;
+
 public class inventoryButtonController {
 
     @FXML
@@ -40,7 +42,7 @@ public class inventoryButtonController {
         try {
             App.setRoot("interfaces/home/home");
         } catch (IOException e) {
-            e.printStackTrace();
+            showFailedAlert("خطأ", "فشل في فتح نافذة الرئيسية.");
         }
     }
 
@@ -66,8 +68,7 @@ public class inventoryButtonController {
             newStage.show();
 
         } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Error opening add new product window: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل في فتح نافذة اضافة منتج جديد.");
         }
     }
 
@@ -94,8 +95,7 @@ public class inventoryButtonController {
             newStage.show();
 
         } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Error opening add new product window: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل في فتح نافذة عرض المنتجات."+ e.getMessage());
         }
     }
 
@@ -119,8 +119,7 @@ public class inventoryButtonController {
             newStage.show();
 
         } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Error opening add new product window: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل في فتح نافذة اضافة تصنيفات."+ e.getMessage());
         }
     }
 
@@ -147,8 +146,7 @@ public class inventoryButtonController {
             newStage.show();
 
         } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Error opening add new product window: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل في فتح نافذة تعديل المنتجات."+ e.getMessage());
         }
     }
     @FXML
@@ -174,8 +172,7 @@ public class inventoryButtonController {
             newStage.show();
 
         } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Error opening add new product window: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل في فتح نافذة اضافة تصنيفات."+ e.getMessage());
         }
     }
 
@@ -202,8 +199,7 @@ public class inventoryButtonController {
             newStage.show();
 
         } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Error opening add new product window: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل في فتح نافذة اضافة الوحدات."+ e.getMessage());
         }
     }
 
@@ -230,8 +226,7 @@ public class inventoryButtonController {
             newStage.show();
 
         } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Error opening add new product window: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل في فتح نافذة استيراد البيانات."+ e.getMessage());
         }
     }
 
@@ -258,8 +253,7 @@ public class inventoryButtonController {
             newStage.show();
 
         } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Error opening add new product window: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل في فتح نافذة صلاحيات المنتج."+ e.getMessage());
         }
     }
 }

@@ -313,8 +313,8 @@ public class printFormController {
             // إضافة البيانات إلى الجدول
             itemsGrid.add(createDataLabel(productName), 0, row);
             itemsGrid.add(createDataLabel(quantity), 1, row);
-            itemsGrid.add(createDataLabel(price + " DZ"), 2, row);
-            itemsGrid.add(createDataLabel(total + " DZ"), 3, row);
+            itemsGrid.add(createDataLabel(price), 2, row);
+            itemsGrid.add(createDataLabel(total), 3, row);
             row++;
         }
 
@@ -322,21 +322,21 @@ public class printFormController {
         totalsBox.setAlignment(Pos.CENTER_LEFT);
 
         // استخراج القيم من الحقول مع معالجة القيم الفارغة
-        String subtotal = subtotalField.getText() != null ?
-                subtotalField.getText().replace(" DZ", "") : "0.00";
-        String discount = discountField.getText() != null ?
-                discountField.getText().replace(" DZ", "") : "0.00";
-        String debt = debtField.getText() != null ?
-                debtField.getText().replace(" DZ", "") : "0.00";
-        String total = totalField.getText() != null ?
-                totalField.getText().replace(" DZ", "") : "0.00";
+        String subtotal = (subtotalField.getText() != null && !subtotalField.getText().trim().isEmpty()) ?
+                subtotalField.getText().replace(" DZ", "").trim() : "0.00 DZ";
+        String discount = (discountField.getText() != null && !discountField.getText().trim().isEmpty()) ?
+                discountField.getText().replace(" DZ", "").trim() : "0.00 DZ";
+        String debt = (debtField.getText() != null && !debtField.getText().trim().isEmpty()) ?
+                debtField.getText().replace(" DZ", "").trim() : "0.00 DZ";
+        String total = (totalField.getText() != null && !totalField.getText().trim().isEmpty()) ?
+                totalField.getText().replace(" DZ", "").trim() : "0.00 DZ";
 
         // إنشاء التسميات مع تنسيق العملة
         totalsBox.getChildren().addAll(
-                new Label("المجموع الفرعي: " + formatCurrency(subtotal) + " DZ"),
-                new Label("مبلغ الخصم: " + formatCurrency(discount) + " DZ"),
-                new Label("الديون: " + formatCurrency(debt) + " DZ"),
-                new Label("المبلغ الإجمالي الكلي: " + formatCurrency(total) + " DZ")
+                new Label("المجموع الفرعي: " + formatCurrency(subtotal)),
+                new Label("مبلغ الخصم: " + formatCurrency(discount)),
+                new Label("الديون: " + formatCurrency(debt)),
+                new Label("المبلغ الإجمالي الكلي: " + formatCurrency(total))
         );
         totalsBox.setStyle("-fx-font-size: 12; -fx-font-weight: bold;");
 

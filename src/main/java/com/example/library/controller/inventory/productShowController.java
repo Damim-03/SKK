@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.sql.*;
 
+import static com.example.library.Alert.alert.showFailedAlert;
+
 public class productShowController {
 
     @FXML private TextField barcodeField;
@@ -76,51 +78,36 @@ public class productShowController {
                 String imagePath = rs.getString("image_path");
                 loadProductImage(imagePath);
             } else {
-                showAlert("المنتج غير موجود", "لم يتم العثور على منتج بالباركود: " + barcode);
+                showFailedAlert("المنتج غير موجود", "لم يتم العثور على منتج بالباركود: " + barcode);
             }
         } catch (SQLException e) {
-            showAlert("خطأ في قاعدة البيانات", "فشل تحميل المنتج: " + e.getMessage());
-            e.printStackTrace();
+            showFailedAlert("خطأ في قاعدة البيانات", "فشل تحميل المنتج: " + e.getMessage());
         }
     }
 
     private void loadProductImage(String path) {
         try {
             if (path == null || path.isEmpty()) {
-                System.out.println("Image path is empty, loading default image.");
                 productImageView.setImage(new Image(getClass().getResourceAsStream("/images/image.png")));
                 return;
             }
 
             File file = new File(path);
             if (file.exists()) {
-                System.out.println("Loading image from file: " + path);
                 productImageView.setImage(new Image(file.toURI().toString()));
                 return;
             }
 
             InputStream is = getClass().getResourceAsStream("/images/" + path);
             if (is != null) {
-                System.out.println("Loading image from resources: /images/" + path);
                 productImageView.setImage(new Image(is));
                 return;
             }
 
-            System.out.println("Image not found, loading default image.");
             productImageView.setImage(new Image(getClass().getResourceAsStream("/images/image.png")));
         } catch (Exception e) {
-            System.err.println("Error loading image: " + e.getMessage());
             productImageView.setImage(new Image(getClass().getResourceAsStream("/images/image.png")));
         }
-    }
-
-
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
     public void setProductData(String barcode) {

@@ -21,6 +21,8 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import static com.example.library.Alert.alert.*;
+
 public class updateFormController {
 
     @FXML private TextField barcodeField;
@@ -174,7 +176,7 @@ public class updateFormController {
                 productImageView.setImage(null);
             }
         } catch (Exception e) {
-            System.err.println("خطأ في تحميل الصورة: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل في تحميل الصورة.");
             productImageView.setImage(null);
         }
     }
@@ -244,13 +246,13 @@ public class updateFormController {
             currentProduct.setImagePath(imagePath);
 
             if (updateProductInDatabase(currentProduct)) {
-                showAlert(Alert.AlertType.INFORMATION, "نجاح", "تم تحديث المنتج بنجاح!");
+                showSuccessAlert("نجاح", "تم تحديث المنتج بنجاح!");
                 ((Stage) saveButton.getScene().getWindow()).close();
             } else {
-                throw new Exception("Failed to update product in database");
+                showFailedAlert("خطأ", "فشل في تحديث المنتج:");
             }
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "خطأ", "فشل في تحديث المنتج: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل في تحديث المنتج: " + e.getMessage());
         }
     }
 
@@ -258,15 +260,15 @@ public class updateFormController {
         if (productNameField.getText().isEmpty() ||
                 price1Field.getText().isEmpty() ||
                 quantityField.getText().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "خطأ التحقق",
-                    "يرجى ملء جميع الحقول المطلوبة (اسم المنتج، السعر 1، الكمية)");
+            showWarningAlert("تنبيه",
+                    "يرجى ملء جميع الحقول المطلوبة.");
             return false;
         }
 
         if (productionDatePicker.getValue() != null &&
                 expirationDatePicker.getValue() != null &&
                 productionDatePicker.getValue().isAfter(expirationDatePicker.getValue())) {
-            showAlert(Alert.AlertType.WARNING, "خطأ التاريخ",
+            showWarningAlert("تنبيه",
                     "لا يمكن أن يكون تاريخ الإنتاج بعد تاريخ انتهاء الصلاحية");
             return false;
         }
@@ -277,7 +279,7 @@ public class updateFormController {
             if (!price3Field.getText().isEmpty()) Double.parseDouble(price3Field.getText());
             Integer.parseInt(quantityField.getText());
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.WARNING, "خطأ التحقق",
+            showWarningAlert("تنبيه",
                     "الرجاء إدخال أرقام صحيحة للأسعار والكمية");
             return false;
         }
@@ -313,16 +315,8 @@ public class updateFormController {
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            showFailedAlert("خطأ في قاعدة البيانات", "لم يتم تحديث المنتج");
             return false;
         }
-    }
-
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }

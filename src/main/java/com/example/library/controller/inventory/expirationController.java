@@ -16,13 +16,15 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
 import java.awt.Toolkit;
 import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+
+import static com.example.library.Alert.alert.showFailedAlert;
+import static com.example.library.Alert.alert.showWarningAlert;
 
 public class expirationController {
 
@@ -143,7 +145,7 @@ public class expirationController {
         if (!scannedBarcode.isEmpty()) {
             String cleanBarcode = scannedBarcode.replaceAll("[^a-zA-Z0-9]", "");
             if (cleanBarcode.isEmpty()) {
-                showAlert("Invalid Barcode", "The scanned barcode is not valid");
+                showWarningAlert("Barcode", "البار كود المدخل خاطى.");
                 return;
             }
 
@@ -194,11 +196,11 @@ public class expirationController {
                     highlightProductInTable(product);
                 });
             } else {
-                showAlert("Product Not Found", "No product found with barcode: " + barcode);
+                showFailedAlert("فشل", "لم يتم عثور على المنتج :" + barcode);
                 showAllProducts();
             }
         } catch (SQLException e) {
-            showAlert("Database Error", "Failed to search product: " + e.getMessage());
+            showFailedAlert("خطأ في قاعدة البيانات", "لم يتم عثور على المنتج :" + e.getMessage());
         }
     }
 
@@ -255,7 +257,7 @@ public class expirationController {
             filteredProductData.setAll(productData);
             tableView.setItems(filteredProductData);
         } catch (SQLException e) {
-            showAlert("Database Error", "Failed to load products: " + e.getMessage());
+            showFailedAlert("خطأ في قاعدة البيانات", "مشكلة في تحميل المنتجات");
         }
     }
 
@@ -280,7 +282,7 @@ public class expirationController {
     private void handleInfoButton() {
         Product selectedProduct = tableView.getSelectionModel().getSelectedItem();
         if (selectedProduct == null) {
-            showAlert("تنبيه", "يرجى اختيار منتج من القائمة أولاً");
+            showWarningAlert("تنبيه", "يرجى اختيار منتج من القائمة أولاً");
             return;
         }
 
@@ -302,15 +304,7 @@ public class expirationController {
 
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Error opening product info window: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل في اظهار نافذة معلومات المنتج");
         }
-    }
-
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }

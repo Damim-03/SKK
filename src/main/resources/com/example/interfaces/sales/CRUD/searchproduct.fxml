@@ -65,7 +65,8 @@
                                 <Image url="@../../../../../images/barcode.png" />
                             </image>
                         </ImageView>
-                    </graphic></Button>
+                    </graphic>
+                </Button>
 
                 <!-- TableView Section -->
                 <TableView fx:id="tableView" editable="true" GridPane.columnIndex="0" GridPane.rowIndex="1">

@@ -18,6 +18,8 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import static com.example.library.Alert.alert.showFailedAlert;
+
 public class getProductController {
 
     @FXML private TableView<Product> tableView;
@@ -118,7 +120,7 @@ public class getProductController {
             tableView.refresh();
 
         } catch (SQLException e) {
-            showAlert("Database Error", "Failed to load products: " + e.getMessage());
+            showFailedAlert("خطأ في قاعدة البيانات", "مشكلة في تحميل المنتجات" + e.getMessage());
         }
     }
 
@@ -195,7 +197,7 @@ public class getProductController {
             }
 
         } catch (Exception e) {
-            System.err.println("Error loading image: " + e.getMessage());
+            showFailedAlert("خطأ","فشل تحميل الصورة"+ e.getMessage());
         }
 
         return loadFallbackImage();
@@ -211,7 +213,7 @@ public class getProductController {
                 return new Image(stream);
             }
         } catch (Exception e) {
-            System.err.println("Error loading fallback image: " + e.getMessage());
+            showFailedAlert("خطأ","فشل تحميل الصورة"+ e.getMessage());
         }
         return null;
     }
@@ -245,14 +247,6 @@ public class getProductController {
                     });
         }
         tableView.refresh();
-    }
-
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
     @FXML
