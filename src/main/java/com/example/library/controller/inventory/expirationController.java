@@ -303,7 +303,6 @@ public class expirationController {
             newStage.show();
 
         } catch (IOException e) {
-            e.printStackTrace();
             showFailedAlert("خطأ", "فشل في اظهار نافذة معلومات المنتج");
         }
     }

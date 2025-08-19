@@ -2,9 +2,7 @@ package com.example.library.controller.inventory;
 
 import java.io.IOException;
 import java.util.Objects;
-
 import com.example.App;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -13,8 +11,6 @@ import static com.example.library.Alert.alert.showFailedAlert;
 
 public class inventoryButtonController {
 
-    @FXML
-    public Button backButton; // back button
     @FXML
     public Button addNewProductButton; // اضافة منتج جديد
     @FXML

@@ -8,22 +8,22 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.sql.*;
 import java.time.LocalTime;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static com.example.library.Alert.alert.showFailedAlert;
+import static com.example.library.Alert.alert.showWarningAlert;
 
 public class getRaportsController {
 
@@ -36,14 +36,8 @@ public class getRaportsController {
     private ObservableList<Sale> salesData = FXCollections.observableArrayList();
 
     @FXML private Button refreshButton;
-    @FXML private ScrollPane mainScrollPane;
-    @FXML private AnchorPane contentPane;
-    @FXML private Label titleLabel;
-    @FXML private ImageView titleIcon;
     @FXML private TextField customerIdField;
     @FXML private TextField customerNameField;
-    @FXML private Label customerNameLabel;
-    @FXML private Label customerIdLabel;
     @FXML private TableView<Sale> reportTableView;
     @FXML private TableColumn<Sale, Integer> numberColumn;
     @FXML private TableColumn<Sale, String> customerIdColumn;
@@ -56,8 +50,6 @@ public class getRaportsController {
     @FXML private TableColumn<Sale, String> timeColumn;
     @FXML private Button showButton;
     @FXML private Button cancelButton;
-    @FXML private ImageView showButtonIcon;
-    @FXML private ImageView cancelButtonIcon;
 
     @FXML
     private void initialize() {
@@ -67,8 +59,7 @@ public class getRaportsController {
             initializeSearchFields();
             loadSalesData();
         } catch (Exception e) {
-            showAlert("Initialization Error", "Failed to initialize: " + e.getMessage(), Alert.AlertType.ERROR);
-            LOGGER.log(Level.SEVERE, "Initialization Error", e);
+            showFailedAlert("خطأ", "خطأ في التهيئة:" + e.getMessage());
         }
     }
 
@@ -147,7 +138,7 @@ public class getRaportsController {
             if (selectedSale != null) {
                 openBillWindow(selectedSale);
             } else {
-                showAlert("تحذير", "الرجاء تحديد فاتورة لعرضها", Alert.AlertType.WARNING);
+                showWarningAlert("تحذير", "الرجاء تحديد فاتورة لعرضها");
             }
         });
 
@@ -163,7 +154,7 @@ public class getRaportsController {
             rapotsController controller = loader.getController();
             ObservableList<SaleItem> saleItems = loadSaleItems(sale.getSaleId());
             if (saleItems.isEmpty()) {
-                showAlert("تحذير", "لا توجد منتجات لهذه الفاتورة (Sale ID: " + sale.getSaleId() + ")", Alert.AlertType.WARNING);
+                showWarningAlert("تحذير", "لا توجد منتجات لهذه الفاتورة (Sale ID: " + sale.getSaleId() + ")");
             }
             controller.setSaleData(sale, saleItems);
 
@@ -176,11 +167,9 @@ public class getRaportsController {
             raportStage.showAndWait();
 
         } catch (IOException e) {
-            showAlert("خطأ", "تعذر فتح نافذة الفاتورة: " + e.getMessage(), Alert.AlertType.ERROR);
-            LOGGER.log(Level.SEVERE, "Error opening bill window due to IOException", e);
+            showFailedAlert("خطأ", "تعذر فتح نافذة الفاتورة: " + e.getMessage());
         } catch (SQLException e) {
-            showAlert("خطأ", "تعذر تحميل بيانات الفاتورة: " + e.getMessage(), Alert.AlertType.ERROR);
-            LOGGER.log(Level.SEVERE, "Error loading bill data due to SQLException", e);
+            showFailedAlert("خطأ", "تعذر تحميل بيانات الفاتورة: " + e.getMessage());
         }
     }
 
@@ -204,9 +193,7 @@ public class getRaportsController {
                         String.format("%.2f", rs.getDouble("total_price")) // total_price as formatted String
                 ));
             }
-            System.out.println("Loaded " + items.size() + " items for sale_id: " + saleId + " at " + LocalTime.now());
         } catch (SQLException e) {
-            System.err.println("SQLException in loadSaleItems for sale_id " + saleId + ": " + e.getMessage());
             throw e; // Re-throw to be handled by the caller
         }
         return items;
@@ -222,9 +209,9 @@ public class getRaportsController {
                     customerNameField.clear();
                 });
                 loadSalesData();
-                Platform.runLater(() -> showAlert("تحديث", "تم تحديث القائمة", Alert.AlertType.INFORMATION));
+                Platform.runLater(() -> showWarningAlert("تحديث", "تم تحديث القائمة"));
             } catch (Exception e) {
-                Platform.runLater(() -> showAlert("خطأ", "فشل التحديث", Alert.AlertType.ERROR));
+                Platform.runLater(() -> showFailedAlert("خطأ", "فشل التحديث"));
                 LOGGER.log(Level.SEVERE, "Refresh failed", e);
             } finally {
                 Platform.runLater(() -> refreshButton.setDisable(false));
@@ -261,19 +248,8 @@ public class getRaportsController {
     }
 
     private void showDatabaseError(String title, SQLException e) {
-        showAlert("خطأ في قاعدة البيانات", title + ": " + e.getMessage(), Alert.AlertType.ERROR);
+        showFailedAlert("خطأ في قاعدة البيانات", title + ": " + e.getMessage());
         LOGGER.log(Level.SEVERE, title, e);
     }
 
-    private void showAlert(String title, String message, Alert.AlertType type) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    public void shutdown() {
-        executor.shutdown();
-    }
 }

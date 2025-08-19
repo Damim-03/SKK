@@ -160,8 +160,7 @@
                         <Image url="@../../../../../images/cancel.png" />
                      </image>
                   </ImageView>
-               </graphic>
-            </Button>
+               </graphic>            </Button>
             <Button fx:id="printButton" layoutX="227.0" layoutY="942.0" mnemonicParsing="false"
                     prefHeight="40.0" prefWidth="141.0" style="-fx-background-color: #6e88ff;"
                     text="طباعة"

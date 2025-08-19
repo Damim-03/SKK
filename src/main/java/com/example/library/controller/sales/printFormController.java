@@ -26,10 +26,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-public class printFormController {
+import static com.example.library.Alert.alert.*;
 
-    @FXML
-    private TableView<SaleItem> salesTable;
+public class printFormController {
 
     // Header Section
     @FXML private Label arabicTitleLabel;
@@ -218,7 +217,7 @@ public class printFormController {
     @FXML
     private void handlePrint() {
         if (itemsTableView.getItems() == null || itemsTableView.getItems().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "تنبيه", null, "لا توجد عناصر للطباعة!");
+            showWarningAlert("تنبيه", "لا توجد عناصر للطباعة!");
             return;
         }
 
@@ -380,7 +379,7 @@ public class printFormController {
     private void printHighQualityNode(Node node, Stage ownerWindow) {
         PrinterJob job = PrinterJob.createPrinterJob();
         if (job == null) {
-            showAlert(Alert.AlertType.ERROR, "Error", null, "Cannot create print job");
+            showFailedAlert("خطأ", "لا يمكن إنشاء مهمة الطباعة");
             return;
         }
 
@@ -430,12 +429,12 @@ public class printFormController {
                 // 9. Print
                 if (job.printPage(layout, printContent)) {
                     job.endJob();
-                    showAlert(Alert.AlertType.INFORMATION, "Success", null, "Receipt printed");
+                    showSuccessAlert("نجاح", "تمت طباعة الإيصال");
                 } else {
-                    showAlert(Alert.AlertType.ERROR, "Error", null, "Print failed");
+                    showFailedAlert("خطأ", "فشلت الطباعة");
                 }
             } catch (Exception e) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Print Exception", e.getMessage());
+                showFailedAlert("حطأ", "استثناء الطباعة");
             }
         }
     }
@@ -451,49 +450,5 @@ public class printFormController {
             // Fallback to A4 if custom paper can't be created
             return Paper.A4;
         }
-    }
-
-
-    private void showAlert(Alert.AlertType type, String title, String header, String content) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(type);
-            alert.setTitle(title);
-            alert.setHeaderText(header);
-            alert.setContentText(content);
-            alert.show();
-        });
-    }
-
-    private void showSuccessAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/success.png")));
-        alert.getDialogPane().setStyle("-fx-background-color: #e8f5e9;");
-        alert.showAndWait();
-    }
-
-    private void showWarningAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/warning.png")));
-        alert.getDialogPane().setStyle("-fx-background-color: #fff8e1;");
-        alert.showAndWait();
-    }
-
-    private void showFailedAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/fail.png")));
-        alert.getDialogPane().setStyle("-fx-background-color: #ffebee;");
-        alert.showAndWait();
     }
 }

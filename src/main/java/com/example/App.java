@@ -6,7 +6,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.util.Objects;
 
@@ -19,7 +18,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("interfaces/home/home"));
+        scene = new Scene(loadFXML("interfaces/home/loading_Page"));
         stage.setScene(scene);
         try {
             Image icon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/SKK-1.png")));
@@ -40,8 +39,6 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
-
         launch();
     }
-
 }

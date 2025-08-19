@@ -27,7 +27,6 @@ public class updateProductController {
 
     @FXML private Button exitButton;
     @FXML private TextField barcodeField;
-
     @FXML private TableView<Product> tableView;
     @FXML private TableColumn<Product, String> barcodeColumn;
     @FXML private TableColumn<Product, String> nameColumn;

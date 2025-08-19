@@ -30,6 +30,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Objects;
 
+import static com.example.library.Alert.alert.*;
+
 public class salesController {
 
     @FXML private TableView<SaleItem> salesTable;
@@ -515,7 +517,6 @@ public class salesController {
             }
             return barcode; // Fallback if not found
         } catch (SQLException e) {
-            e.printStackTrace();
             return barcode; // Fallback on error
         }
     }
@@ -773,7 +774,6 @@ public class salesController {
 
         } catch (Exception e) {
             showFailedAlert("خطأ", "تعذر حفظ الفاتورة: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -782,7 +782,6 @@ public class salesController {
         return String.format(Locale.US, "%.2f DZ", value);
     }
 
-// Rest of your methods (parseDoubleSafely, parseIntSafely, saveSaleToDatabase) remain the same
 
     private double parseDoubleSafely(String value) {
         try {
@@ -853,10 +852,8 @@ public class salesController {
             }
         } catch (SQLException e) {
             showFailedAlert("فشل", "تعذر حفظ الفاتورة: " + e.getMessage());
-            e.printStackTrace();
         } catch (Exception e) {
             showFailedAlert("خطأ", "حدث خطأ غير متوقع: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -942,8 +939,7 @@ public class salesController {
             newStage.show();
 
         } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Error opening add new product window: " + e.getMessage());
+            showWarningAlert("تنبيه", "حدث خطأ أثناء فتح نافذة إضافة منتج جديد:");
         }
     }
 
@@ -1051,7 +1047,6 @@ public class salesController {
 
     @FXML
     private void handlePay() {
-        System.out.println("handlePay started at " + LocalTime.now() + " on " + LocalDate.now());
         if (productList.isEmpty()) {
             showWarningAlert("تنبيه", "لا توجد منتجات للدفع!");
             return;
@@ -1066,10 +1061,8 @@ public class salesController {
             if (customerName == null || customerId == null ||
                     customerName.trim().isEmpty() || customerId.trim().isEmpty()) {
                 showWarningAlert("تنبيه", "الرجاء إدخال اسم العميل ورقم العميل بشكل صحيح!");
-                System.out.println("Exiting handlePay: Invalid or empty customer details - Name: '" + customerName + "', ID: '" + customerId + "'");
                 return;
             }
-            System.out.println("Validated Customer Name: '" + customerName.trim() + "', Customer ID: '" + customerId.trim() + "'");
 
             // 3️⃣ Get total from UI
             double total = parseDoubleOrZero(totalField.getText().replace(" DZ", ""));
@@ -1098,25 +1091,20 @@ public class salesController {
             handleClearList();
 
         } catch (Exception e) {
-            e.printStackTrace();
             showFailedAlert("فشل", "تعذر معالجة الدفع: " + e.getMessage());
         }
     }
 
     private void savePaymentToDatabase(int saleId, double total, double paid, double change) {
-        System.out.println("Attempting to save payment - saleId: " + saleId +
-                ", total: " + total + ", paid: " + paid + ", change: " + change +
-                " at " + LocalTime.now() + " on " + LocalDate.now());
 
         // Validate input parameters
         if (saleId <= 0) {
-            System.err.println("Invalid saleId: " + saleId);
             showFailedAlert("خطأ في البيانات", "رقم عملية البيع غير صالح");
             return;
         }
+
         if (Double.isNaN(total) || Double.isNaN(paid) || Double.isNaN(change) ||
                 Double.isInfinite(total) || Double.isInfinite(paid) || Double.isInfinite(change)) {
-            System.err.println("Invalid numeric values detected: total=" + total + ", paid=" + paid + ", change=" + change);
             showFailedAlert("خطأ في البيانات", "القيم المدخلة غير صالحة");
             return;
         }
@@ -1125,16 +1113,14 @@ public class salesController {
         BigDecimal formattedTotal = BigDecimal.valueOf(total).setScale(2, RoundingMode.HALF_UP);
         BigDecimal formattedPaid = BigDecimal.valueOf(paid).setScale(2, RoundingMode.HALF_UP);
         BigDecimal formattedChange = BigDecimal.valueOf(change).setScale(2, RoundingMode.HALF_UP);
-        System.out.println("Formatted values - total: " + formattedTotal + ", paid: " + formattedPaid + ", change: " + formattedChange);
 
         String sql = "INSERT INTO payments (sale_id, total_amount, paid_amount, change_amount) VALUES (?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection()) {
             if (conn == null) {
-                System.err.println("Database connection is null at " + LocalTime.now());
                 showFailedAlert("خطأ في الاتصال", "فشل الاتصال بقاعدة البيانات");
                 return;
             }
-            System.out.println("Database connection established at " + LocalTime.now());
+
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, saleId);
@@ -1143,31 +1129,23 @@ public class salesController {
                 pstmt.setBigDecimal(4, formattedChange); // Use BigDecimal to preserve scale
 
                 int rowsAffected = pstmt.executeUpdate();
-                System.out.println("Rows affected in skj.payments table: " + rowsAffected + " at " + LocalTime.now());
                 if (rowsAffected == 0) {
-                    System.out.println("No rows inserted into skj.payments table for sale_id: " + saleId);
                     showWarningAlert("تنبيه", "لم يتم إدراج الدفع في قاعدة البيانات");
                 } else {
-                    System.out.println("Successfully inserted payment for sale_id: " + saleId + " at " + LocalTime.now());
                     showSuccessAlert("نجاح", "تم حفظ الدفع بنجاح");
                 }
             }
         } catch (SQLException e) {
-            System.err.println("SQL Exception in savePaymentToDatabase at " + LocalTime.now() + ": " + e.getMessage());
-            e.printStackTrace();
             String errorMessage = "تعذر حفظ الدفع: " + (e.getMessage() != null ? e.getMessage() : "خطأ غير محدد");
             showFailedAlert("خطأ في قاعدة البيانات", errorMessage);
         }
     }
 
     private int saveSaleAndGetId(String customerName, String customerId) throws SQLException {
-        System.out.println("saveSaleAndGetId started for customer: " + customerName + ", ID: " + customerId);
         try (Connection conn = DatabaseConnection.getConnection()) {
             if (conn == null) {
-                System.err.println("Database connection is null");
                 throw new SQLException("Database connection failed");
             }
-            System.out.println("Database connection established");
             conn.setAutoCommit(false);
 
             // 1️⃣ Get and format values from UI fields
@@ -1180,12 +1158,10 @@ public class salesController {
             double discount = parseDoubleSafely(discountText);
             double debt = parseDoubleSafely(debtText);
             double total = parseDoubleSafely(totalText);
-            System.out.println("Sale details - Subtotal: " + subtotal + ", Discount: " + discount + ", Debt: " + debt + ", Total: " + total);
 
             // 2️⃣ Get current date/time
             String date = LocalDate.now().toString();
             String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-            System.out.println("Sale date: " + date + ", Time: " + time);
 
             // 3️⃣ Insert sale header
             String salesQuery = "INSERT INTO sales (sale_date, sale_time, subtotal, discount, debt, total, customer_name, customer_id) " +
@@ -1201,9 +1177,7 @@ public class salesController {
                 salesStmt.setString(8, customerId);
 
                 int rowsAffected = salesStmt.executeUpdate();
-                System.out.println("Rows affected in sales table: " + rowsAffected);
                 if (rowsAffected == 0) {
-                    System.out.println("No rows inserted into sales table");
                     throw new SQLException("No rows inserted into sales table");
                 }
 
@@ -1213,14 +1187,11 @@ public class salesController {
                         throw new SQLException("تعذر الحصول على رقم عملية البيع");
                     }
                     int saleId = rs.getInt(1);
-                    System.out.println("Generated sale_id: " + saleId);
 
                     // 5️⃣ Insert sale items
                     try (PreparedStatement itemsStmt = conn.prepareStatement(
                             "INSERT INTO sale_items (sale_id, product_id, number, product_name, quantity, price, total_price) " +
                                     "VALUES (?, ?, ?, ?, ?, ?, ?)")) {
-                        System.out.println("Attempting to save " + productList.size() + " sale items for sale_id: " + saleId +
-                                " at " + LocalTime.now());
                         int itemNum = 1;
                         boolean itemsInserted = false;
 
@@ -1234,37 +1205,31 @@ public class salesController {
                                 itemsStmt.setDouble(6, parseDoubleSafely(item.getPrice()));
                                 itemsStmt.setDouble(7, parseDoubleSafely(item.getTotalPrice()));
                                 itemsStmt.addBatch(); // Add each item to the batch
-                                System.out.println("Added to batch: " + item.getProductName() + ", Quantity: " + item.getQuantity() +
-                                        ", Price: " + item.getPrice() + " for sale_id: " + saleId);
+
                                 itemsInserted = true;
                             } catch (SQLException e) {
-                                System.err.println("Failed to add item to batch: " + item.getProductName() + ", Error: " + e.getMessage());
-                                e.printStackTrace();
+                                showFailedAlert("فشل", "فشل في إضافة العنصر إلى الدفعة");
                             }
                         }
 
                         if (itemsInserted) {
                             int[] itemRowsAffected = itemsStmt.executeBatch();
-                            System.out.println("Rows affected in sale_items table: " + itemRowsAffected.length + " at " + LocalTime.now());
                             for (int i = 0; i < itemRowsAffected.length; i++) {
                                 if (itemRowsAffected[i] == 0) {
                                     System.err.println("Warning: Item " + (i + 1) + " not inserted for sale_id: " + saleId);
                                 }
                             }
                         } else {
-                            System.err.println("No items added to batch for sale_id: " + saleId);
-                            throw new SQLException("No sale items were successfully added to the batch");
+                            throw new SQLException("لم تتم إضافة أي عناصر بيع إلى الدفعة بنجاح");
                         }
                     }
 
                     conn.commit();
-                    System.out.println("Transaction committed for sale_id: " + saleId);
                     return saleId;
                 }
             }
         } catch (SQLException e) {
-            System.err.println("SQLException in saveSaleAndGetId: " + e.getMessage());
-            e.printStackTrace();
+            showFailedAlert("خطأ", "خطأ في قاعدة البيانات");
             throw e;
         }
     }
@@ -1282,36 +1247,4 @@ public class salesController {
         timeline.play();
     }
 
-    private void showSuccessAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/success.png")));
-        alert.getDialogPane().setStyle("-fx-background-color: #e8f5e9;");
-        alert.showAndWait();
-    }
-
-    private void showWarningAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/warning.png")));
-        alert.getDialogPane().setStyle("-fx-background-color: #fff8e1;");
-        alert.showAndWait();
-    }
-
-    private void showFailedAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/fail.png")));
-        alert.getDialogPane().setStyle("-fx-background-color: #ffebee;");
-        alert.showAndWait();
-    }
 }

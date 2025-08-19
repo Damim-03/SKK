@@ -4,41 +4,30 @@ import com.example.library.model.Sale;
 import com.example.library.model.SaleItem;
 import com.example.library.util.DatabaseConnection;
 import javafx.application.Platform;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.print.*;
-import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.skin.TableViewSkin;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 import javafx.scene.transform.Transform;
 import javafx.stage.Stage;
-import javafx.util.Callback;
-
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
+import static com.example.library.Alert.alert.*;
+
 public class rapotsController {
-    @FXML
-    private TableView<SaleItem> salesTable;
 
     // Current sale information
     private int currentSaleId;
@@ -174,7 +163,7 @@ public class rapotsController {
     @FXML
     private void handleDelete() {
         if (currentSaleId == 0) {
-            showAlert(Alert.AlertType.WARNING, "خطأ", null, "لا يوجد فاتورة محددة للحذف.");
+            showFailedAlert("خطأ", "لا يوجد فاتورة محددة للحذف.");
             return;
         }
 
@@ -198,7 +187,7 @@ public class rapotsController {
                 itemsTableView.refresh();
 
                 // Show success message
-                showAlert(Alert.AlertType.INFORMATION, "تم الحذف", null,
+                showSuccessAlert("تم الحذف",
                         "تم حذف الفاتورة بنجاح.");
 
                 // Close the current window
@@ -206,8 +195,7 @@ public class rapotsController {
                 stage.close();
 
             } catch (SQLException e) {
-                showAlert(Alert.AlertType.ERROR, "خطأ", "فشل في الحذف",
-                        "حدث خطأ أثناء حذف الفاتورة: " + e.getMessage());
+                showFailedAlert("خطأ", "فشل في الحذف");
             }
         }
     }
@@ -247,7 +235,7 @@ public class rapotsController {
     @FXML
     private void handlePrint() {
         if (itemsTableView.getItems() == null || itemsTableView.getItems().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "تنبيه", null, "لا توجد عناصر للطباعة!");
+            showWarningAlert("تنبيه", "لا توجد عناصر للطباعة!");
             return;
         }
 
@@ -418,7 +406,7 @@ public class rapotsController {
     private void printHighQualityNode(Node node, Stage ownerWindow) {
         PrinterJob job = PrinterJob.createPrinterJob();
         if (job == null) {
-            showAlert(Alert.AlertType.ERROR, "Error", null, "Cannot create print job");
+            showWarningAlert( "تنبيه", "لا يمكن إنشاء مهمة الطباعة");
             return;
         }
 
@@ -468,12 +456,12 @@ public class rapotsController {
                 // 9. Print
                 if (job.printPage(layout, printContent)) {
                     job.endJob();
-                    showAlert(Alert.AlertType.INFORMATION, "Success", null, "Receipt printed");
+                    showSuccessAlert( "نجاح", "تم طباعة الإيصال");
                 } else {
-                    showAlert(Alert.AlertType.ERROR, "Error", null, "Print failed");
+                    showFailedAlert("خطأ", "فشل الطباعة");
                 }
             } catch (Exception e) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Print Exception", e.getMessage());
+                showFailedAlert("خطأ", "استثناء الطباعة");
             }
         }
     }
@@ -489,48 +477,5 @@ public class rapotsController {
             // Fallback to A4 if custom paper can't be created
             return Paper.A4;
         }
-    }
-
-    private void showAlert(Alert.AlertType type, String title, String header, String content) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(type);
-            alert.setTitle(title);
-            alert.setHeaderText(header);
-            alert.setContentText(content);
-            alert.show();
-        });
-    }
-
-    private void showSuccessAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/success.png")));
-        alert.getDialogPane().setStyle("-fx-background-color: #e8f5e9;");
-        alert.showAndWait();
-    }
-
-    private void showWarningAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/warning.png")));
-        alert.getDialogPane().setStyle("-fx-background-color: #fff8e1;");
-        alert.showAndWait();
-    }
-
-    private void showFailedAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/fail.png")));
-        alert.getDialogPane().setStyle("-fx-background-color: #ffebee;");
-        alert.showAndWait();
     }
 }

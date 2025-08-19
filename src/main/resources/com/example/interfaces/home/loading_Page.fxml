@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.layout.HBox?>
+
+<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity"
+            minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="327.0" prefWidth="620.0"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.library.controller.home.LoadingPageController">
+    <content>
+        <AnchorPane prefHeight="307.0" prefWidth="575.0">
+            <children>
+                <Rectangle fx:id="backgroundRectangle" arcHeight="5.0" arcWidth="5.0" fill="#6e757d66" height="22.0" layoutX="14.0" layoutY="275.0" stroke="BLACK" strokeType="INSIDE" width="571.0" />
+                <Rectangle fx:id="progressBar" arcHeight="5.0" arcWidth="5.0" fill="#2fabd1" height="22.0" layoutX="15.0" layoutY="275.0" stroke="BLACK" strokeType="INSIDE" width="0.0" />
+                <HBox layoutX="260.0" layoutY="275.0" spacing="5.0">
+                    <Label text="Loading " accessibleText="Loading progress" />
+                    <Label fx:id="percentageLabel" text="0%" accessibleText="Progress percentage" />
+                </HBox>
+                <ImageView fitHeight="298.0" fitWidth="613.0" layoutY="-1.0">
+                    <image>
+                        <Image url="@../../../../images/SKK-1.png" />
+                    </image>
+                </ImageView>
+            </children>
+        </AnchorPane>
+    </content>
+</ScrollPane>

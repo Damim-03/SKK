@@ -17,15 +17,6 @@
         <!-- Top bar with back button and title -->
         <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="60.0" spacing="10" style="-fx-padding: 10;">
             <children>
-                <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBackButtonAction" prefHeight="40.0" prefWidth="50.0">
-                    <graphic>
-                        <ImageView fitHeight="28.0" fitWidth="32.0" preserveRatio="true">
-                            <image>
-                                <Image url="@../../../../../images/back.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
                 <StackPane HBox.hgrow="ALWAYS">
                     <children>
                         <Label alignment="CENTER" text="المخزون">

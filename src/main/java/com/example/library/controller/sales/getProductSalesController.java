@@ -10,13 +10,14 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import static com.example.library.Alert.alert.showFailedAlert;
 
 public class getProductSalesController {
 
@@ -118,7 +119,7 @@ public class getProductSalesController {
             tableView.refresh();
 
         } catch (SQLException e) {
-            showAlert("Database Error", "Failed to load products: " + e.getMessage());
+            showFailedAlert("خطأ في قاعدة البيانات", "فشل تحميل المنتجات: " + e.getMessage());
         }
     }
 
@@ -195,7 +196,7 @@ public class getProductSalesController {
             }
 
         } catch (Exception e) {
-            System.err.println("Error loading image: " + e.getMessage());
+            showFailedAlert("خطأ", "خطأ في تحميل الصورة:" + e.getMessage());
         }
 
         return loadFallbackImage();
@@ -211,7 +212,7 @@ public class getProductSalesController {
                 return new Image(stream);
             }
         } catch (Exception e) {
-            System.err.println("Error loading fallback image: " + e.getMessage());
+            showFailedAlert("خطأ", "خطأ في تحميل الصورة:" + e.getMessage());
         }
         return null;
     }
@@ -245,14 +246,6 @@ public class getProductSalesController {
                     });
         }
         tableView.refresh();
-    }
-
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
     @FXML

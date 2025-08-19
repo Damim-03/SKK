@@ -6,9 +6,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-
 import java.util.HashSet;
 import java.util.Set;
+
+import static com.example.library.Alert.alert.showFailedAlert;
 
 public class updateProductTableController {
 
@@ -94,7 +95,7 @@ public class updateProductTableController {
 
     private boolean validateInput() {
         if (nameField.getText().isEmpty()) {
-            showAlert("خطأ", "يرجى إدخال اسم المنتج");
+            showFailedAlert("خطأ", "يرجى إدخال اسم المنتج");
             return false;
         }
 
@@ -102,7 +103,7 @@ public class updateProductTableController {
             Double.parseDouble(priceField.getText().replace(" DZ", "").trim());
             Integer.parseInt(quantityField.getText());
         } catch (NumberFormatException e) {
-            showAlert("خطأ", "يرجى إدخال قيم صحيحة للسعر والكمية");
+            showFailedAlert("خطأ", "يرجى إدخال قيم صحيحة للسعر والكمية");
             return false;
         }
 
@@ -159,11 +160,4 @@ public class updateProductTableController {
         });
     }
 
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
 }

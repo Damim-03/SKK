@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="522.0" prefWidth="824.0" spacing="0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.library.controller.home.ButtonController">
+<VBox prefHeight="522.0" prefWidth="900.0" spacing="0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.library.controller.home.ButtonController">
 
     <!-- Top bar -->
     <HBox alignment="CENTER_LEFT" prefHeight="39.0" style="-fx-background-color: #7ac7f0;">
@@ -30,6 +30,7 @@
                 <ColumnConstraints />
                 <ColumnConstraints />
                 <ColumnConstraints />
+            <ColumnConstraints />
             </columnConstraints>
 
             <rowConstraints>
@@ -110,6 +111,30 @@
                     <ImageView>
                         <image>
                             <Image url="@../../../../images/records.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button fx:id="inquiriesButton" contentDisplay="TOP" onAction="#handleinquiriesButtonAction" prefHeight="142.0" prefWidth="159.0" text="الاستعلامات" GridPane.columnIndex="3">
+                <font>
+                    <Font size="19.0" />
+                </font>
+                <graphic>
+                    <ImageView>
+                        <image>
+                            <Image url="@../../../../images/positive-dynamic.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button fx:id="PrintBarcodeButton" contentDisplay="TOP" onAction="#handlePrintBarcodeButtonAction" prefHeight="142.0" prefWidth="159.0" text="باركود" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                <font>
+                    <Font size="19.0" />
+                </font>
+                <graphic>
+                    <ImageView>
+                        <image>
+                            <Image url="@../../../../images/barcode.png" />
                         </image>
                     </ImageView>
                 </graphic>

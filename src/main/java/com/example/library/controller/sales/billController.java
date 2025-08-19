@@ -1,6 +1,5 @@
 package com.example.library.controller.sales;
 
-import com.example.library.model.Sale;
 import com.example.library.model.SaleItem;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -11,9 +10,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class billController {
-
-    @FXML
-    private TableView<SaleItem> salesTable;
 
     // Header Section
     @FXML private Label arabicTitleLabel;
@@ -56,8 +52,6 @@ public class billController {
     @FXML private Label returnDeadlineLabel;
     @FXML private Label copyrightLabel;
 
-    // Action Buttons
-    @FXML private Button printButton;
     @FXML private Button closeButton;
 
     @FXML
@@ -105,11 +99,6 @@ public class billController {
                 stage.close();
             });
         }
-
-        // Similarly for other buttons
-        if (printButton != null) {
-            printButton.setOnAction(event -> handlePrint());
-        }
     }
 
 
@@ -140,13 +129,6 @@ public class billController {
         } catch (NumberFormatException e) {
             return value;
         }
-    }
-
-    @FXML
-    private void handlePrint() {
-        // Implement printing logic here
-        // This could use PrinterJob as in your original code
-        System.out.println("Printing bill...");
     }
 
     // Getters for fields if needed by other controllers

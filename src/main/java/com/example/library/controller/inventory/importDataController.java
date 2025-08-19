@@ -175,7 +175,7 @@ public class importDataController {
             showSuccessAlert("نتيجة", alertMessage);
 
         } catch (Exception e) {
-            showAlert("خطأ", "حدث خطأ أثناء قراءة الملف: " + e.getMessage());
+            showFailedAlert("خطأ", "حدث خطأ أثناء قراءة الملف: " + e.getMessage());
         }
     }
 
