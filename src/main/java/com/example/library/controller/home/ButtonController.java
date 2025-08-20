@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.util.Objects;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
+
 import static com.example.library.Alert.alert.showFailedAlert;
 
 public class ButtonController {
@@ -18,7 +21,7 @@ public class ButtonController {
     @FXML
     public Button inventoryButton; // المخزون button
     @FXML
-    public Button expensesButton; // المصروفات button
+    public Button ExitButton; // الخروج button
     @FXML
     public Button purchasesButton; // المشتريات button
     @FXML
@@ -33,7 +36,6 @@ public class ButtonController {
     @FXML
     public void initialize() {
         // Optional: Initialize UI components or set default states
-        label.setText("Soubirate Kamel Kir"); // Ensure label text is set
     }
 
     @FXML
@@ -118,32 +120,12 @@ public class ButtonController {
     }
 
     @FXML
-    public void handleExpensesButtonAction(ActionEvent event) {
-        System.out.println("Expenses");
-        /*try {
-            // Load the FXML file for the add new product interface
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource(""));
-            javafx.scene.Parent root = loader.load();
-
-            // Create a new stage (window)
-            javafx.stage.Stage newStage = new javafx.stage.Stage();
-            newStage.setTitle("المصروفات");
-            newStage.setScene(new javafx.scene.Scene(root));
-
-            // Add icon to the stage
-            newStage.getIcons().add(new javafx.scene.image.Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/wallet.png"))));
-
-            // Set window properties
-            newStage.setResizable(false);
-            newStage.setMaximized(false);
-
-            // Show the new window
-            newStage.show();
-
-        } catch (IOException e) {
-            showFailedAlert("خطأ", "تعذر الانتقال الى شاشة المصروفات.");
-        }*/
+    public void handleExitButtonAction(ActionEvent event) {
+        // Get the stage from the button and close it
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.close();
     }
+
 
     @FXML
     public void handlePurchasesButtonAction(ActionEvent event) {
@@ -174,10 +156,9 @@ public class ButtonController {
 
     @FXML
     public void handleRecordsButtonAction(ActionEvent event) {
-        System.out.println("Records");
-        /*try {
+        try {
             // Load the FXML file for the add new product interface
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/interfaces/client/Form/clientForm.fxml"));
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/interfaces/records/Form/all_records.fxml"));
             javafx.scene.Parent root = loader.load();
 
             // Create a new stage (window)
@@ -197,15 +178,15 @@ public class ButtonController {
 
         } catch (IOException e) {
             showFailedAlert("خطأ", "تعذر الانتقال الى شاشة العملاء.");
-        }*/
+            e.printStackTrace();
+        }
     }
 
     @FXML
     public void handleinquiriesButtonAction(ActionEvent event) {
-        System.out.println("inquiries");
-        /*try {
+        try {
             // Load the FXML file for the add new product interface
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource(""));
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/interfaces/inquiries/Form/inquiries_Form.fxml"));
             javafx.scene.Parent root = loader.load();
 
             // Create a new stage (window)
@@ -225,7 +206,7 @@ public class ButtonController {
 
         } catch (IOException e) {
             showFailedAlert("خطأ", "تعذر الانتقال الى شاشة العملاء.");
-        }*/
+        }
     }
 
     @FXML
