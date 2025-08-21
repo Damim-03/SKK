@@ -374,7 +374,7 @@ public class ClientPayDebtController {
     private void handleExcelSave() {
         String clientName = clientNameMenu.getText();
         if (clientName == null || clientName.trim().isEmpty() || clientName.equals("اختر العميل...")) {
-            showAlert("تنبيه", "يرجى اختيار العميل أولاً!");
+            showWarningAlert("تنبيه", "يرجى اختيار العميل أولاً!");
             return;
         }
 
@@ -419,10 +419,9 @@ public class ClientPayDebtController {
         try (FileOutputStream fileOut = new FileOutputStream(file)) {
             workbook.write(fileOut);
             workbook.close();
-            showAlert("تم الحفظ", "تم حفظ الملف باسم: " + file.getAbsolutePath());
+            showSuccessAlert("تم الحفظ", "تم حفظ الملف.");
         } catch (IOException e) {
-            e.printStackTrace();
-            showAlert("خطأ", "فشل حفظ الملف: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل حفظ الملف.");
         }
     }
 
@@ -432,7 +431,7 @@ public class ClientPayDebtController {
         String customerName = clientNameMenu.getText().trim(); // Assuming clientNameMenu is defined
 
         if (customerId.isEmpty() || customerName.isEmpty() || customerName.equals("اختر العميل...")) {
-            showAlert("تنبيه", "الرجاء اختيار العميل أولاً.");
+            showWarningAlert("تنبيه", "الرجاء اختيار العميل أولاً.");
             return;
         }
 
@@ -446,13 +445,12 @@ public class ClientPayDebtController {
                 if (rs.next()) {
                     currentDebt = rs.getBigDecimal("amount");
                 } else {
-                    showAlert("تنبيه", "لا يوجد دين مستحق لهذا العميل.");
+                    showWarningAlert("تنبيه", "لا يوجد دين مستحق لهذا العميل.");
                     return;
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            showAlert("خطأ", "فشل في جلب بيانات الدين: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل في جلب بيانات الدين.");
             return;
         }
 
@@ -503,14 +501,12 @@ public class ClientPayDebtController {
             }
 
             conn.commit();
-            String message = "تم دفع الدين بنجاح. تم حذف البيانات.";
-            showAlert("تم", message);
+            showSuccessAlert("تم", "تم دفع الدين بنجاح. تم حذف البيانات.");
             handleExcelSave();
             handleRefresh(); // Assuming handleRefresh is defined
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            showAlert("خطأ", "فشل تسجيل الدفع: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل تسجيل الدفع: " + e.getMessage());
         }
     }
 }

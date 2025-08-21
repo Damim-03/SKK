@@ -18,6 +18,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static com.example.library.Alert.alert.showFailedAlert;
+import static com.example.library.Alert.alert.showSuccessAlert;
+
 public class DebtPaymentController {
 
     @FXML private TextField clientIdField;
@@ -76,7 +79,7 @@ public class DebtPaymentController {
             debtTable.setItems(paymentList);
 
         } catch (SQLException e) {
-            showError("خطأ في الاتصال بقاعدة البيانات", e.getMessage());
+            showFailedAlert("خطأ", "خطأ في الاتصال بقاعدة البيانات");
         }
     }
 
@@ -120,7 +123,7 @@ public class DebtPaymentController {
             debtTable.setItems(paymentList);
 
         } catch (SQLException e) {
-            showError("خطأ في البحث", e.getMessage());
+            showFailedAlert("خطأ", "خطأ في البحث.");
         }
     }
 
@@ -195,19 +198,10 @@ public class DebtPaymentController {
                 workbook.write(fileOut);
             }
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "تم حفظ الملف بنجاح!", ButtonType.OK);
-            alert.showAndWait();
+            showSuccessAlert("نجاح", "تم حفظ الملف بنجاح!");
 
         } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "فشل حفظ الملف: " + e.getMessage(), ButtonType.OK);
-            alert.showAndWait();
+            showFailedAlert("فشل", "فشل حفظ الملف.");
         }
-    }
-
-    private void showError(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }

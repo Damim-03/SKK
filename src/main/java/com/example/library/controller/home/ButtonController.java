@@ -126,7 +126,6 @@ public class ButtonController {
         stage.close();
     }
 
-
     @FXML
     public void handlePurchasesButtonAction(ActionEvent event) {
         try {
@@ -177,8 +176,7 @@ public class ButtonController {
             newStage.show();
 
         } catch (IOException e) {
-            showFailedAlert("خطأ", "تعذر الانتقال الى شاشة العملاء.");
-            e.printStackTrace();
+            showFailedAlert("خطأ", "تعذر الانتقال الى شاشة السجلات.");
         }
     }
 
@@ -205,7 +203,7 @@ public class ButtonController {
             newStage.show();
 
         } catch (IOException e) {
-            showFailedAlert("خطأ", "تعذر الانتقال الى شاشة العملاء.");
+            showFailedAlert("خطأ", "تعذر الانتقال الى شاشة الاستعلامات.");
         }
     }
 
@@ -232,7 +230,7 @@ public class ButtonController {
             newStage.show();
 
         } catch (IOException e) {
-            showFailedAlert("خطأ", "تعذر الانتقال الى شاشة العملاء.");
+            showFailedAlert("خطأ", "تعذر الانتقال الى شاشة باركود.");
         }
     }
 

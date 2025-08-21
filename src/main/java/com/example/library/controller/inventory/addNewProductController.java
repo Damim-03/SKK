@@ -244,7 +244,7 @@ public class addNewProductController {
             }
 
         } catch (SQLException | NumberFormatException e) {
-            showFailedAlert("خطأ في قاعدة البيانات", "هنالك خطأ في قاعدة البيانات الرجاء التحقق من سلامة قاعدة البيانات. " + e.getMessage());
+            showFailedAlert("خطأ في قاعدة البيانات", "هنالك خطأ في قاعدة البيانات الرجاء التحقق من سلامة قاعدة البيانات.");
         }
     }
 

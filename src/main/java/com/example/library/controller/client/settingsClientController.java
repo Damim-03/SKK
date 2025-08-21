@@ -127,7 +127,7 @@ public class settingsClientController {
                 showFailedAlert("خطأ", "لم يتم العثور على عميل برقم المعرف: " + searchId);
             }
         } catch (SQLException e) {
-            showFailedAlert("خطأ", "فشل البحث عن العميل: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل البحث عن العميل.");
         }
     }
 
@@ -171,7 +171,7 @@ public class settingsClientController {
                 tableView.getSelectionModel().selectFirst();
             }
         } catch (SQLException e) {
-            showFailedAlert("خطأ", "فشل البحث عن العميل: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل البحث عن العميل.");
         }
     }
 
@@ -248,7 +248,7 @@ public class settingsClientController {
                 showFailedAlert("خطأ", "فشل حذف العميل.");
             }
         } catch (SQLException e) {
-            showFailedAlert("خطأ", "فشل حذف العميل: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل حذف العميل");
         }
     }
 
@@ -274,7 +274,7 @@ public class settingsClientController {
                 clients.add(client);
             }
         } catch (SQLException e) {
-            showFailedAlert("خطأ", "فشل تحميل العملاء: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل تحميل العملاء.");
         }
     }
 }

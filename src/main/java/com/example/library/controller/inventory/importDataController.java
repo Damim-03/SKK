@@ -175,7 +175,7 @@ public class importDataController {
             showSuccessAlert("نتيجة", alertMessage);
 
         } catch (Exception e) {
-            showFailedAlert("خطأ", "حدث خطأ أثناء قراءة الملف: " + e.getMessage());
+            showFailedAlert("خطأ", "حدث خطأ أثناء قراءة الملف.");
         }
     }
 
@@ -449,8 +449,7 @@ public class importDataController {
 
         } catch (SQLException e) {
             showWarningAlert("تحذير",
-                    "خطأ أثناء إدخال المنتج:"
-                            + name + " - " + e.getMessage()
+                    "خطأ أثناء إدخال المنتج."
             );
             return false;
         }

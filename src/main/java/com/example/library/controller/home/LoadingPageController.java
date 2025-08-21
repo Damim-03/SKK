@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import java.util.Objects;
 import static com.example.library.Alert.alert.showFailedAlert;
+import static com.example.library.Alert.alert.showWarningAlert;
 
 public class LoadingPageController {
 
@@ -25,7 +26,7 @@ public class LoadingPageController {
     public void initialize() {
         // Validate FXML elements
         if (backgroundRectangle == null || progressBar == null || percentageLabel == null) {
-            System.err.println("Error: One or more FXML elements are null!");
+            showWarningAlert("خطأ", "الصورة غير موجودة.");
             return;
         }
 

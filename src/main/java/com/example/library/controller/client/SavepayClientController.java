@@ -117,8 +117,7 @@ public class SavepayClientController {
             debtTableView.setItems(sortedData);
 
         } catch (Exception e) {
-            showFailedAlert("خطأ", "فشل في تحميل بيانات الديون: " + e.getMessage());
-            e.printStackTrace();
+            showFailedAlert("خطأ", "فشل في تحميل بيانات الديون.");
         }
     }
 

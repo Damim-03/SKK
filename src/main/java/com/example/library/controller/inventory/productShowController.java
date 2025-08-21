@@ -80,7 +80,7 @@ public class productShowController {
                 showFailedAlert("المنتج غير موجود", "لم يتم العثور على منتج بالباركود: " + barcode);
             }
         } catch (SQLException e) {
-            showFailedAlert("خطأ في قاعدة البيانات", "فشل تحميل المنتج: " + e.getMessage());
+            showFailedAlert("خطأ في قاعدة البيانات", "فشل تحميل المنتج.");
         }
     }
 

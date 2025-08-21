@@ -113,10 +113,10 @@ public class getClientController {
                 clients.add(client);
                 tableView.getSelectionModel().select(client);
             } else {
-                showFailedAlert("خطأ", "لم يتم العثور على عميل برقم المعرف: " + searchId);
+                showFailedAlert("خطأ", "لم يتم العثور على عميل برقم المعرف.");
             }
         } catch (SQLException e) {
-            showFailedAlert("خطأ", "فشل البحث عن العميل: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل البحث عن العميل.");
         }
     }
 
@@ -156,7 +156,7 @@ public class getClientController {
                 clients.add(client);
             }
         } catch (SQLException e) {
-            showFailedAlert("خطأ", "فشل تحميل العملاء: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل تحميل العملاء");
         }
     }
 
@@ -177,7 +177,7 @@ public class getClientController {
                 customerImage.setImage(new Image(getClass().getResource(imagePath).toExternalForm()));
             }
         } catch (Exception e) {
-            showFailedAlert("خطأ", "فشل تحميل صورة العميل: تأكد من وجود الملف " + imagePath);
+            showFailedAlert("خطأ", "فشل تحميل صورة العميل: تأكد من وجود الملف.");
             customerImage.setImage(null);
         }
     }

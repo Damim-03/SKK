@@ -62,7 +62,7 @@ public class recordesClientController {
             initializeSearchFields();
             loadSalesData();
         } catch (Exception e) {
-            showFailedAlert("خطأ في التهيئة", "فشل في التهيئة: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل في التهيئة.");
         }
     }
 
@@ -157,7 +157,7 @@ public class recordesClientController {
             rapotsClientController controller = loader.getController();
             ObservableList<SaleItem> saleItems = loadSaleItems(sale.getSaleId());
             if (saleItems.isEmpty()) {
-                showWarningAlert("تحذير", "لا توجد منتجات لهذه الفاتورة (Sale ID: " + sale.getSaleId() + ")");
+                showWarningAlert("تحذير", "لا توجد منتجات لهذه الفاتورة.");
             }
             controller.setSaleData(sale, saleItems);
 
@@ -170,9 +170,9 @@ public class recordesClientController {
             raportStage.showAndWait();
 
         } catch (IOException e) {
-            showFailedAlert("خطأ", "تعذر فتح نافذة الفاتورة: " + e.getMessage());
+            showFailedAlert("خطأ", "تعذر فتح نافذة الفاتورة:");
         } catch (SQLException e) {
-            showFailedAlert("خطأ", "تعذر تحميل بيانات الفاتورة: " + e.getMessage());
+            showFailedAlert("خطأ", "تعذر تحميل بيانات الفاتورة:");
         }
     }
 
@@ -212,9 +212,9 @@ public class recordesClientController {
                     customerNameField.clear();
                 });
                 loadSalesData();
-                Platform.runLater(() -> showSuccessAlert("تحديث", "تم تحديث القائمة"));
+                Platform.runLater(() -> showSuccessAlert("تحديث", "تم تحديث القائمة."));
             } catch (Exception e) {
-                Platform.runLater(() -> showFailedAlert("خطأ", "فشل التحديث"));
+                Platform.runLater(() -> showFailedAlert("خطأ", "فشل التحديث."));
             } finally {
                 Platform.runLater(() -> refreshButton.setDisable(false));
             }
@@ -250,6 +250,6 @@ public class recordesClientController {
     }
 
     private void showDatabaseError(String title, SQLException e) {
-        showAlert("خطأ في قاعدة البيانات", title + ": " + e.getMessage());
+        showAlert("خطأ", "خطأ في قاعدة البيانات.");
     }
 }

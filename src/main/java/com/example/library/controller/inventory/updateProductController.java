@@ -105,7 +105,7 @@ public class updateProductController {
             tableView.refresh();
 
         } catch (SQLException e) {
-            showFailedAlert("خطأ في قاعد البيانات", "فشل تحميل المنتج:\n" + e.getMessage());
+            showFailedAlert("خطأ في قاعد البيانات", "فشل تحميل المنتج.");
         }
     }
 
@@ -212,7 +212,7 @@ public class updateProductController {
             stage.show();
 
         } catch (IOException e) {
-            showFailedAlert("خطأ", "فشل في فتح التحديث:\n" + e.getMessage());
+            showFailedAlert("خطأ", "فشل في فتح التحديث.");
         }
     }
 }

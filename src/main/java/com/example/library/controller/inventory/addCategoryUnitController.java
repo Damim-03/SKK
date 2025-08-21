@@ -41,7 +41,7 @@ public class addCategoryUnitController {
             categoryNameField.clear();
 
         } catch (SQLException e) {
-            showFailedAlert("خطأ", "فشل في حفظ التصنيف: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل في حفظ التصنيف.");
         }
     }
 

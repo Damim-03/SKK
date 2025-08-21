@@ -250,7 +250,7 @@ public class updateFormController {
                 showFailedAlert("خطأ", "فشل في تحديث المنتج:");
             }
         } catch (Exception e) {
-            showFailedAlert("خطأ", "فشل في تحديث المنتج: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل في تحديث المنتج.");
         }
     }
 

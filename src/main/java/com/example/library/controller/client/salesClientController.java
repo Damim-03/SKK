@@ -1,6 +1,7 @@
 package com.example.library.controller.client;
 
 
+import com.example.library.controller.sales.printFormController;
 import com.example.library.model.Debt;
 import com.example.library.model.SaleItem;
 import com.example.library.util.DatabaseConnection;
@@ -32,6 +33,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static com.example.library.Alert.alert.*;
+import static javax.swing.JOptionPane.showInputDialog;
 
 public class salesClientController {
 
@@ -514,7 +516,7 @@ public class salesClientController {
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
-            showFailedAlert("فشل", "تعذر فتح نافذة إضافة المنتج: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر فتح نافذة إضافة المنتج.");
         }
     }
 
@@ -622,7 +624,7 @@ public class salesClientController {
                 }
             }
         } catch (SQLException e) {
-            showFailedAlert("خطأ", "خطأ في تحديث المخزون: " + e.getMessage());
+            showFailedAlert("خطأ", "خطأ في تحديث المخزون.");
         }
     }
 
@@ -638,7 +640,7 @@ public class salesClientController {
                 stmt.setString(2, barcode);
             }
         } catch (SQLException e) {
-            showFailedAlert("خطأ", "خطأ في استعادة المخزون: " + e.getMessage());
+            showFailedAlert("خطأ", "خطأ في استعادة المخزون.");
         }
     }
 
@@ -723,7 +725,7 @@ public class salesClientController {
             }
             return barcode;
         } catch (SQLException e) {
-            showFailedAlert("خطأ", "تعذر الحصول على معرف المنتج: " + e.getMessage());
+            showFailedAlert("خطأ", "تعذر الحصول على معرف المنتج.");
             return barcode;
         }
     }
@@ -734,34 +736,44 @@ public class salesClientController {
             productSearchField.clear();
             productSearchField.requestFocus();
         } catch (Exception e) {
-            showFailedAlert("فشل", "تعذر إفراغ حقل الباركود: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر إفراغ حقل الباركود.");
         }
-    }
-
-    private String generate13DigitBarcode() {
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 12; i++) {
-            sb.append(random.nextInt(10));
-        }
-        int checksum = calculateEAN13Checksum(sb.toString());
-        sb.append(checksum);
-        return sb.toString();
-    }
-
-    private int calculateEAN13Checksum(String barcode) {
-        int sum = 0;
-        for (int i = 0; i < 12; i++) {
-            int digit = Character.getNumericValue(barcode.charAt(i));
-            sum += (i % 2 == 0) ? digit : digit * 3;
-        }
-        int mod = sum % 10;
-        return (10 - mod) % 10;
     }
 
     @FXML
     private void handlePrintButton() {
-        showWarningAlert("تنبيه", "وظيفة الطباعة لم يتم تنفيذها بعد!");
+        try {
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/interfaces/client/Form/printClientForm.fxml"));
+            Parent root = loader.load();
+
+            // Get the bill controller
+            printFormClientController controller = loader.getController();
+
+            // Prepare data to pass
+            ObservableList<SaleItem> items = productList; // Current items from salesTable
+            String subtotal = subtotalField.getText();    // Current subtotal
+            String discount = discountField.getText();    // Current discount
+            String debt = debtField.getText();            // Current debt
+            String total = totalField.getText();          // Current total
+            String date = dateField.getText();            // Current date (e.g., "2025-08-09")
+            String time = timeField.getText();
+
+            String customerName = clientNameMenu.getText();
+            String customerId = clientIdFeild.getText();// Current time (e.g., "00:56")
+
+            // Set the data in the bill controller
+            controller.setSalesClientData(items, subtotal, discount, debt, total, date, time, customerName, customerId);
+
+            Stage stage = new Stage();
+            stage.setTitle("الفاتورة");
+            stage.setScene(new Scene(root));
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/bill.png")));
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e) {
+            showFailedAlert("فشل", "تعذر فتح نافذة الفاتورة: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -941,7 +953,6 @@ public class salesClientController {
 
         } catch (Exception e) {
             showFailedAlert("خطأ", "تعذر حفظ الفاتورة: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -1028,7 +1039,7 @@ public class salesClientController {
             taxMenuButton.setText("0%");
             showSuccessAlert("نجاح", "تم مسح القائمة بنجاح!");
         } catch (Exception e) {
-            showFailedAlert("فشل", "تعذر مسح القائمة: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر مسح القائمة.");
         }
     }
 
@@ -1056,7 +1067,7 @@ public class salesClientController {
             productSearchField.requestFocus();
             showSuccessAlert("نجاح", "تم تحديث الصفحة بنجاح!");
         } catch (Exception e) {
-            showFailedAlert("فشل", "تعذر تحديث الصفحة: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر تحديث الصفحة.");
         }
     }
 
@@ -1072,7 +1083,7 @@ public class salesClientController {
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
-            showFailedAlert("فشل", "تعذر فتح تقرير الفواتير: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر فتح تقرير الفواتير.");
         }
     }
 
@@ -1094,7 +1105,7 @@ public class salesClientController {
             updateTotals();
             showSuccessAlert("نجاح", "تم حذف المنتج بنجاح!");
         } catch (Exception e) {
-            showFailedAlert("فشل", "تعذر حذف المنتج: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر حذف المنتج.");
         }
     }
 
@@ -1121,8 +1132,7 @@ public class salesClientController {
             newStage.show();
 
         } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Error opening add new product window: " + e.getMessage());
+            showFailedAlert("فشل", "فتح نافذ البحث.");
         }
     }
 
@@ -1165,7 +1175,7 @@ public class salesClientController {
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
-            showFailedAlert("فشل", "تعذر فتح نافذة تعديل المنتج");
+            showFailedAlert("فشل", "تعذر فتح نافذة تعديل المنتج.");
         }
     }
 
@@ -1256,15 +1266,15 @@ public class salesClientController {
             }
 
         } catch (SQLException e) {
-            showFailedAlert("خطأ", "تعذر حفظ الدين: " + e.getMessage());
+            showFailedAlert("خطأ", "تعذر حفظ الدين.");
         } catch (Exception e) {
-            showFailedAlert("خطأ", "خطأ غير متوقع: " + e.getMessage());
+            showFailedAlert("خطأ", "خطأ غير متوقع.");
         }
     }
 
     private void refreshDebtTable() {
         if (debtTableView == null) {
-            System.err.println("debtTableView is null in refreshDebtTable. Check FXML injection.");
+            showWarningAlert("تنبيه", "الجدول فارغ.");
             return;
         }
 
@@ -1294,7 +1304,7 @@ public class salesClientController {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            showFailedAlert("فشل", "تعذر تحديث الديون.");
         }
 
         debtTableView.setItems(debts);
@@ -1302,8 +1312,18 @@ public class salesClientController {
 
     @FXML
     private void handleHelp() {
-        // Implement help logic here
-        showWarningAlert("تنبيه", "وظيفة المساعدة لم يتم تنفيذها بعد!");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/interfaces/sales/Form/help.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("مساعدة");
+            stage.setScene(new Scene(root));
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/help.png")));
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e) {
+            showFailedAlert("فشل", "تعذر فتح نافذة المساعدة.");
+        }
     }
 
     @FXML
@@ -1320,7 +1340,7 @@ public class salesClientController {
             stage.show();
 
         } catch (IOException e) {
-            showFailedAlert("فشل", "تعذر فتح نافذة الفاتورة: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر فتح نافذة الفاتورة.");
         }
     }
 
@@ -1351,7 +1371,7 @@ public class salesClientController {
                     showFailedAlert("خطأ", "تعذر الوصول إلى نافذة التطبيق.");
                 }
             } catch (Exception e) {
-                showFailedAlert("خطأ", "خطأ في إعداد تحديث الوقت: " + e.getMessage());
+                showFailedAlert("خطأ", "خطأ في إعداد تحديث الوقت.");
             }
         });
     }

@@ -200,7 +200,7 @@ public class expirationController {
                 showAllProducts();
             }
         } catch (SQLException e) {
-            showFailedAlert("خطأ في قاعدة البيانات", "لم يتم عثور على المنتج :" + e.getMessage());
+            showFailedAlert("خطأ في قاعدة البيانات", "لم يتم عثور على المنتج.");
         }
     }
 

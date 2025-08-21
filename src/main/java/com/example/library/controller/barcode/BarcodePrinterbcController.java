@@ -32,7 +32,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.PdfWriter;
 
-import static com.example.library.Alert.alert.showWarningAlert;
+import static com.example.library.Alert.alert.*;
 
 public class BarcodePrinterbcController {
 
@@ -141,7 +141,7 @@ public class BarcodePrinterbcController {
         } catch (NumberFormatException e) {
             showWarningAlert("خطأ في الإدخال", "يرجى التأكد من إدخال قيم رقمية صحيحة في الحقول.");
         } catch (Exception e) {
-            showWarningAlert("خطأ", "حدث خطأ أثناء توليد الباركود: " + e.getMessage());
+            showWarningAlert("خطأ", "حدث خطأ أثناء توليد الباركود. ");
         }
     }
 
@@ -188,8 +188,10 @@ public class BarcodePrinterbcController {
             pdfImage.scaleToFit(500, 700);
             document.add(pdfImage);
             document.close();
+
+            showSuccessAlert("نجاح", "تم حفظ كا pdf.");
         } catch (Exception e) {
-            e.printStackTrace();
+            showFailedAlert("فشل", "تعذر حفظ كا pdf.");
         }
     }
 

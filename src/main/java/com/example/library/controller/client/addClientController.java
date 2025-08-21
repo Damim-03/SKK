@@ -48,7 +48,7 @@ public class addClientController {
         try {
             imageView.setImage(new Image(getClass().getResource(imagePath).toExternalForm()));
         } catch (NullPointerException e) {
-            showFailedAlert("خطأ", "فشل تحميل الصورة الافتراضية: تأكد من وجود الملف /images/images/image.png");
+            showFailedAlert("خطأ", "فشل تحميل الصورة الافتراضية.");
         }
     }
 
@@ -78,7 +78,7 @@ public class addClientController {
                 // Load image from file system using file URL
                 imageView.setImage(new Image(destPath.toUri().toString()));
             } catch (IOException e) {
-                showFailedAlert("خطأ", "فشل تحميل الصورة: " + e.getMessage());
+                showFailedAlert("خطأ", "فشل تحميل الصورة.");
             }
         }
     }
@@ -89,7 +89,7 @@ public class addClientController {
         try {
             imageView.setImage(new Image(getClass().getResource(imagePath).toExternalForm()));
         } catch (NullPointerException e) {
-            showFailedAlert("خطأ", "فشل تحميل الصورة الافتراضية: تأكد من وجود الملف /images/images/image.png");
+            showFailedAlert("خطأ", "فشل تحميل الصورة الافتراضية.");
         }
     }
 
@@ -133,10 +133,10 @@ public class addClientController {
             stmt.setString(4, address.isEmpty() ? null : address);
             stmt.setString(5, imagePath.equals("/images/image.png") ? null : imagePath);
             stmt.executeUpdate();
-            showAlert("نجاح", "تم حفظ العميل بنجاح: " + customerName);
+            showSuccessAlert("نجاح", "تم حفظ العميل بنجاح.");
             handleClearButtonAction(null);
         } catch (SQLException e) {
-            showAlert("خطأ", "فشل حفظ العميل: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل حفظ العميل." + e.getMessage());
         }
     }
 
@@ -150,7 +150,7 @@ public class addClientController {
         try {
             imageView.setImage(new Image(getClass().getResource(imagePath).toExternalForm()));
         } catch (NullPointerException e) {
-            showFailedAlert("خطأ", "فشل تحميل الصورة الافتراضية: تأكد من وجود الملف /images/image.png");
+            showFailedAlert("خطأ", "فشل تحميل الصورة الافتراضية.");
         }
         handleGenerateIdButtonAction(null); // Generate new ID after clearing
     }
@@ -182,7 +182,7 @@ public class addClientController {
                 }
             }
         } catch (SQLException e) {
-            showFailedAlert("خطأ", "فشل التحقق من رقم المعرف: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل التحقق من رقم المعرف.");
         }
         return generatedId;
     }

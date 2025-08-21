@@ -185,7 +185,7 @@ public class addproductSalesClientController {
                 return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
-            showFailedAlert("خطأ", "فشل التحقق من رمز المنتج: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل التحقق من رمز المنتج.");
             return true;
         }
         return false;

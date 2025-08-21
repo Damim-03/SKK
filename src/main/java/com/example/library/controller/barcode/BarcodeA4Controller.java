@@ -28,7 +28,6 @@ import javafx.stage.Stage;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
-
 import static com.example.library.Alert.alert.showWarningAlert;
 
 public class BarcodeA4Controller {
@@ -159,7 +158,6 @@ public class BarcodeA4Controller {
             e.printStackTrace();
         }
     }
-
 
     // ✅ دالة توليد صورة باركود
     private ImageView generateBarcodeImage(String code, int width, int height) throws WriterException {

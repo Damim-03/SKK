@@ -14,6 +14,8 @@ import javafx.util.Duration;
 import java.sql.*;
 import java.time.LocalDate;
 
+import static com.example.library.Alert.alert.showFailedAlert;
+
 public class InquiriesFormController {
 
     // 🟢 Labels (المستطيلات العلوية)
@@ -101,7 +103,6 @@ public class InquiriesFormController {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
             lblDailySalesCount.setText("خطأ في التحميل");
             lblDailyProfit.setText("خطأ في التحميل");
             lblInvoicesCount.setText("خطأ في التحميل");
@@ -132,7 +133,6 @@ public class InquiriesFormController {
             pieBestSellers.setTitle("أفضل المنتجات مبيعاً");
 
         } catch (Exception e) {
-            e.printStackTrace();
             pieBestSellers.setTitle("أفضل المنتجات مبيعاً - لا توجد بيانات");
         }
     }
@@ -165,7 +165,6 @@ public class InquiriesFormController {
             dailyAreaChart.setTitle("المبيعات اليومية خلال آخر 7 أيام");
 
         } catch (Exception e) {
-            e.printStackTrace();
             dailyAreaChart.setTitle("المبيعات اليومية - لا توجد بيانات");
         }
     }
@@ -201,7 +200,6 @@ public class InquiriesFormController {
             monthlyLineChart.setTitle("المبيعات الشهرية");
 
         } catch (Exception e) {
-            e.printStackTrace();
             monthlyLineChart.setTitle("المبيعات الشهرية - لا توجد بيانات");
         }
     }
@@ -298,7 +296,7 @@ public class InquiriesFormController {
             applyDataOrEmpty(pieStockLevels, stockLevels, "توزيع مستويات المخزون");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            showFailedAlert("خطأ" , "تغذر تحميل الاستعلام.");
         }
     }
 
@@ -365,7 +363,6 @@ public class InquiriesFormController {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
             lblDailyPurchasesCount.setText("خطأ في التحميل");
             lblDailyPurchaseCost.setText("خطأ في التحميل");
             lblPurchaseInvoicesCount.setText("خطأ في التحميل");
@@ -396,7 +393,6 @@ public class InquiriesFormController {
             pieTopPurchasedProducts.setTitle("أكثر المنتجات شراءً");
 
         } catch (Exception e) {
-            e.printStackTrace();
             pieTopPurchasedProducts.setTitle("أكثر المنتجات شراءً - لا توجد بيانات");
         }
     }
@@ -429,7 +425,6 @@ public class InquiriesFormController {
             dailyPurchaseAreaChart.setTitle("المشتريات اليومية خلال آخر 7 أيام");
 
         } catch (Exception e) {
-            e.printStackTrace();
             dailyPurchaseAreaChart.setTitle("المشتريات اليومية - لا توجد بيانات");
         }
     }
@@ -465,7 +460,6 @@ public class InquiriesFormController {
             monthlyPurchaseLineChart.setTitle("المشتريات الشهرية");
 
         } catch (Exception e) {
-            e.printStackTrace();
             monthlyPurchaseLineChart.setTitle("المشتريات الشهرية - لا توجد بيانات");
         }
     }
@@ -513,7 +507,6 @@ public class InquiriesFormController {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
             lblRegularClients.setText("خطأ في التحميل");
             lblDebtorClients.setText("خطأ في التحميل");
             lblTotalDebt.setText("خطأ في التحميل");
@@ -548,7 +541,6 @@ public class InquiriesFormController {
             pieClientsStatus.setTitle("حالة عملاء الديون");
 
         } catch (Exception e) {
-            e.printStackTrace();
             pieClientsStatus.setTitle("حالة عملاء الديون - لا توجد بيانات");
         }
     }
@@ -579,7 +571,6 @@ public class InquiriesFormController {
             areaDailySales.setTitle("مبيعات العملاء اليومية خلال آخر 7 أيام");
 
         } catch (Exception e) {
-            e.printStackTrace();
             areaDailySales.setTitle("مبيعات العملاء اليومية - لا توجد بيانات");
         }
     }
@@ -612,7 +603,6 @@ public class InquiriesFormController {
             lineMonthlySales.setTitle("مبيعات العملاء الشهرية");
 
         } catch (Exception e) {
-            e.printStackTrace();
             lineMonthlySales.setTitle("مبيعات العملاء الشهرية - لا توجد بيانات");
         }
     }

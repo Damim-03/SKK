@@ -479,7 +479,7 @@ public class PurchasesFormController {
                 );
             }
         } catch (SQLException e) {
-            showFailedAlert("فشل", "خطأ في قاعدة البيانات: " + e.getMessage());
+            showFailedAlert("فشل", "خطأ في قاعدة البيانات");
         }
         return null;
     }
@@ -517,7 +517,7 @@ public class PurchasesFormController {
             }
             return barcode; // Fallback if not found
         } catch (SQLException e) {
-            e.printStackTrace();
+            showFailedAlert("خطأ","تعذر الحصول على رقم المنتج.");
             return barcode; // Fallback on error
         }
     }
@@ -548,7 +548,7 @@ public class PurchasesFormController {
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
-            showFailedAlert("فشل", "تعذر فتح نافذة إضافة المنتج: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر فتح نافذة إضافة المنتج.");
         }
     }
 
@@ -584,7 +584,7 @@ public class PurchasesFormController {
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
-            showFailedAlert("فشل", "تعذر فتح نافذة الفاتورة: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر فتح نافذة الفاتورة.");
         }
     }
 
@@ -656,7 +656,7 @@ public class PurchasesFormController {
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
-            showFailedAlert("فشل", "تعذر فتح نافذة الطباعة: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر فتح نافذة الطباعة.");
         }
     }
 
@@ -768,7 +768,7 @@ public class PurchasesFormController {
             billStage.showAndWait();
 
         } catch (Exception e) {
-            showFailedAlert("خطأ", "تعذر حفظ الفاتورة: " + e.getMessage());
+            showFailedAlert("خطأ", "تعذر حفظ الفاتورة.");
         }
     }
 
@@ -846,11 +846,9 @@ public class PurchasesFormController {
                 conn.commit();
             }
         } catch (SQLException e) {
-            showFailedAlert("فشل", "تعذر حفظ الفاتورة: " + e.getMessage());
-            e.printStackTrace();
+            showFailedAlert("فشل", "تعذر حفظ الفاتورة.");
         } catch (Exception e) {
-            showFailedAlert("خطأ", "حدث خطأ غير متوقع: " + e.getMessage());
-            e.printStackTrace();
+            showFailedAlert("خطأ", "حدث خطأ غير متوقع.");
         }
     }
 
@@ -874,7 +872,7 @@ public class PurchasesFormController {
 
             showSuccessAlert("نجاح", "تم مسح القائمة بنجاح!");
         } catch (Exception e) {
-            showFailedAlert("فشل", "تعذر مسح القائمة: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر مسح القائمة.");
         }
     }
 
@@ -909,7 +907,7 @@ public class PurchasesFormController {
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
-            showFailedAlert("فشل", "تعذر فتح تقرير الفواتير: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر فتح تقرير الفواتير.");
         }
     }
 
@@ -936,7 +934,6 @@ public class PurchasesFormController {
             newStage.show();
 
         } catch (IOException e) {
-            e.printStackTrace();
             showFailedAlert("فشل", "تعذر فتح  شاشة البحث عن المنتج.");
         }
     }
@@ -953,7 +950,7 @@ public class PurchasesFormController {
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
-            showFailedAlert("فشل", "تعذر فتح نافذة المساعدة: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر فتح نافذة المساعدة.");
         }
     }
 
@@ -979,13 +976,7 @@ public class PurchasesFormController {
 
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
-            // Show error alert
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Failed to open calculator");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            showFailedAlert("خطأ", "تعذر فتح الحاسبة.");
         }
     }
 
@@ -1039,7 +1030,7 @@ public class PurchasesFormController {
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
-            showFailedAlert("فشل", "تعذر فتح نافذة تعديل المنتج: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر فتح نافذة تعديل المنتج.");
         }
     }
 
@@ -1089,7 +1080,7 @@ public class PurchasesFormController {
             handleClearList();
 
         } catch (Exception e) {
-            showFailedAlert("فشل", "تعذر معالجة الدفع: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر معالجة الدفع.");
         }
     }
 
@@ -1132,8 +1123,7 @@ public class PurchasesFormController {
                 }
             }
         } catch (SQLException e) {
-            String errorMessage = "تعذر حفظ الدفع: " + (e.getMessage() != null ? e.getMessage() : "خطأ غير محدد");
-            showFailedAlert("خطأ في قاعدة البيانات", errorMessage);
+            showFailedAlert("خطأ", "تعذر حفظ الدفع");
         }
     }
 

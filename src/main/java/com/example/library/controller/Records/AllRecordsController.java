@@ -124,8 +124,7 @@ public class AllRecordsController {
             clientIdField.textProperty().addListener((obs, oldVal, newVal) -> searchPayments());
             clientNameField.textProperty().addListener((obs, oldVal, newVal) -> searchPayments());
         } catch (Exception e) {
-            showFailedAlert("خطأ", "خطأ في التهيئة:" + e.getMessage());
-            LOGGER.log(Level.SEVERE, "Initialization error", e);
+            showFailedAlert("خطأ", "خطأ في التهيئة");
         }
     }
 
@@ -234,11 +233,9 @@ public class AllRecordsController {
             raportStage.showAndWait();
 
         } catch (IOException e) {
-            showFailedAlert("خطأ", "تعذر فتح نافذة الفاتورة: " + e.getMessage());
-            LOGGER.log(Level.SEVERE, "Failed to open bill window", e);
+            showFailedAlert("خطأ", "تعذر فتح نافذة الفاتورة.");
         } catch (SQLException e) {
-            showFailedAlert("خطأ", "تعذر تحميل بيانات الفاتورة: " + e.getMessage());
-            LOGGER.log(Level.SEVERE, "Failed to load sale items", e);
+            showFailedAlert("خطأ", "تعذر تحميل بيانات الفاتورة.");
         }
     }
 
@@ -315,7 +312,7 @@ public class AllRecordsController {
     }
 
     private void showDatabaseError(String title, SQLException e) {
-        Platform.runLater(() -> showFailedAlert("خطأ في قاعدة البيانات", title + ": " + e.getMessage()));
+        Platform.runLater(() -> showFailedAlert("خطأ",  "خطأ في قاعدة البيانات."));
         LOGGER.log(Level.SEVERE, title, e);
     }
 
@@ -424,11 +421,9 @@ public class AllRecordsController {
             raportStage.showAndWait();
 
         } catch (IOException e) {
-            showFailedAlert("خطأ", "تعذر فتح نافذة الفاتورة: " + e.getMessage());
-            LOGGER.log(Level.SEVERE, "Failed to open bill window", e);
+            showFailedAlert("خطأ", "تعذر فتح نافذة الفاتورة");
         } catch (SQLException e) {
-            showFailedAlert("خطأ", "تعذر تحميل بيانات الفاتورة: " + e.getMessage());
-            LOGGER.log(Level.SEVERE, "Failed to load sale items", e);
+            showFailedAlert("خطأ", "تعذر تحميل بيانات الفاتورة");
         }
     }
 
@@ -505,7 +500,7 @@ public class AllRecordsController {
     }
 
     private void showDatabaseError2(String title, SQLException e) {
-        Platform.runLater(() -> showFailedAlert("خطأ في قاعدة البيانات", title + ": " + e.getMessage()));
+        Platform.runLater(() -> showFailedAlert("خطأ",  "خطأ في قاعدة البيانات"));
         LOGGER.log(Level.SEVERE, title, e);
     }
 
@@ -533,7 +528,7 @@ public class AllRecordsController {
             debtTable.setItems(paymentList);
 
         } catch (SQLException e) {
-            showError("خطأ في الاتصال بقاعدة البيانات", e.getMessage());
+            showFailedAlert("خطأ", "خطأ في الاتصال بقاعدة البيانات");
         }
     }
 
@@ -577,7 +572,7 @@ public class AllRecordsController {
             debtTable.setItems(paymentList);
 
         } catch (SQLException e) {
-            showError("خطأ في البحث", e.getMessage());
+            showFailedAlert("خطأ", "خطأ في البحث");
         }
     }
 
@@ -652,20 +647,11 @@ public class AllRecordsController {
                 workbook.write(fileOut);
             }
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "تم حفظ الملف بنجاح!", ButtonType.OK);
-            alert.showAndWait();
+            showSuccessAlert("نجاح", "تم حفظ الملف بنجاح!");
 
         } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "فشل حفظ الملف: " + e.getMessage(), ButtonType.OK);
-            alert.showAndWait();
+            showFailedAlert("فشل", "فشل حفظ الملف.");
         }
-    }
-
-    private void showError(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
 }

@@ -54,7 +54,7 @@ public class updateClientController {
                 imageView.setImage(new Image(getClass().getResource(imagePath).toExternalForm()));
             }
         } catch (Exception e) {
-            showFailedAlert("خطأ", "فشل تحميل صورة العميل: " + e.getMessage());
+            showFailedAlert("خطأ", "فشل تحميل صورة العميل.");
             imageView.setImage(null);
         }
         generateIdButton.setVisible(false); // Hide for updates
@@ -89,7 +89,7 @@ public class updateClientController {
                 selectedImagePath = "/images/customers/" + fileName;
                 imageView.setImage(new Image(destPath.toUri().toString()));
             } catch (IOException e) {
-                showFailedAlert("خطأ", "فشل تحميل الصورة: " + e.getMessage());
+                showFailedAlert("خطأ", "فشل تحميل الصورة.");
             }
         }
     }
@@ -145,7 +145,7 @@ public class updateClientController {
                 showFailedAlert("خطأ", client == null ? "فشل إضافة العميل." : "فشل تحديث العميل.");
             }
         } catch (SQLException e) {
-            showFailedAlert("خطأ", (client == null ? "فشل إضافة العميل: " : "فشل تحديث العميل: ") + e.getMessage());
+            showFailedAlert("خطأ", (client == null ? "فشل إضافة العميل: " : "فشل تحديث العميل: "));
         }
     }
 
@@ -186,7 +186,7 @@ public class updateClientController {
                     exists = true;
                 }
             } catch (SQLException e) {
-                showFailedAlert("خطأ", "فشل التحقق من رقم المعرف: " + e.getMessage());
+                showFailedAlert("خطأ", "فشل التحقق من رقم المعرف.");
                 return null;
             }
         } while (exists);

@@ -119,7 +119,7 @@ public class getProductController {
             tableView.refresh();
 
         } catch (SQLException e) {
-            showFailedAlert("خطأ في قاعدة البيانات", "مشكلة في تحميل المنتجات" + e.getMessage());
+            showFailedAlert("خطأ في قاعدة البيانات", "مشكلة في تحميل المنتجات.");
         }
     }
 
@@ -196,7 +196,7 @@ public class getProductController {
             }
 
         } catch (Exception e) {
-            showFailedAlert("خطأ","فشل تحميل الصورة"+ e.getMessage());
+            showFailedAlert("خطأ","فشل تحميل الصورة.");
         }
 
         return loadFallbackImage();
@@ -212,7 +212,7 @@ public class getProductController {
                 return new Image(stream);
             }
         } catch (Exception e) {
-            showFailedAlert("خطأ","فشل تحميل الصورة"+ e.getMessage());
+            showFailedAlert("خطأ","فشل تحميل الصورة.");
         }
         return null;
     }

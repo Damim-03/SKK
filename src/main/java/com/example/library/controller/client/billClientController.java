@@ -175,7 +175,7 @@ public class billClientController {
                     if (generatedKeys.next()) {
                         saleId = generatedKeys.getInt(1);
                     } else {
-                        throw new SQLException("Failed to get generated sale_id.");
+                        throw new SQLException("فشل في الحصول على معرف البيع الذي تم إنشاؤه.");
                     }
                 }
 
@@ -208,10 +208,9 @@ public class billClientController {
                 }
             }
         } catch (IllegalArgumentException e) {
-            showFailedAlert("خطأ", "بيانات غير صالحة: " + e.getMessage());
+            showFailedAlert("خطأ", "بيانات غير صالحة.");
         } catch (Exception e) {
-            showFailedAlert("خطأ", "خطأ غير متوقع: " + e.getMessage());
-            e.printStackTrace();
+            showFailedAlert("خطأ", "خطأ غير متوقع.");
         } finally {
             if (conn != null) {
                 try {

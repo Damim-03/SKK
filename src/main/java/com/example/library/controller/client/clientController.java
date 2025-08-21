@@ -76,7 +76,7 @@ public class clientController {
             // Show the new window
             newStage.show();
         } catch (Exception e) {
-            showFailedAlert("عمليات شراء العميل", "عرض سجل مشتريات العميل");
+            showFailedAlert("فشل", "فشل عرض سجل مشتريات العميل");
         }
     }
 
@@ -103,7 +103,7 @@ public class clientController {
             // Show the new window
             newStage.show();
         } catch (Exception e) {
-            showFailedAlert("بحث العملاء", "فتح واجهة بحث العملاء.");
+            showFailedAlert("فشل", "فشل فتح واجهة بحث العملاء.");
         }
     }
 
@@ -130,7 +130,7 @@ public class clientController {
             // Show the new window
             newStage.show();
         } catch (Exception e) {
-            showFailedAlert("سداد الدين", " تعذر فتح نموذج سداد الدين.");
+            showFailedAlert("فشل", "فشل تعذر فتح نموذج سداد الدين.");
         }
     }
 
@@ -157,7 +157,7 @@ public class clientController {
             // Show the new window
             newStage.show();
         } catch (Exception e) {
-            showFailedAlert("إعدادات العميل", "تعذر فتح واجهة إعدادات العميل.");
+            showFailedAlert("فشل", "فشل تعذر فتح واجهة إعدادات العميل.");
         }
     }
 
@@ -188,9 +188,8 @@ public class clientController {
             newStage.show();
 
         } catch (Exception e) {
-            showFailedAlert("سجلات المبيعات", "تعذر عرض سجلات المبيعات.");
+            showFailedAlert("فشل", "فشل تعذر عرض سجلات المبيعات.");
             e.printStackTrace();
         }
     }
-
 }

@@ -91,7 +91,7 @@ public class inventoryButtonController {
             newStage.show();
 
         } catch (IOException e) {
-            showFailedAlert("خطأ", "فشل في فتح نافذة عرض المنتجات."+ e.getMessage());
+            showFailedAlert("خطأ", "فشل في فتح نافذة عرض المنتجات.");
         }
     }
 
@@ -115,7 +115,7 @@ public class inventoryButtonController {
             newStage.show();
 
         } catch (IOException e) {
-            showFailedAlert("خطأ", "فشل في فتح نافذة اضافة تصنيفات."+ e.getMessage());
+            showFailedAlert("خطأ", "فشل في فتح نافذة اضافة تصنيفات.");
         }
     }
 
@@ -142,7 +142,7 @@ public class inventoryButtonController {
             newStage.show();
 
         } catch (IOException e) {
-            showFailedAlert("خطأ", "فشل في فتح نافذة تعديل المنتجات."+ e.getMessage());
+            showFailedAlert("خطأ", "فشل في فتح نافذة تعديل المنتجات.");
         }
     }
     @FXML
@@ -168,7 +168,7 @@ public class inventoryButtonController {
             newStage.show();
 
         } catch (IOException e) {
-            showFailedAlert("خطأ", "فشل في فتح نافذة اضافة تصنيفات."+ e.getMessage());
+            showFailedAlert("خطأ", "فشل في فتح نافذة اضافة تصنيفات.");
         }
     }
 
@@ -195,7 +195,7 @@ public class inventoryButtonController {
             newStage.show();
 
         } catch (IOException e) {
-            showFailedAlert("خطأ", "فشل في فتح نافذة اضافة الوحدات."+ e.getMessage());
+            showFailedAlert("خطأ", "فشل في فتح نافذة اضافة الوحدات.");
         }
     }
 
@@ -222,7 +222,7 @@ public class inventoryButtonController {
             newStage.show();
 
         } catch (IOException e) {
-            showFailedAlert("خطأ", "فشل في فتح نافذة استيراد البيانات."+ e.getMessage());
+            showFailedAlert("خطأ", "فشل في فتح نافذة استيراد البيانات.");
         }
     }
 
@@ -249,7 +249,7 @@ public class inventoryButtonController {
             newStage.show();
 
         } catch (IOException e) {
-            showFailedAlert("خطأ", "فشل في فتح نافذة صلاحيات المنتج."+ e.getMessage());
+            showFailedAlert("خطأ", "فشل في فتح نافذة صلاحيات المنتج.");
         }
     }
 }

@@ -222,7 +222,6 @@ public class rapotsClientController {
                 stage.close();
 
             } catch (SQLException e) {
-                e.printStackTrace();
                 showFailedAlert("خطأ", "فشل في الحذف أو تحديث الديون.");
             }
         }

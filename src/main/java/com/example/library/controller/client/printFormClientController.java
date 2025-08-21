@@ -80,33 +80,6 @@ public class printFormClientController {
         setupButtons();
     }
 
-    public void initializeFormData(ObservableList<SaleItem> items,
-                                   double subtotal,
-                                   String discount,
-                                   String debt,
-                                   String customerName,
-                                   String customerId) {
-        // Set customer info
-        customerNameField.setText(customerName != null ? customerName : "غير محدد");
-        customerIdField.setText(customerId != null ? customerId : "غير محدد");
-
-        // Set current date/time
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-        issueDateField.setText(LocalDate.now().format(dateFormatter));
-        issueTimeField.setText(LocalTime.now().format(timeFormatter));
-
-        // Set table data
-        itemsTableView.setItems(items);
-
-        // Calculate and set totals
-        double total = subtotal - Double.parseDouble(discount) + Double.parseDouble(debt);
-        subtotalField.setText(String.format("%,.2f DZ", subtotal));
-        discountField.setText(String.format("%,.2f DZ", Double.parseDouble(discount)));
-        debtField.setText(String.format("%,.2f DZ", Double.parseDouble(debt)));
-        totalField.setText(String.format("%,.2f DZ", total));
-    }
-
     private void setupTableColumns() {
         idColumn.setCellValueFactory(new PropertyValueFactory<>("number"));
         productIdColumn.setCellValueFactory(new PropertyValueFactory<>("productId"));
@@ -119,13 +92,6 @@ public class printFormClientController {
         priceColumn.setCellFactory(col -> formatCurrencyCell());
         totalPriceColumn.setCellFactory(col -> formatCurrencyCell());
     }
-
-    public void setSaleItems(ObservableList<SaleItem> items) {
-        if (itemsTableView != null) {
-            itemsTableView.setItems(items);
-        }
-    }
-
 
     private TableCell<SaleItem, String> formatCurrencyCell() {
         return new TableCell<SaleItem, String>() {
@@ -160,29 +126,16 @@ public class printFormClientController {
         }
     }
 
-    public void setSaleData(Sale sale, ObservableList<SaleItem> saleItems) {
-        if (sale == null) return;
-
-        // Set customer info
-        customerNameField.setText(sale.getCustomerName());
-        customerIdField.setText(sale.getCustomerId());
-
-        // Set date/time
-        issueDateField.setText(sale.getSaleDate().toString());
-        issueTimeField.setText(sale.getSaleTime().toString());
-
-        // Set totals
-        subtotalField.setText(String.format("%.2f DZ", sale.getSubtotal()));
-        discountField.setText(String.format("%.2f DZ", sale.getDiscount()));
-        debtField.setText(String.format("%.2f DZ", sale.getDebt()));
-        totalField.setText(String.format("%.2f DZ", sale.getTotal()));
-
-        // Set table data
-        itemsTableView.setItems(saleItems);
+    private String formatCurrency(String value) {
+        try {
+            double amount = Double.parseDouble(value);
+            return String.format("%.2f DZ", amount);
+        } catch (NumberFormatException e) {
+            return value;
+        }
     }
 
-
-    public void setSalesData(ObservableList<SaleItem> items, String subtotal, String discount,
+    public void setSalesClientData(ObservableList<SaleItem> items, String subtotal, String discount,
                              String debt, String total, String date, String time,
                              String customerName, String customerId) {
         itemsTableView.setItems(items);
@@ -200,15 +153,6 @@ public class printFormClientController {
         // Set customer info
         customerNameField.setText(customerName != null ? customerName : "غير محدد");
         customerIdField.setText(customerId != null ? customerId : "غير محدد");
-    }
-
-    private String formatCurrency(String value) {
-        try {
-            double amount = Double.parseDouble(value);
-            return String.format("%.2f DZ", amount);
-        } catch (NumberFormatException e) {
-            return value;
-        }
     }
 
     @FXML
@@ -376,7 +320,7 @@ public class printFormClientController {
     private void printHighQualityNode(Node node, Stage ownerWindow) {
         PrinterJob job = PrinterJob.createPrinterJob();
         if (job == null) {
-            showWarningAlert("Error", "Cannot create print job");
+            showWarningAlert("خطأ", "لا يمكن إنشاء مهمة الطباعة.");
             return;
         }
 
@@ -426,12 +370,12 @@ public class printFormClientController {
                 // 9. Print
                 if (job.printPage(layout, printContent)) {
                     job.endJob();
-                    showSuccessAlert("Success", "Receipt printed");
+                    showSuccessAlert("نجاح", "تمت طباعة الإيصال.");
                 } else {
-                    showFailedAlert("Error", "Print failed");
+                    showFailedAlert("خطأ", "فشلت الطباعة.");
                 }
             } catch (Exception e) {
-                showFailedAlert("Error", "Print Exception");
+                showFailedAlert("خطأ", "استثناء الطباعة.");
             }
         }
     }

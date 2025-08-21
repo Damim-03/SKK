@@ -59,7 +59,7 @@ public class getRaportsPurchasesController {
             initializeSearchFields();
             loadPurchaseData();
         } catch (Exception e) {
-            showFailedAlert("فشل في التهيئة", "فشل في تهيئة " + e.getMessage());
+            showFailedAlert("فشل في التهيئة", "فشل في تهيئة.");
             LOGGER.log(Level.SEVERE, "Initialization Error", e);
         }
     }
@@ -168,9 +168,9 @@ public class getRaportsPurchasesController {
             raportStage.showAndWait();
 
         } catch (IOException e) {
-            showFailedAlert("خطأ", "تعذر فتح نافذة الفاتورة: " + e.getMessage());
+            showFailedAlert("خطأ", "تعذر فتح نافذة الفاتورة.");
         } catch (SQLException e) {
-            showFailedAlert("خطأ", "تعذر تحميل بيانات الفاتورة: " + e.getMessage());
+            showFailedAlert("خطأ", "تعذر تحميل بيانات الفاتورة.");
         }
     }
 

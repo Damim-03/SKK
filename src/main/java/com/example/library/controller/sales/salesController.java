@@ -481,7 +481,7 @@ public class salesController {
                 );
             }
         } catch (SQLException e) {
-            showFailedAlert("فشل", "خطأ في قاعدة البيانات: " + e.getMessage());
+            showFailedAlert("فشل", "خطأ في قاعدة البيانات.");
         }
         return null;
     }
@@ -549,7 +549,7 @@ public class salesController {
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
-            showFailedAlert("فشل", "تعذر فتح نافذة إضافة المنتج: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر فتح نافذة إضافة المنتج.");
         }
     }
 
@@ -585,7 +585,7 @@ public class salesController {
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
-            showFailedAlert("فشل", "تعذر فتح نافذة الفاتورة: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر فتح نافذة الفاتورة.");
         }
     }
 
@@ -657,7 +657,7 @@ public class salesController {
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
-            showFailedAlert("فشل", "تعذر فتح نافذة الفاتورة: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر فتح نافذة الفاتورة.");
         }
     }
 
@@ -775,7 +775,7 @@ public class salesController {
             billStage.showAndWait();
 
         } catch (Exception e) {
-            showFailedAlert("خطأ", "تعذر حفظ الفاتورة: " + e.getMessage());
+            showFailedAlert("خطأ", "تعذر حفظ الفاتورة.");
         }
     }
 
@@ -853,9 +853,9 @@ public class salesController {
                 conn.commit();
             }
         } catch (SQLException e) {
-            showFailedAlert("فشل", "تعذر حفظ الفاتورة: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر حفظ الفاتورة.");
         } catch (Exception e) {
-            showFailedAlert("خطأ", "حدث خطأ غير متوقع: " + e.getMessage());
+            showFailedAlert("خطأ", "حدث خطأ غير متوقع.");
         }
     }
 
@@ -879,7 +879,7 @@ public class salesController {
 
             showSuccessAlert("نجاح", "تم مسح القائمة بنجاح!");
         } catch (Exception e) {
-            showFailedAlert("فشل", "تعذر مسح القائمة: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر مسح القائمة.");
         }
     }
 
@@ -914,7 +914,7 @@ public class salesController {
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
-            showFailedAlert("فشل", "تعذر فتح تقرير الفواتير: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر فتح تقرير الفواتير.");
         }
     }
 
@@ -957,7 +957,7 @@ public class salesController {
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
-            showFailedAlert("فشل", "تعذر فتح نافذة المساعدة: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر فتح نافذة المساعدة.");
         }
     }
 
@@ -983,13 +983,7 @@ public class salesController {
 
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
-            // Show error alert
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Failed to open calculator");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            showFailedAlert("خطأ", "تعذر فتح الحاسبة.");
         }
     }
 
@@ -1043,7 +1037,7 @@ public class salesController {
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
-            showFailedAlert("فشل", "تعذر فتح نافذة تعديل المنتج: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر فتح نافذة تعديل المنتج.");
         }
     }
 
@@ -1093,7 +1087,7 @@ public class salesController {
             handleClearList();
 
         } catch (Exception e) {
-            showFailedAlert("فشل", "تعذر معالجة الدفع: " + e.getMessage());
+            showFailedAlert("فشل", "تعذر معالجة الدفع.");
         }
     }
 
@@ -1138,8 +1132,7 @@ public class salesController {
                 }
             }
         } catch (SQLException e) {
-            String errorMessage = "تعذر حفظ الدفع: " + (e.getMessage() != null ? e.getMessage() : "خطأ غير محدد");
-            showFailedAlert("خطأ في قاعدة البيانات", errorMessage);
+            showFailedAlert("خطأ", "تعذر حفظ الدفع");
         }
     }
 
