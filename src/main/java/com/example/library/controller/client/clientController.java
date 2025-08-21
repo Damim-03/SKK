@@ -2,7 +2,13 @@ package com.example.library.controller.client;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
+
 import java.util.Objects;
 import static com.example.library.Alert.alert.showFailedAlert;
 
@@ -157,27 +163,33 @@ public class clientController {
 
     @FXML
     private void handlerecordsClientButtonAction(ActionEvent event) {
-        try{
-            // Load the FXML file for the add new product interface
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/interfaces/client/Form/recordes_client.fxml"));
-            javafx.scene.Parent root = loader.load();
+        try {
+            // ✅ تأكد أن ملف الـ FXML موجود داخل src/main/resources بنفس المسار
+            FXMLLoader loader = new FXMLLoader(
+                    Objects.requireNonNull(getClass().getResource("/com/example/interfaces/client/Form/recordes_Client.fxml"))
+            );
+            Parent root = loader.load();
 
-            // Create a new stage (window)
-            javafx.stage.Stage newStage = new javafx.stage.Stage();
+            // ✅ إنشاء نافذة جديدة
+            Stage newStage = new Stage();
             newStage.setTitle("سجلات المبيعات");
-            newStage.setScene(new javafx.scene.Scene(root));
+            newStage.setScene(new Scene(root));
 
-            // Add icon to the stage
-            newStage.getIcons().add(new javafx.scene.image.Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/records.png"))));
+            // ✅ إضافة الأيقونة (تأكد أن الصورة موجودة في resources/images/)
+            newStage.getIcons().add(new Image(
+                    Objects.requireNonNull(getClass().getResourceAsStream("/images/records.png"))
+            ));
 
-            // Set window properties
+            // ✅ خصائص النافذة
             newStage.setResizable(false);
             newStage.setMaximized(false);
 
-            // Show the new window
+            // ✅ عرض النافذة
             newStage.show();
+
         } catch (Exception e) {
             showFailedAlert("سجلات المبيعات", "تعذر عرض سجلات المبيعات.");
+            e.printStackTrace();
         }
     }
 

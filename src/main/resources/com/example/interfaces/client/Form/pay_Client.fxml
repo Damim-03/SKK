@@ -27,10 +27,10 @@
                         </ImageView>
                     </graphic>
                 </Label>
-                <TextField fx:id="customerIdField" layoutX="41.0" layoutY="72.0" prefHeight="26.0" prefWidth="268.0" />
+                <TextField fx:id="searchCustomerIdField" layoutX="41.0" layoutY="72.0" prefHeight="26.0" prefWidth="268.0" />
                 <Label layoutX="319.0" layoutY="76.0" prefHeight="18.0" prefWidth="65.0" text="رقم العميل :" />
                 <Label layoutX="707.0" layoutY="76.0" text="اسم العميل :" />
-                <TextField fx:id="customerNameField" layoutX="427.0" layoutY="72.0" prefHeight="26.0" prefWidth="268.0" />
+                <TextField fx:id="searchCustomerNameField" layoutX="427.0" layoutY="72.0" prefHeight="26.0" prefWidth="268.0" />
                 <TableView fx:id="debtTableView" layoutX="14.0" layoutY="115.0" prefHeight="426.0" prefWidth="790.0">
                     <columns>
                         <TableColumn fx:id="colCustomerId" prefWidth="160.0" text="رقم العميل" />

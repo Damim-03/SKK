@@ -92,6 +92,8 @@ public class salesController {
         setupTaxMenu();
         setupDiscountMenu();
         setupDebtField();
+
+        productSearchField.requestFocus();
     }
 
     private void setupEventHandlers() {
@@ -946,7 +948,7 @@ public class salesController {
     @FXML
     private void handleHelp() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/interfaces/sales/help.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/interfaces/sales/Form/help.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("مساعدة");

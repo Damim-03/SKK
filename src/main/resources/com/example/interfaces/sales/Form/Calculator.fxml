@@ -1,147 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<?import javafx.scene.layout.RowConstraints?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.library.controller.sales.calculatorController"
-            prefWidth="320" prefHeight="450">
-    <stylesheets>
-        /* Root AnchorPane: Dark gray background */
-        .anchor-pane {
-        -fx-background-color: #212121;
-        }
+<AnchorPane prefHeight="400.0" prefWidth="300.0"
+            xmlns="http://javafx.com/javafx/15.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.library.controller.sales.calculatorController">
 
-        /* VBox: Transparent background for layout */
-        .vbox {
-        -fx-background-color: transparent;
-        }
+    <children>
+        <!-- Main display -->
+        <TextField fx:id="displayField" editable="false"
+                   layoutX="25.0" layoutY="15.0"
+                   nodeOrientation="RIGHT_TO_LEFT"
+                   prefHeight="75.0" prefWidth="250.0" text="0">
+            <font>
+                <Font size="40.0"/>
+            </font>
+        </TextField>
 
-        /* Display Label: White text, dark background, right-aligned, modern font */
-        .label#display {
-        -fx-font-size: 28px;
-        -fx-font-family: "Segoe UI";
-        -fx-text-fill: #FFFFFF;
-        -fx-background-color: #2A2A2A;
-        -fx-alignment: center-right;
-        -fx-padding: 0 15 0 15;
-        -fx-background-radius: 8;
-        -fx-border-radius: 8;
-        -fx-border-color: #3C3C3C;
-        -fx-border-width: 1;
-        }
+        <!-- Number buttons -->
+        <FlowPane layoutX="25.0" layoutY="125.0" prefHeight="180.0" prefWidth="180.0">
+            <children>
+                <Button text="1" prefHeight="60.0" prefWidth="60.0" onAction="#button1Clicked">
+                    <font><Font size="25.0"/></font>
+                </Button>
+                <Button text="2" prefHeight="60.0" prefWidth="60.0" onAction="#button2Clicked">
+                    <font><Font size="25.0"/></font>
+                </Button>
+                <Button text="3" prefHeight="60.0" prefWidth="60.0" onAction="#button3Clicked">
+                    <font><Font size="25.0"/></font>
+                </Button>
+                <Button text="4" prefHeight="60.0" prefWidth="60.0" onAction="#button4Clicked">
+                    <font><Font size="25.0"/></font>
+                </Button>
+                <Button text="5" prefHeight="60.0" prefWidth="60.0" onAction="#button5Clicked">
+                    <font><Font size="25.0"/></font>
+                </Button>
+                <Button text="6" prefHeight="60.0" prefWidth="60.0" onAction="#button6Clicked">
+                    <font><Font size="25.0"/></font>
+                </Button>
+                <Button text="7" prefHeight="60.0" prefWidth="60.0" onAction="#button7Clicked">
+                    <font><Font size="25.0"/></font>
+                </Button>
+                <Button text="8" prefHeight="60.0" prefWidth="60.0" onAction="#button8Clicked">
+                    <font><Font size="25.0"/></font>
+                </Button>
+                <Button text="9" prefHeight="60.0" prefWidth="60.0" onAction="#button9Clicked">
+                    <font><Font size="25.0"/></font>
+                </Button>
+                <Button text="0" prefHeight="60.0" prefWidth="60.0" onAction="#button0Clicked">
+                    <font><Font size="25.0"/></font>
+                </Button>
+                <Button text="=" prefHeight="60.0" prefWidth="60.0" onAction="#calculate">
+                    <font><Font size="25.0"/></font>
+                </Button>
+                <Button text="C" prefHeight="60.0" prefWidth="60.0" onAction="#clearTextField">
+                    <font><Font size="25.0"/></font>
+                </Button>
+            </children>
+        </FlowPane>
 
-        /* General Buttons: Flat design, rounded, smooth transitions */
-        .button {
-        -fx-background-color: #424242;
-        -fx-text-fill: #FFFFFF;
-        -fx-font-size: 18px;
-        -fx-font-family: "Segoe UI";
-        -fx-background-radius: 8;
-        -fx-border-radius: 8;
-        -fx-cursor: hand;
-        -fx-transition: background-color 0.2s ease-in-out;
-        }
+        <!-- Operators -->
+        <VBox layoutX="215.0" layoutY="125.0" prefHeight="240.0" prefWidth="60.0">
+            <children>
+                <Button text="+" prefHeight="60.0" prefWidth="60.0" onAction="#addAction">
+                    <font><Font size="25.0"/></font>
+                </Button>
+                <Button text="-" prefHeight="60.0" prefWidth="60.0" onAction="#minusAction">
+                    <font><Font size="25.0"/></font>
+                </Button>
+                <Button text="/" prefHeight="60.0" prefWidth="60.0" onAction="#divideAction">
+                    <font><Font size="25.0"/></font>
+                </Button>
+                <Button text="*" prefHeight="60.0" prefWidth="60.0" onAction="#multiplicationAction">
+                    <font><Font size="25.0"/></font>
+                </Button>
+            </children>
+        </VBox>
 
-        .button:hover {
-        -fx-background-color: #5C5C5C;
-        }
-
-        .button:pressed {
-        -fx-background-color: #2E2E2E;
-        }
-
-        /* Operator Buttons: Slightly lighter shade for distinction */
-        .button.operator {
-        -fx-background-color: #5A5A5A;
-        }
-
-        .button.operator:hover {
-        -fx-background-color: #737373;
-        }
-
-        .button.operator:pressed {
-        -fx-background-color: #454545;
-        }
-
-        /* Clear Button: Matches operator style */
-        .button.clear-button {
-        -fx-background-color: #5A5A5A;
-        }
-
-        .button.clear-button:hover {
-        -fx-background-color: #737373;
-        }
-
-        .button.clear-button:pressed {
-        -fx-background-color: #454545;
-        }
-
-        /* Equals Button: Vibrant blue for emphasis */
-        .button.equals {
-        -fx-background-color: #0288D1;
-        }
-
-        .button.equals:hover {
-        -fx-background-color: #03A9F4;
-        }
-
-        .button.equals:pressed {
-        -fx-background-color: #01579B;
-        }
-    </stylesheets>
-
-    <VBox alignment="CENTER" spacing="15" AnchorPane.topAnchor="15" AnchorPane.leftAnchor="15" AnchorPane.rightAnchor="15">
-        <!-- Display for calculator input/output -->
-        <Label fx:id="display" text="0" prefWidth="290" prefHeight="60" />
-
-        <!-- Button grid -->
-        <GridPane hgap="8" vgap="8" alignment="CENTER">
-            <columnConstraints>
-                <ColumnConstraints percentWidth="25" />
-                <ColumnConstraints percentWidth="25" />
-                <ColumnConstraints percentWidth="25" />
-                <ColumnConstraints percentWidth="25" />
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints percentHeight="20" />
-                <RowConstraints percentHeight="20" />
-                <RowConstraints percentHeight="20" />
-                <RowConstraints percentHeight="20" />
-                <RowConstraints percentHeight="20" />
-            </rowConstraints>
-
-            <!-- Row 1: Clear, Divide -->
-            <Button fx:id="clearBtn" text="C" GridPane.rowIndex="0" GridPane.columnIndex="0" prefWidth="65" prefHeight="65" onAction="#handleClear" styleClass="clear-button" />
-            <Button text="/" GridPane.rowIndex="0" GridPane.columnIndex="3" prefWidth="65" prefHeight="65" onAction="#handleOperator" styleClass="operator" />
-
-            <!-- Row 2: 7, 8, 9, Multiply -->
-            <Button text="7" GridPane.rowIndex="1" GridPane.columnIndex="0" prefWidth="65" prefHeight="65" onAction="#handleDigit" />
-            <Button text="8" GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="65" prefHeight="65" onAction="#handleDigit" />
-            <Button text="9" GridPane.rowIndex="1" GridPane.columnIndex="2" prefWidth="65" prefHeight="65" onAction="#handleDigit" />
-            <Button text="*" GridPane.rowIndex="1" GridPane.columnIndex="3" prefWidth="65" prefHeight="65" onAction="#handleOperator" styleClass="operator" />
-
-            <!-- Row 3: 4, 5, 6, Subtract -->
-            <Button text="4" GridPane.rowIndex="2" GridPane.columnIndex="0" prefWidth="65" prefHeight="65" onAction="#handleDigit" />
-            <Button text="5" GridPane.rowIndex="2" GridPane.columnIndex="1" prefWidth="65" prefHeight="65" onAction="#handleDigit" />
-            <Button text="6" GridPane.rowIndex="2" GridPane.columnIndex="2" prefWidth="65" prefHeight="65" onAction="#handleDigit" />
-            <Button text="-" GridPane.rowIndex="2" GridPane.columnIndex="3" prefWidth="65" prefHeight="65" onAction="#handleOperator" styleClass="operator" />
-
-            <!-- Row 4: 1, 2, 3, Add -->
-            <Button text="1" GridPane.rowIndex="3" GridPane.columnIndex="0" prefWidth="65" prefHeight="65" onAction="#handleDigit" />
-            <Button text="2" GridPane.rowIndex="3" GridPane.columnIndex="1" prefWidth="65" prefHeight="65" onAction="#handleDigit" />
-            <Button text="3" GridPane.rowIndex="3" GridPane.columnIndex="2" prefWidth="65" prefHeight="65" onAction="#handleDigit" />
-            <Button text="+" GridPane.rowIndex="3" GridPane.columnIndex="3" prefWidth="65" prefHeight="65" onAction="#handleOperator" styleClass="operator" />
-
-            <!-- Row 5: 0, Equals -->
-            <Button text="0" GridPane.rowIndex="4" GridPane.columnIndex="0" GridPane.columnSpan="2" prefWidth="138" prefHeight="65" onAction="#handleDigit" />
-            <Button text="=" GridPane.rowIndex="4" GridPane.columnIndex="2" GridPane.columnSpan="2" prefWidth="138" prefHeight="65" onAction="#handleEquals" styleClass="equals" />
-        </GridPane>
-    </VBox>
+        <!-- History display -->
+        <Text fx:id="historyText" layoutX="30.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0"/>
+    </children>
 </AnchorPane>

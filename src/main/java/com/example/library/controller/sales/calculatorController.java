@@ -2,198 +2,149 @@ package com.example.library.controller.sales;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
 
+/**
+ * Controller for the calculator UI, handling arithmetic operations and display updates.
+ */
 public class calculatorController {
-    @FXML
-    private Label display;
-
-    private double currentNumber = 0;
-    private double storedNumber = 0;
-    private String currentOperator = "";
-    private boolean newInput = true;
-    private boolean decimalEntered = false;
 
     @FXML
-    private void handleNumber(ActionEvent event) {
-        Button button = (Button) event.getSource();
-        String digit = button.getText();
+    private TextField displayField;
 
-        if (display.getText().length() >= 15) return; // Limit input length
+    @FXML
+    private Text historyText;
 
-        if (newInput) {
-            display.setText(digit);
-            newInput = false;
-        } else {
-            display.setText(display.getText() + digit);
+    private String firstOperand = "";
+    private String currentOperand = "";
+    private String operator = "";
+
+    /**
+     * Sets up the calculation by storing the first operand and operator.
+     * @param operator The arithmetic operator (+, -, *, /)
+     */
+    private void setupCalculation(String operator) {
+        if (!currentOperand.isEmpty()) {
+            this.operator = operator;
+            firstOperand = currentOperand;
+            currentOperand = "";
+            updateHistory(firstOperand + " " + operator);
         }
     }
 
     @FXML
-    private void handleDecimal(ActionEvent event) {
-        if (!display.getText().contains(".")) {
-            if (newInput) {
-                display.setText("0.");
-                newInput = false;
-            } else {
-                display.setText(display.getText() + ".");
+    void addAction(ActionEvent event) {
+        setupCalculation("+");
+    }
+
+    @FXML
+    void minusAction(ActionEvent event) {
+        setupCalculation("-");
+    }
+
+    @FXML
+    void divideAction(ActionEvent event) {
+        setupCalculation("/");
+    }
+
+    @FXML
+    void multiplicationAction(ActionEvent event) {
+        setupCalculation("*");
+    }
+
+    /**
+     * Performs the calculation based on the stored operator and operands.
+     */
+    @FXML
+    void calculate(ActionEvent event) {
+        if (firstOperand.isEmpty() || currentOperand.isEmpty() || operator.isEmpty()) {
+            return; // Prevent calculation with incomplete data
+        }
+
+        try {
+            double firstNum = Double.parseDouble(firstOperand);
+            double secondNum = Double.parseDouble(currentOperand);
+            double result;
+
+            switch (operator) {
+                case "+":
+                    result = firstNum + secondNum;
+                    break;
+                case "-":
+                    result = firstNum - secondNum;
+                    break;
+                case "/":
+                    if (secondNum == 0) {
+                        displayField.setText("Error: Division by zero");
+                        return;
+                    }
+                    result = firstNum / secondNum;
+                    break;
+                case "*":
+                    result = firstNum * secondNum;
+                    break;
+                default:
+                    return;
             }
-            decimalEntered = true;
+
+            updateHistory(firstOperand + " " + operator + " " + currentOperand + " = " + result);
+            displayField.setText(String.valueOf(result));
+            firstOperand = String.valueOf(result);
+            currentOperand = "";
+        } catch (NumberFormatException e) {
+            displayField.setText("Error: Invalid input");
         }
     }
 
+    /**
+     * Clears all operands, operator, and display fields.
+     */
     @FXML
-    private void handleOperator(ActionEvent event) {
-        Button button = (Button) event.getSource();
-        String operator = button.getText();
+    void clearTextField(ActionEvent event) {
+        firstOperand = "";
+        currentOperand = "";
+        operator = "";
+        displayField.setText("0");
+        historyText.setText("");
+    }
 
-        if (!newInput) {
-            calculate();
-            currentNumber = Double.parseDouble(display.getText());
-            currentOperator = operator;
-            newInput = true;
-            decimalEntered = false;
-        } else {
-            currentOperator = operator;
+    // --- Number buttons ---
+    @FXML void button0Clicked(ActionEvent e) { addDigit("0"); }
+    @FXML void button1Clicked(ActionEvent e) { addDigit("1"); }
+    @FXML void button2Clicked(ActionEvent e) { addDigit("2"); }
+    @FXML void button3Clicked(ActionEvent e) { addDigit("3"); }
+    @FXML void button4Clicked(ActionEvent e) { addDigit("4"); }
+    @FXML void button5Clicked(ActionEvent e) { addDigit("5"); }
+    @FXML void button6Clicked(ActionEvent e) { addDigit("6"); }
+    @FXML void button7Clicked(ActionEvent e) { addDigit("7"); }
+    @FXML void button8Clicked(ActionEvent e) { addDigit("8"); }
+    @FXML void button9Clicked(ActionEvent e) { addDigit("9"); }
+
+    /**
+     * Updates the display field with the current operand.
+     */
+    private void updateDisplay() {
+        displayField.setText(currentOperand.isEmpty() ? "0" : currentOperand);
+    }
+
+    /**
+     * Adds a digit to the current operand and updates the display.
+     * @param digit The digit to add (0-9)
+     */
+    private void addDigit(String digit) {
+        if (digit.equals("0") && currentOperand.equals("0")) {
+            return; // avoid multiple leading zeros
         }
+        currentOperand += digit;
+        updateDisplay();
     }
 
-    @FXML
-    private void handleEquals(ActionEvent event) {
-        if (!newInput) {
-            calculate();
-            newInput = true;
-            decimalEntered = false;
-            currentOperator = "";
-        }
-    }
-
-    @FXML
-    private void handleClear(ActionEvent event) {
-        display.setText("0");
-        currentNumber = 0;
-        storedNumber = 0;
-        currentOperator = "";
-        newInput = true;
-        decimalEntered = false;
-    }
-
-    @FXML
-    private void handleClearEntry(ActionEvent event) {
-        display.setText("0");
-        newInput = true;
-        decimalEntered = false;
-    }
-
-    @FXML
-    private void handleNegate(ActionEvent event) {
-        double value = Double.parseDouble(display.getText());
-        value *= -1;
-        display.setText(formatNumber(value));
-    }
-
-    @FXML
-    private void handlePercentage(ActionEvent event) {
-        double value = Double.parseDouble(display.getText());
-        value /= 100;
-        display.setText(formatNumber(value));
-    }
-
-    @FXML
-    private void handleSquare(ActionEvent event) {
-        double value = Double.parseDouble(display.getText());
-        value *= value;
-        display.setText(formatNumber(value));
-    }
-
-    @FXML
-    private void handleSquareRoot(ActionEvent event) {
-        double value = Double.parseDouble(display.getText());
-        if (value < 0) {
-            display.setText("Error");
-            newInput = true;
-            return;
-        }
-        value = Math.sqrt(value);
-        display.setText(formatNumber(value));
-    }
-
-    @FXML
-    private void handleReciprocal(ActionEvent event) {
-        double value = Double.parseDouble(display.getText());
-        if (value == 0) {
-            display.setText("Error");
-            newInput = true;
-            return;
-        }
-        value = 1 / value;
-        display.setText(formatNumber(value));
-    }
-
-    @FXML
-    private void handleMemoryStore(ActionEvent event) {
-        storedNumber = Double.parseDouble(display.getText());
-    }
-
-    @FXML
-    private void handleMemoryRecall(ActionEvent event) {
-        display.setText(formatNumber(storedNumber));
-        newInput = true;
-    }
-
-    @FXML
-    private void handleMemoryAdd(ActionEvent event) {
-        storedNumber += Double.parseDouble(display.getText());
-    }
-
-    @FXML
-    private void handleMemorySubtract(ActionEvent event) {
-        storedNumber -= Double.parseDouble(display.getText());
-    }
-
-    @FXML
-    private void handleMemoryClear(ActionEvent event) {
-        storedNumber = 0;
-    }
-
-    @FXML
-    private void handleMemorySwap(ActionEvent event) {
-        double temp = storedNumber;
-        storedNumber = Double.parseDouble(display.getText());
-        display.setText(formatNumber(temp));
-        newInput = true;
-    }
-
-    private void calculate() {
-        double secondNumber = Double.parseDouble(display.getText());
-        if (currentOperator.equals("/") && secondNumber == 0) {
-            display.setText("Error");
-            newInput = true;
-            currentOperator = "";
-            return;
-        }
-        switch (currentOperator) {
-            case "+":
-                currentNumber += secondNumber;
-                break;
-            case "-":
-                currentNumber -= secondNumber;
-                break;
-            case "×":
-                currentNumber *= secondNumber;
-                break;
-            case "/":
-                currentNumber /= secondNumber;
-                break;
-            default:
-                currentNumber = secondNumber;
-                break;
-        }
-        display.setText(formatNumber(currentNumber));
-    }
-
-    private String formatNumber(double value) {
-        return String.format("%.10f", value).replaceAll("0*$", "").replaceAll("\\.$", "");
+    /**
+     * Updates the history text with the current calculation state.
+     * @param text The text to display in the history
+     */
+    private void updateHistory(String text) {
+        historyText.setText(text);
     }
 }
