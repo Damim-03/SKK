@@ -1,5 +1,6 @@
 package com.example.library.controller.Records;
 
+import com.example.library.controller.Purchases.raportsPurchaseController;
 import com.example.library.controller.client.rapotsClientController;
 import com.example.library.controller.sales.rapotsController;
 import com.example.library.model.DebtPayment;
@@ -402,15 +403,15 @@ public class AllRecordsController {
     private void openBillWindow2(Sale sale) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/com/example/interfaces/sales/Form/raports.fxml"));
+                    "/com/example/interfaces/purchases/Form/raportspurchase.fxml"));
             Parent root = loader.load();
 
-            rapotsController controller = loader.getController();
+            raportsPurchaseController controller = loader.getController();
             ObservableList<SaleItem> saleItems = loadSaleItems2(sale.getSaleId());
             if (saleItems.isEmpty()) {
                 showWarningAlert("تحذير", "لا توجد منتجات لهذه الفاتورة (Sale ID: " + sale.getSaleId() + ")");
             }
-            controller.setSaleData(sale, saleItems);
+            controller.setPurchaseData(sale, saleItems);
 
             Stage raportStage = new Stage();
             raportStage.setTitle("فاتورة #" + sale.getSaleId());
