@@ -23,6 +23,7 @@ module com.example {
     opens com.example.library.controller.Purchases to javafx.fxml;
     opens com.example.library.controller.inquiries to javafx.fxml;
     opens com.example.library.controller.Records to javafx.fxml;
+    opens com.example.library.controller.ProductGateWay to javafx.fxml;
     opens com.example.library.model to javafx.base;
 
     exports com.example;
@@ -34,5 +35,6 @@ module com.example {
     exports com.example.library.controller.Purchases;
     exports com.example.library.controller.inquiries;
     exports com.example.library.controller.Records;
+    exports com.example.library.controller.ProductGateWay;
     exports com.example.library.model;
 }

@@ -71,6 +71,9 @@ public class LoadingPageController {
             homeStage.getIcons().add(new javafx.scene.image.Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/SKK-1.png"))));
 
             // Show the home screen
+
+            homeStage.setMaximized(true);
+
             homeStage.show();
 
             // Close the loading page stage

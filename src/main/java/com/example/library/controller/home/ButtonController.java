@@ -120,10 +120,28 @@ public class ButtonController {
     }
 
     @FXML
-    public void handleExitButtonAction(ActionEvent event) {
-        // Get the stage from the button and close it
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.close();
+    public void handleProductGatewayAction(ActionEvent event) {
+        try {
+            // Load the FXML file for the add new product interface
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/interfaces/Product/ProductScannerui.fxml"));
+            javafx.scene.Parent root = loader.load();
+
+            // Create a new stage (window)
+            javafx.stage.Stage newStage = new javafx.stage.Stage();
+            newStage.setTitle("بوابة المشتريات");
+            newStage.setScene(new javafx.scene.Scene(root));
+
+            // Add icon to the stage
+            newStage.getIcons().add(new javafx.scene.image.Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/product.png"))));
+
+            newStage.setMaximized(true);
+
+            // Show the new window
+            newStage.show();
+
+        } catch (IOException e) {
+            showFailedAlert("خطأ", "تعذر الانتقال الى شاشة بوابة المنتجات.");
+        }
     }
 
     @FXML
