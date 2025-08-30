@@ -128,7 +128,7 @@ public class ButtonController {
 
             // Create a new stage (window)
             javafx.stage.Stage newStage = new javafx.stage.Stage();
-            newStage.setTitle("بوابة المشتريات");
+            newStage.setTitle("بوابة المنتجات");
             newStage.setScene(new javafx.scene.Scene(root));
 
             // Add icon to the stage
