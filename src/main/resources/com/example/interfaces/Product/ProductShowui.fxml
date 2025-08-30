@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" prefHeight="780.0"
+            prefWidth="1470.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.library.controller.ProductGateWay.ProductPrice">
+    <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="800.0">
+            <children>
+                <ImageView fitHeight="825.0" fitWidth="1533.0" layoutX="-1.0" opacity="0.12" preserveRatio="false">
+                    <image>
+                        <Image url="@../../../../images/SKK-1.png" />
+                    </image>
+                    <AnchorPane.leftAnchor>-1.0</AnchorPane.leftAnchor>
+                    <AnchorPane.rightAnchor>-63.0</AnchorPane.rightAnchor>
+                    <AnchorPane.topAnchor>0.0</AnchorPane.topAnchor>
+                    <AnchorPane.bottomAnchor>-47.0</AnchorPane.bottomAnchor>
+                </ImageView>
+
+                <Label layoutX="1126.0" layoutY="10.4" style="-fx-text-fill: #2c3e50;" text="سوبيرات كمال كير">
+                    <font>
+                        <Font size="45.0" />
+                    </font>
+                    <AnchorPane.rightAnchor>13.200000000000045</AnchorPane.rightAnchor>
+                    <AnchorPane.topAnchor>10.4</AnchorPane.topAnchor>
+                </Label>
+
+                <Label style="-fx-text-fill: #2c3e50;" text="Soubirate Kamel Kir">
+                    <font>
+                        <Font size="45.0" />
+                    </font>
+                    <AnchorPane.leftAnchor>10.0</AnchorPane.leftAnchor>
+                    <AnchorPane.topAnchor>10.0</AnchorPane.topAnchor>
+                </Label>
+                <ImageView fx:id="productImage" fitHeight="400.0" fitWidth="459.0" layoutX="565.0" layoutY="103.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../../../../images/image.png" />
+                    </image>
+                </ImageView>
+                <TextField fx:id="productNameField" editable="false" layoutX="509.0" layoutY="531.0" prefHeight="71.0" prefWidth="501.0" />
+                <TextField fx:id="priceField" layoutX="511.0" layoutY="626.0" prefHeight="71.0" prefWidth="500.0" />
+            </children>
+        </AnchorPane>
+    </content>
+</ScrollPane>

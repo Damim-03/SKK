@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" prefHeight="780.0"
+            prefWidth="1470.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.library.controller.ProductGateWay.ProductShowPrices">
+   <content>
+      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="800.0">
+         <children>
+            <ImageView fitHeight="825.0" fitWidth="1533.0" layoutX="-1.0" opacity="0.12" preserveRatio="false">
+               <image>
+                  <Image url="@../../../../images/SKK-1.png" />
+               </image>
+               <AnchorPane.leftAnchor>-1.0</AnchorPane.leftAnchor>
+               <AnchorPane.rightAnchor>-63.0</AnchorPane.rightAnchor>
+               <AnchorPane.topAnchor>0.0</AnchorPane.topAnchor>
+               <AnchorPane.bottomAnchor>-47.0</AnchorPane.bottomAnchor>
+            </ImageView>
+
+            <Label layoutX="1126.0" layoutY="10.4" style="-fx-text-fill: #2c3e50;" text="سوبيرات كمال كير">
+               <font>
+                  <Font size="45.0" />
+               </font>
+               <AnchorPane.rightAnchor>13.200000000000045</AnchorPane.rightAnchor>
+               <AnchorPane.topAnchor>10.4</AnchorPane.topAnchor>
+            </Label>
+
+            <Label style="-fx-text-fill: #2c3e50;" text="Soubirate Kamel Kir">
+               <font>
+                  <Font size="45.0" />
+               </font>
+               <AnchorPane.leftAnchor>10.0</AnchorPane.leftAnchor>
+               <AnchorPane.topAnchor>10.0</AnchorPane.topAnchor>
+            </Label>
+
+            <TextField fx:id="barcodeField" editable="false" layoutX="298.6" layoutY="204.8" prefHeight="55.0" prefWidth="910.0" style="-fx-background-color: #ffffff; -fx-border-color: #3498db; -fx-border-width: 2; -fx-border-radius: 5; -fx-background-radius: 5; -fx-font-size: 18;">
+               <AnchorPane.leftAnchor>298.6</AnchorPane.leftAnchor>
+               <AnchorPane.rightAnchor>260.60000000000014</AnchorPane.rightAnchor>
+               <AnchorPane.topAnchor>204.8</AnchorPane.topAnchor>
+            </TextField>
+
+            <Label layoutX="453.0" layoutY="149.0" style="-fx-text-fill: #34495e;" text="الرجاء اظهار رقم المنتج (الباركود) لتعرف على تفاصيل المنتج">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+
+            <ImageView fx:id="bifaLogo" fitHeight="147.0" fitWidth="201.0" layoutX="52.0" layoutY="354.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../images/Bifa_logo.png" />
+               </image>
+            </ImageView>
+
+            <ImageView fx:id="canbebeLogo" fitHeight="75.0" fitWidth="307.0" layoutX="305.0" layoutY="395.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../images/canbebe-seeklogo.png" />
+               </image>
+            </ImageView>
+
+            <ImageView fx:id="cocacolaLogo" fitHeight="317.0" fitWidth="414.0" layoutX="639.0" layoutY="262.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../images/Coca-cola.png" />
+               </image>
+            </ImageView>
+
+            <ImageView fx:id="cevitalLogo" fitHeight="103.0" fitWidth="412.0" layoutX="1067.0" layoutY="375.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../images/cevital-seeklogo.png" />
+               </image>
+            </ImageView>
+
+            <ImageView fx:id="amorbenamorLogo" fitHeight="141.0" fitWidth="293.0" layoutX="54.0" layoutY="539.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../images/amorbenamor.jpg" />
+               </image>
+            </ImageView>
+
+            <ImageView fx:id="soummamLogo" fitHeight="157.0" fitWidth="342.0" layoutX="387.0" layoutY="530.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../images/soummam-seeklogo.png" />
+               </image>
+            </ImageView>
+
+            <ImageView fx:id="hamoudLogo" fitHeight="203.0" fitWidth="156.0" layoutX="805.0" layoutY="512.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../images/hamoud-lion-1878-seeklogo.png" />
+               </image>
+            </ImageView>
+
+            <ImageView fx:id="candiaLogo" fitHeight="149.0" fitWidth="377.0" layoutX="1079.0" layoutY="536.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../images/candia-seeklogo.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
+   </content>
+</ScrollPane>
