@@ -120,7 +120,7 @@ Damim_X_Adi 👍👍👍 https://github.com/Damim-03
 ---
 
 ## 📜 License
-This project is licensed under the [MIT License](./LICENSE).
+This project is licensed under the [MIT License](LICENSE).
 
 © 2025 Imadeddine Kir. All rights reserved.
 
