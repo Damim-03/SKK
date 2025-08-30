@@ -98,7 +98,7 @@ Tables include (example):
 
 
 ### 🏠 Home Dashboard
-![Home Dashboard](src/main/resources/images/HomeScreen.png)
+![Home Dashboard](src/main/resources/images/HomeScreen.PNG)
 
 ### 📦 Inventory Management
 ![Inventory Management](src/main/resources/images/ProductHomeScreen.PNG)
