@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="522.0" prefWidth="900.0" spacing="0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.library.controller.home.ButtonController">
+
+    <!-- Centered Grid -->
+    <StackPane VBox.vgrow="ALWAYS">
+        <GridPane alignment="CENTER" hgap="60" vgap="40">
+            <columnConstraints>
+                <ColumnConstraints />
+                <ColumnConstraints />
+                <ColumnConstraints />
+            <ColumnConstraints />
+            </columnConstraints>
+
+            <rowConstraints>
+                <RowConstraints />
+                <RowConstraints />
+            </rowConstraints>
+
+            <Button fx:id="salesButton" contentDisplay="TOP" onAction="#handleSalesButtonAction" prefHeight="142.0" prefWidth="159.0" text="المبيعات" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <font>
+                    <Font size="19.0" />
+                </font>
+                <graphic>
+                    <ImageView>
+                        <image>
+                            <Image url="@../../../../images/purchase.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <Button fx:id="inventoryButton" contentDisplay="TOP" onAction="#handleInventoryButtonAction" prefHeight="142.0" prefWidth="159.0" text="المخزون" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <font>
+                    <Font size="19.0" />
+                </font>
+                <graphic>
+                    <ImageView>
+                        <image>
+                            <Image url="@../../../../images/goods.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <Button fx:id="purchasesButton" contentDisplay="TOP" onAction="#handlePurchasesButtonAction" prefHeight="142.0" prefWidth="159.0" text="المشتريات" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                <font>
+                    <Font size="19.0" />
+                </font>
+                <graphic>
+                    <ImageView>
+                        <image>
+                            <Image url="@../../../../images/sales.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <Button fx:id="customersButton" contentDisplay="TOP" onAction="#handleCustomersButtonAction" prefHeight="142.0" prefWidth="159.0" text="العملاء" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <font>
+                    <Font size="19.0" />
+                </font>
+                <graphic>
+                    <ImageView>
+                        <image>
+                            <Image url="@../../../../images/client.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <Button fx:id="recordsButton" contentDisplay="TOP" onAction="#handleRecordsButtonAction" prefHeight="142.0" prefWidth="159.0" text="السجلات" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                <font>
+                    <Font size="19.0" />
+                </font>
+                <graphic>
+                    <ImageView>
+                        <image>
+                            <Image url="@../../../../images/records.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button fx:id="inquiriesButton" contentDisplay="TOP" onAction="#handleinquiriesButtonAction" prefHeight="142.0" prefWidth="159.0" text="الاستعلامات" GridPane.columnIndex="2">
+                <font>
+                    <Font size="19.0" />
+                </font>
+                <graphic>
+                    <ImageView>
+                        <image>
+                            <Image url="@../../../../images/positive-dynamic.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+         <Button fx:id="ExitButton" contentDisplay="TOP" onAction="#handleProductGatewayAction" prefHeight="142.0" prefWidth="159.0" text="بوابة المنتجات" GridPane.columnIndex="3" GridPane.rowIndex="1">
+            <font>
+               <Font size="19.0" />
+            </font>
+            <graphic>
+               <ImageView>
+                  <image>
+                     <Image url="@../../../../images/addproduct.png" />
+                  </image>
+               </ImageView>
+            </graphic>
+         </Button>
+         <Button fx:id="PrintBarcodeButton" contentDisplay="TOP" onAction="#handlePrintBarcodeButtonAction" prefHeight="142.0" prefWidth="159.0" text="باركود" GridPane.columnIndex="3">
+            <font>
+               <Font size="19.0" />
+            </font>
+            <graphic>
+               <ImageView>
+                  <image>
+                     <Image url="@../../../../images/barcode.png" />
+                  </image>
+               </ImageView>
+            </graphic>
+         </Button>
+        </GridPane>
+    </StackPane>
+</VBox>

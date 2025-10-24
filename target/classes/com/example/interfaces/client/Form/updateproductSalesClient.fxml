@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<AnchorPane prefHeight="343.0" prefWidth="426.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.library.controller.client.updateProductTableClientController">
+    <children>
+        <Label layoutX="132.0" layoutY="14.0" text="تعديل سعر للقائمة">
+            <font>
+                <Font name="System Bold" size="21.0" />
+            </font></Label>
+
+        <Label layoutX="334.0" layoutY="134.0" text="اسم المنتج :" />
+        <Label layoutX="334.0" layoutY="181.0" text="سعر المنتج :" />
+        <Label layoutX="344.0" layoutY="232.0" text="الكمية :" />
+
+        <TextField fx:id="nameField" layoutX="28.0" layoutY="133.0" prefHeight="26.0" prefWidth="288.0" />
+        <TextField fx:id="priceField" layoutX="28.0" layoutY="179.0" prefHeight="26.0" prefWidth="288.0" />
+        <TextField fx:id="quantityField" layoutX="28.0" layoutY="228.0" prefHeight="26.0" prefWidth="288.0" />
+
+        <Button fx:id="cancelButton" layoutX="241.0" layoutY="289.0" prefHeight="26.0" prefWidth="110.0" text="الغاء">
+            <graphic>
+                <ImageView fitHeight="28.0" fitWidth="28.0">
+                    <image>
+                        <Image url="@../../../../../images/cancel.png" />
+                    </image>
+                </ImageView>
+            </graphic></Button>
+        <Button fx:id="updateButton" layoutX="61.0" layoutY="289.0" prefHeight="26.0" prefWidth="110.0" text="تغيرر">
+            <graphic>
+                <ImageView fitHeight="28.0" fitWidth="28.0">
+                    <image>
+                        <Image url="@../../../../../images/cycle.png" />
+                    </image>
+                </ImageView>
+            </graphic></Button>
+        <TextField fx:id="generatedBarcode" editable="false" layoutX="28.0" layoutY="83.0" prefHeight="26.0" prefWidth="288.0" />
+        <Button fx:id="generatedBarcodeButton" layoutX="323.0" layoutY="83.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="76.0">
+            <graphic>
+                <ImageView fitHeight="20.0" fitWidth="62.0">
+                    <image>
+                        <Image url="@../../../../../images/barcode.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+    </children>
+</AnchorPane>

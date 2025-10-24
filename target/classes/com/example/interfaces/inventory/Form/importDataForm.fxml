@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="732.0" prefWidth="894.0"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.library.controller.inventory.importDataController">
+
+   <children>
+      <!-- عنوان الصفحة -->
+      <Label alignment="CENTER" layoutX="298.0" layoutY="14.0"
+             prefHeight="48.0" prefWidth="297.0"
+             text="استيراد بيانات المنتجات">
+         <font>
+            <Font name="System Bold" size="26.0" />
+         </font>
+         <graphic>
+            <ImageView>
+               <image>
+                  <Image url="@../../../../../images/excel.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Label>
+
+      <!-- وصف عام -->
+      <Label layoutX="99.0" layoutY="77.0" prefHeight="26.0" prefWidth="695.0"
+             text="ستمكنك هذه الشاشة من نقل البيانات من ملف اكسل الى قاعدة البيانات الخاصة بالمنتجات">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Label>
+
+      <!-- تعليمات خطوة 1 -->
+      <Label layoutX="238.0" layoutY="111.0" prefHeight="28.0" prefWidth="555.0"
+             text="الرجاء اتباع الخطوات التالية بهدف ادخال بيانات المنتجات بطريقة صحيحة">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Label>
+
+      <Label alignment="CENTER_RIGHT" layoutX="715.0" layoutY="156.0"
+             prefHeight="28.0" prefWidth="86.0" text="الخطوة 1: " textFill="RED">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Label>
+
+      <Label layoutX="333.0" layoutY="156.0" prefHeight="28.0" prefWidth="380.0"
+             text="ادخال المسار الصحيح للملف مع مراعاة عدم حذفه" textFill="RED">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Label>
+
+      <!-- حقل المسار -->
+      <TextField fx:id="pathField" layoutX="99.0" layoutY="198.0"
+                 prefHeight="38.0" prefWidth="510.0" promptText="مسار ملف Excel..." />
+
+      <!-- زر بحث -->
+      <Button fx:id="browseButton" layoutX="633.0" layoutY="199.0"
+              mnemonicParsing="false" prefHeight="28.0" prefWidth="163.0"
+              text="بحث" onAction="#handleBrowse">
+         <font>
+            <Font size="17.0" />
+         </font>
+      </Button>
+
+      <!-- تعليمات خطوة 2 -->
+      <Label alignment="CENTER_RIGHT" layoutX="705.0" layoutY="415.0"
+             prefHeight="28.0" prefWidth="95.0" text="الخطوة 2 : " textFill="RED">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Label>
+
+      <Label alignment="CENTER_RIGHT" layoutX="325.0" layoutY="415.0"
+             prefHeight="28.0" prefWidth="380.0" text="يجب التحقق من شكل جدول البيانات" textFill="RED">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Label>
+
+      <!-- صورة توضيحية 1 -->
+      <ImageView fitHeight="142.0" fitWidth="703.0" layoutX="98.0" layoutY="249.0">
+         <image>
+            <Image url="@../../../../../images/Capture2.PNG" />
+         </image>
+      </ImageView>
+
+      <!-- صورة توضيحية 2 -->
+      <ImageView fitHeight="56.0" fitWidth="707.0" layoutX="96.0" layoutY="455.0">
+         <image>
+            <Image url="@../../../../../images/Capture.PNG" />
+         </image>
+      </ImageView>
+
+      <!-- زر التحقق من البيانات -->
+      <Button fx:id="checkButton" layoutX="159.0" layoutY="643.0"
+              mnemonicParsing="false" prefHeight="38.0" prefWidth="194.0"
+              text="التحقق من البيانات" onAction="#handleCheckData" />
+
+      <!-- زر استيراد البيانات -->
+      <Button fx:id="importButton" layoutX="558.0" layoutY="643.0"
+              mnemonicParsing="false" prefHeight="38.0" prefWidth="194.0"
+              text="استيراد البيانات" onAction="#handleImportData" disable="true" />
+   </children>
+</AnchorPane>

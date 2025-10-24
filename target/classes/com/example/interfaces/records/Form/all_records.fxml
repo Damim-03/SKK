@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="502.0" prefWidth="825.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.library.controller.Records.AllRecordsController">
+   <children>
+      <TabPane prefHeight="622.0" prefWidth="1011.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="المبيعات">
+            <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="589.0" prefWidth="1006.0">
+                    <children>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" layoutX="0.0" layoutY="0.0" prefHeight="589.0" prefWidth="1006.0" vbarPolicy="AS_NEEDED">
+                            <content>
+                                <AnchorPane prefHeight="587.0" prefWidth="1005.0">
+                                    <children>
+
+                                        <!-- Title -->
+                                        <Label alignment="CENTER" layoutX="396.0" layoutY="8.0" prefHeight="38.0" prefWidth="167.0" text="كشف التقارير">
+                                            <font>
+                                                <Font name="System Bold" size="21.0" />
+                                            </font>
+                                       <graphic>
+      
+                                              <!-- Icon -->
+                                              <ImageView fitHeight="40.0" fitWidth="40.0">
+                                                  <image>
+                                                      <Image url="@../../../../../images/report-file.png" />
+                                                  </image>
+                                              </ImageView>
+                                       </graphic>
+                                        </Label>
+
+                                        <!-- Customer Name Field -->
+                                        <TextField fx:id="customerNameField" layoutX="562.0" layoutY="80.0" prefHeight="26.0" prefWidth="230.0" />
+                                        <Label layoutX="804.0" layoutY="83.0" prefHeight="18.0" prefWidth="68.0" text="اسم العميل :" />
+
+                                        <!-- Customer ID Field -->
+                                        <TextField fx:id="customerIdField" layoutX="65.0" layoutY="78.0" prefHeight="26.0" prefWidth="229.0" />
+                                        <Label layoutX="304.0" layoutY="82.0" prefHeight="18.0" prefWidth="68.0" text="رقم العميل :" />
+
+                                        <!-- Reports Table -->
+                                        <TableView fx:id="reportTableView" layoutX="14.0" layoutY="118.0" prefHeight="394.0" prefWidth="982.0">
+                                            <columns>
+                                                <TableColumn fx:id="numberColumn" prefWidth="75.0" text="الرقم" />
+                                                <TableColumn fx:id="customerIdColumn" prefWidth="113.6" text="رقم العميل" />
+                                                <TableColumn fx:id="customerNameColumn" prefWidth="113.6" text="اسم العميل" />
+                                                <TableColumn fx:id="subTotalColumn" prefWidth="113.6" text="المجموع الفرعي" />
+                                                <TableColumn fx:id="discountColumn" prefWidth="113.6" text="مبلغ الخصم" />
+                                                <TableColumn fx:id="debtColumn" prefWidth="92.0" text="الديون" />
+                                                <TableColumn fx:id="grandTotalColumn" prefWidth="135.2" text="المبلغ الاجمالي الكلي" />
+                                                <TableColumn fx:id="dateColumn" prefWidth="97.6" text="تاريخ التحرير" />
+                                                <TableColumn fx:id="timeColumn" prefWidth="129.6" text="وقت التحرير" />
+                                            </columns>
+                                        </TableView>
+
+                                        <!-- Show Button -->
+                                        <Button fx:id="showButton" layoutX="414.0" layoutY="534.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="194.0" text="اظهار">
+                                            <graphic>
+                                                <ImageView fitHeight="28.0" fitWidth="28.0">
+                                                    <image>
+                                                        <Image url="@../../../../../images/bill.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+
+                                        <!-- Cancel Button -->
+                                        <Button fx:id="cancelButton" layoutX="653.0" layoutY="534.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="194.0" text="الغاء">
+                                            <graphic>
+                                                <ImageView fitHeight="28.0" fitWidth="28.0">
+                                                    <image>
+                                                        <Image url="@../../../../../images/cancel.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+
+                                        <!-- Refresh Button -->
+                                        <Button fx:id="refreshButton" layoutX="180.0" layoutY="534.0" mnemonicParsing="false" onAction="#handleRefresh" prefHeight="39.0" prefWidth="194.0" text="تحديث القائمة">
+                                            <graphic>
+                                                <ImageView fitHeight="28.0" fitWidth="28.0">
+                                                    <image>
+                                                        <Image url="@../../../../../images/cycle.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </AnchorPane>
+                            </content>
+                        </ScrollPane>
+                    </children>
+                </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="المشتريات">
+            <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="589.0" prefWidth="1006.0">
+                    <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" layoutX="0.0" layoutY="0.0" prefHeight="589.0" prefWidth="1006.0" vbarPolicy="AS_NEEDED">
+                        <content>
+                            <AnchorPane prefHeight="589.0" prefWidth="1006.0">
+                                <children>
+
+                                    <!-- Title -->
+                                    <Label alignment="CENTER" layoutX="396.0" layoutY="8.0" prefHeight="38.0" prefWidth="167.0" text="كشف التقارير">
+                                        <font>
+                                            <Font name="System Bold" size="21.0" />
+                                        </font>
+                                    <graphic>
+      
+                                                      <!-- Icon -->
+                                          <ImageView fitHeight="40.0" fitWidth="40.0">
+                                              <image>
+                                                  <Image url="@../../../../../images/report-file.png" />
+                                              </image>
+                                          </ImageView>
+                                    </graphic>
+                                    </Label>
+
+                                    <!-- Customer Name Field -->
+                                    <TextField fx:id="customerNameField2" layoutX="562.0" layoutY="80.0" prefHeight="26.0" prefWidth="230.0" />
+                                    <Label layoutX="804.0" layoutY="83.0" prefHeight="18.0" prefWidth="68.0" text="اسم العميل :" />
+
+                                    <!-- Customer ID Field -->
+                                    <TextField fx:id="customerIdField2" layoutX="65.0" layoutY="78.0" prefHeight="26.0" prefWidth="229.0" />
+                                    <Label layoutX="304.0" layoutY="82.0" prefHeight="18.0" prefWidth="68.0" text="رقم العميل :" />
+
+                                    <!-- Reports Table -->
+                                    <TableView fx:id="reportTableView2" layoutX="14.0" layoutY="118.0" prefHeight="394.0" prefWidth="982.0">
+                                        <columns>
+                                            <TableColumn fx:id="numberColumn2" prefWidth="75.0" text="الرقم" />
+                                            <TableColumn fx:id="customerIdColumn2" prefWidth="113.6" text="رقم العميل" />
+                                            <TableColumn fx:id="customerNameColumn2" prefWidth="113.6" text="اسم العميل" />
+                                            <TableColumn fx:id="subTotalColumn2" prefWidth="113.6" text="المجموع الفرعي" />
+                                            <TableColumn fx:id="discountColumn2" prefWidth="113.6" text="مبلغ الخصم" />
+                                            <TableColumn fx:id="debtColumn2" prefWidth="92.0" text="الديون" />
+                                            <TableColumn fx:id="grandTotalColumn2" prefWidth="135.2" text="المبلغ الاجمالي الكلي" />
+                                            <TableColumn fx:id="dateColumn2" prefWidth="97.6" text="تاريخ التحرير" />
+                                            <TableColumn fx:id="timeColumn2" prefWidth="129.6" text="وقت التحرير" />
+                                        </columns>
+                                    </TableView>
+
+                                    <!-- Show Button -->
+                                    <Button fx:id="showButton2" layoutX="414.0" layoutY="534.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="194.0" text="اظهار">
+                                        <graphic>
+                                            <ImageView fitHeight="28.0" fitWidth="28.0">
+                                                <image>
+                                                    <Image url="@../../../../../images/bill.png" />
+                                                </image>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+
+                                    <!-- Cancel Button -->
+                                    <Button fx:id="cancelButton2" layoutX="653.0" layoutY="534.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="194.0" text="الغاء">
+                                        <graphic>
+                                            <ImageView fitHeight="28.0" fitWidth="28.0">
+                                                <image>
+                                                    <Image url="@../../../../../images/cancel.png" />
+                                                </image>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+
+                                    <!-- Refresh Button -->
+                                    <Button fx:id="refreshButton2" layoutX="180.0" layoutY="534.0" mnemonicParsing="false" onAction="#handleRefresh2" prefHeight="39.0" prefWidth="194.0" text="تحديث القائمة">
+                                        <graphic>
+                                            <ImageView fitHeight="28.0" fitWidth="28.0">
+                                                <image>
+                                                    <Image url="@../../../../../images/cycle.png" />
+                                                </image>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+
+                                </children>
+                            </AnchorPane>
+                        </content>
+                    </ScrollPane>
+                </AnchorPane>
+            </content>
+          </Tab>
+            <Tab text="العملاء">
+               <content>
+                  <AnchorPane prefHeight="589.0" prefWidth="1006.0">
+                     <children>
+                        <Label layoutX="396.0" layoutY="8.0" prefHeight="48.0" prefWidth="199.0" text="سجلات العملاء">
+                           <font>
+                              <Font name="System Bold" size="21.0" />
+                           </font>
+                           <graphic>
+                              <ImageView>
+                                 <image>
+                                    <Image url="@../../../../../images/records.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Label>
+                        <Label layoutX="804.0" layoutY="83.0" prefHeight="18.0" prefWidth="62.0" text="اسم العميل :" />
+                        <TextField fx:id="clientNameField" layoutX="562.0" layoutY="80.0" prefHeight="26.0" prefWidth="230.0" />
+                        <Label layoutX="304.0" layoutY="82.0" prefHeight="18.0" prefWidth="62.0" text="رقم العميل :" />
+                        <TextField fx:id="clientIdField" layoutX="65.0" layoutY="78.0" prefHeight="26.0" prefWidth="230.0" />
+                        <TableView fx:id="debtTable" layoutX="14.0" layoutY="118.0" prefHeight="394.0" prefWidth="980.0">
+                           <columns>
+                              <TableColumn fx:id="colPaymentId" prefWidth="111.2" text="رقم الدفع" />
+                              <TableColumn fx:id="colClientId" prefWidth="130.4" text="رقم العميل" />
+                              <TableColumn fx:id="colClientName" prefWidth="130.4" text="اسم العميل" />
+                              <TableColumn fx:id="colDebtAmount" prefWidth="135.2" text="مبلغ الدين المدفوع" />
+                              <TableColumn fx:id="colPaymentDate" prefWidth="123.2" text="تاريخ الدفع" />
+                              <TableColumn fx:id="colPaymentTime" prefWidth="115.2" text="ساعة الدفع" />
+                              <TableColumn fx:id="colPaymentStatus" prefWidth="101.6" text="حالة الدفع" />
+                           </columns>
+                        </TableView>
+                        <Button fx:id="btnCancel" layoutX="188.0" layoutY="534.0" mnemonicParsing="false" onAction="#handleCancel" prefHeight="39.0" prefWidth="194.0" text="الغاء">
+                           <graphic>
+                              <ImageView fitHeight="28.0" fitWidth="28.0">
+                                 <image>
+                                    <Image url="@../../../../../images/cancel.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="btnSaveAsExcel" layoutX="428.0" layoutY="534.0" mnemonicParsing="false" onAction="#handleSaveAsExcel" prefHeight="39.0" prefWidth="194.0" text="حفظ كاكسل">
+                           <graphic>
+                              <ImageView fitHeight="28.0" fitWidth="28.0">
+                                 <image>
+                                    <Image url="@../../../../../images/excel.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="btnRefresh" layoutX="678.0" layoutY="534.0" mnemonicParsing="false" onAction="#handleRefresh3" prefHeight="39.0" prefWidth="194.0" text="تحديث القائمة">
+                           <graphic>
+                              <ImageView fitHeight="28.0" fitWidth="28.0">
+                                 <image>
+                                    <Image url="@../../../../../images/cycle.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>

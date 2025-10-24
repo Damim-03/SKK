@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.util.Objects;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
@@ -68,27 +71,22 @@ public class ButtonController {
     @FXML
     public void handleInventoryButtonAction(ActionEvent event) {
         try {
-            // Load the FXML file for the add new product interface
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/interfaces/inventory/Form/inventory.fxml"));
-            javafx.scene.Parent root = loader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/interfaces/password/passwordGate.fxml"));
+            Parent root = loader.load();
 
-            // Create a new stage (window)
-            javafx.stage.Stage newStage = new javafx.stage.Stage();
-            newStage.setTitle("المخزون");
-            newStage.setScene(new javafx.scene.Scene(root));
+            Stage stage = new Stage();
+            stage.setTitle("التحقق من كلمة المرور");
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
 
-            // Add icon to the stage
-            newStage.getIcons().add(new javafx.scene.image.Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/goods.png"))));
+            // تمرير Stage إلى الكنترولر
+            PasswordGateController controller = loader.getController();
+            controller.setCurrentStage(stage);
 
-            // Set window properties
-            newStage.setResizable(false);
-            newStage.setMaximized(false);
-
-            // Show the new window
-            newStage.show();
+            stage.show();
 
         } catch (IOException e) {
-            showFailedAlert("خطأ", "تعذر الانتقال الى شاشة المخزن.");
+            showFailedAlert("خطأ", "تعذر فتح نافذة التحقق من كلمة المرور.");
         }
     }
 

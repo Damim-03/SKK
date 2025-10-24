@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<ScrollPane prefHeight="603.0" prefWidth="595.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.library.controller.client.billClientController">
+<content>
+    <AnchorPane prefHeight="842.0" prefWidth="595.0">
+        <children>
+            <Label fx:id="arabicTitleLabel" layoutX="361.0" layoutY="14.0" prefHeight="31.0" prefWidth="158.0" text="سوبيرات كمال كير">
+                <font>
+                    <Font size="21.0" />
+                </font>
+            </Label>
+            <Label fx:id="englishTitleLabel" layoutX="14.0" layoutY="14.0" prefHeight="31.0" prefWidth="185.0" text="Soubirate Kamel kir">
+                <font>
+                    <Font size="21.0" />
+                </font>
+            </Label>
+            <Label fx:id="arabicAddressLabel" layoutX="365.0" layoutY="51.0" prefHeight="18.0" prefWidth="142.0" text="حي الشهداء -x- قمار-الوادي" />
+            <Label fx:id="englishAddressLabel" layoutX="14.0" layoutY="51.0" prefHeight="18.0" prefWidth="200.0" text="Quartier Chouhada Gummar-El Oued" />
+            <Label fx:id="customerNameLabel" layoutX="436.0" layoutY="111.0" prefHeight="20.0" prefWidth="79.0" text="اسم العميل :">
+                <font>
+                    <Font size="14.0" />
+                </font>
+            </Label>
+            <TextField fx:id="customerNameField" layoutX="275.0" layoutY="108.0" prefHeight="28.0" prefWidth="150.0" />
+            <Button fx:id="barcodeButton" layoutX="180.0" layoutY="109.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="62.0">
+                <graphic>
+                    <ImageView fx:id="barcodeImageView" fitHeight="20.0" fitWidth="52.0">
+                        <image>
+                            <Image url="@../../../../../images/barcode.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <TextField fx:id="customerIdField" editable="false" layoutX="24.0" layoutY="108.0" prefHeight="28.0" prefWidth="150.0" />
+            <Label fx:id="issueDateLabel" layoutX="432.0" layoutY="148.0" prefHeight="20.0" prefWidth="86.0" text="تاريخ الاصدار :">
+                <font>
+                    <Font size="14.0" />
+                </font>
+            </Label>
+            <TextField fx:id="issueDateField" layoutX="275.0" layoutY="146.0" prefHeight="28.0" prefWidth="150.0" />
+            <Label fx:id="issueTimeLabel" layoutX="176.0" layoutY="150.0" prefHeight="20.0" prefWidth="86.0" text="وقت الاصدار :">
+                <font>
+                    <Font size="14.0" />
+                </font>
+            </Label>
+            <TextField fx:id="issueTimeField" layoutX="24.0" layoutY="146.0" prefHeight="28.0" prefWidth="150.0" />
+            <TableView fx:id="itemsTableView" layoutX="14.0" layoutY="185.0" prefHeight="400.0" prefWidth="558.0">
+                <columns>
+                    <TableColumn fx:id="idColumn" prefWidth="75.0" text="الرقم" />
+                    <TableColumn fx:id="productIdColumn" prefWidth="75.0" text="Barcode" />
+                    <TableColumn fx:id="productNameColumn" prefWidth="117.60005187988281" text="اسم المنتج" />
+                    <TableColumn fx:id="quantityColumn" prefWidth="63.199951171875" text="الكمية" />
+                    <TableColumn fx:id="priceColumn" prefWidth="63.199951171875" text="السعر" />
+                    <TableColumn fx:id="totalPriceColumn" prefWidth="109.60003662109375" text="السعر الاجمالي" />
+                </columns>
+            </TableView>
+            <ImageView fx:id="backgroundImageView" fitHeight="400.0" fitWidth="557.0" layoutX="15.0" layoutY="185.0" opacity="0.14">
+                <image>
+                    <Image url="@../../../../../images/SKK-1.png" />
+                </image>
+            </ImageView>
+            <Pane fx:id="valuesPane" layoutX="15.0" layoutY="600.0" prefHeight="230.0" prefWidth="300.0" style="-fx-background-color: #d1d1d1; -fx-border-color: #404040;">
+                <children>
+                    <TextField fx:id="subtotalField" alignment="CENTER" editable="false" layoutX="9.0" layoutY="18.0" prefHeight="37.0" prefWidth="278.0" promptText="0.00" style="-fx-background-color: #259aa1;">
+                        <font>
+                            <Font name="System Bold" size="17.0" />
+                        </font>
+                    </TextField>
+                    <TextField fx:id="discountField" alignment="CENTER" editable="false" layoutX="9.0" layoutY="63.0" prefHeight="37.0" prefWidth="278.0" promptText="0.00" style="-fx-background-color: #8456e8;">
+                        <font>
+                            <Font name="System Bold" size="17.0" />
+                        </font>
+                    </TextField>
+                    <TextField fx:id="debtField" alignment="CENTER" editable="false" layoutX="9.0" layoutY="106.0" prefHeight="37.0" prefWidth="277.0" promptText="0.00" style="-fx-background-color: #09b300;">
+                        <font>
+                            <Font size="17.0" />
+                        </font>
+                    </TextField>
+                    <TextField fx:id="totalField" alignment="CENTER" editable="false" layoutX="9.0" layoutY="151.0" prefHeight="70.0" prefWidth="277.0" promptText="0.00" style="-fx-background-color: red;">
+                        <font>
+                            <Font name="System Bold" size="30.0" />
+                        </font>
+                    </TextField>
+                </children>
+            </Pane>
+            <Pane fx:id="totalsPane" layoutX="322.0" layoutY="600.0" prefHeight="230.0" prefWidth="249.0" style="-fx-background-color: #d1d1d1; -fx-border-color: #404040;">
+                <children>
+                    <Label fx:id="subtotalLabel" alignment="CENTER" layoutX="5.0" layoutY="20.0" prefHeight="34.0" prefWidth="234.0" style="-fx-background-color: #259aa1;" text="المجموع الفرعي :">
+                        <font>
+                            <Font name="System Bold" size="15.0" />
+                        </font>
+                    </Label>
+                    <Label fx:id="discountLabel" alignment="CENTER" layoutX="5.0" layoutY="64.0" prefHeight="34.0" prefWidth="234.0" style="-fx-background-color: #8456e8;" text="مبلغ الخصم :">
+                        <font>
+                            <Font name="System Bold" size="15.0" />
+                        </font>
+                    </Label>
+                    <Label fx:id="debtLabel" alignment="CENTER" layoutX="6.0" layoutY="107.0" prefHeight="34.0" prefWidth="234.0" style="-fx-background-color: #09b300;" text="الديون :">
+                        <font>
+                            <Font name="System Bold" size="15.0" />
+                        </font>
+                    </Label>
+                    <Label fx:id="totalLabel" alignment="CENTER" layoutX="7.0" layoutY="151.0" prefHeight="70.0" prefWidth="234.0" style="-fx-background-color: red;" text="المبلغ الاجمالي الكلي :">
+                        <font>
+                            <Font name="System Bold" size="15.0" />
+                        </font>
+                    </Label>
+                </children>
+            </Pane>
+            <Label fx:id="returnPolicyLabel" layoutX="147.0" layoutY="848.0" prefHeight="18.0" prefWidth="332.0" text="في حالة طلب ارجاع المنتجات الرجاء التأكد من عدم التأخر في ارجاعها">
+                <font>
+                    <Font name="System Bold" size="12.0" />
+                </font>
+            </Label>
+            <Label fx:id="returnDeadlineLabel" alignment="CENTER" layoutX="143.0" layoutY="870.0" prefHeight="18.0" prefWidth="322.0" text="المدة لاخر الاجال هي 24 ساعة و لاتقبل في حالة استهلاكها" textFill="#ff0000">
+                <font>
+                    <Font name="System Bold" size="13.0" />
+                </font>
+            </Label>
+            <Label fx:id="copyrightLabel" alignment="CENTER" layoutX="157.0" layoutY="895.0" prefHeight="18.0" prefWidth="322.0" text="SKK All rights reserved">
+                <graphic>
+                    <ImageView fx:id="copyrightImageView" fitHeight="10.0" fitWidth="10.0">
+                        <image>
+                            <Image url="@../../../../../images/copyright.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Label>
+        </children>
+    </AnchorPane>
+</content>
+</ScrollPane>

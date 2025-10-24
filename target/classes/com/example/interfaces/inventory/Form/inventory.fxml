@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="544.0" prefWidth="836.0" spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.library.controller.inventory.inventoryButtonController">
+    <children>
+        <!-- Top bar with back button and title -->
+        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="60.0" spacing="10" style="-fx-padding: 10;">
+            <children>
+                <StackPane HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label alignment="CENTER" text="المخزون">
+                            <font>
+                                <Font name="Segoe UI Bold" size="26.0" />
+                            </font>
+                            <graphic>
+                                <ImageView fitHeight="48.0" fitWidth="48.0" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../../../../../images/goods.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Label>
+                    </children>
+                </StackPane>
+            </children>
+        </HBox>
+
+        <!-- Main content area with centered grid -->
+        <StackPane VBox.vgrow="ALWAYS">
+            <children>
+                <GridPane alignment="CENTER" hgap="30" vgap="30">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="180.0" prefWidth="180.0" />
+                        <ColumnConstraints minWidth="180.0" prefWidth="180.0" />
+                        <ColumnConstraints minWidth="180.0" prefWidth="180.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="150.0" prefHeight="150.0" />
+                        <RowConstraints minHeight="150.0" prefHeight="150.0" />
+                    </rowConstraints>
+
+                    <!-- First row buttons -->
+                    <Button fx:id="addNewProductButton" contentDisplay="TOP" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleAddNewProductButtonAction" text="اضافة منتج جديد" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <font>
+                            <Font size="14.0" />
+                        </font>
+                        <graphic>
+                            <ImageView>
+                                <image>
+                                    <Image url="@../../../../../images/add.png" />
+                                </image>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+
+                    <Button fx:id="viewProductsButton" contentDisplay="TOP" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleViewProductsButtonAction" text="عرض المنتجات" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <font>
+                            <Font size="14.0" />
+                        </font>
+                        <graphic>
+                            <ImageView fitHeight="48.0" fitWidth="48.0" preserveRatio="true">
+                                <image>
+                                    <Image url="@../../../../../images/zoom.png" />
+                                </image>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+
+                    <Button fx:id="addNewCategoryButton" contentDisplay="TOP" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleAddNewCategoryButtonAction" text="اضافة تصنيف جديد" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                        <font>
+                            <Font size="14.0" />
+                        </font>
+                        <graphic>
+                            <ImageView>
+                                <image>
+                                    <Image url="@../../../../../images/category.png" />
+                                </image>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+
+                    <!-- Second row buttons -->
+                    <Button fx:id="productExpirationButton" contentDisplay="TOP" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleProductExpirationButtonAction" text="صلاحية المنتجات" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <font>
+                            <Font size="14.0" />
+                        </font>
+                        <graphic>
+                            <ImageView fitHeight="48.0" fitWidth="48.0" preserveRatio="true">
+                                <image>
+                                    <Image url="@../../../../../images/date.png" />
+                                </image>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+
+                    <Button fx:id="importDataButton" contentDisplay="TOP" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleImportDataButtonAction" text="استيراد بيانات المنتجات" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <font>
+                            <Font size="14.0" />
+                        </font>
+                        <graphic>
+                            <ImageView fitHeight="48.0" fitWidth="48.0" preserveRatio="true">
+                                <image>
+                                    <Image url="@../../../../../images/excel.png" />
+                                </image>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+
+                    <Button fx:id="editPricesButton" contentDisplay="TOP" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleEditPricesButtonAction" text="تعديل اسعار المنتجات" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <font>
+                            <Font size="14.0" />
+                        </font>
+                        <graphic>
+                            <ImageView>
+                                <image>
+                                    <Image url="@../../../../../images/cycle.png" />
+                                </image>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                </GridPane>
+            </children>
+        </StackPane>
+    </children>
+</VBox>

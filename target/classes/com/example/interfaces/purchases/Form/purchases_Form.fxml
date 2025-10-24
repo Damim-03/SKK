@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="mainAnchorPane" prefHeight="728.0" prefWidth="1216.0" style="-fx-background-color: #d9dbdb;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.library.controller.Purchases.PurchasesFormController">
+   <children>
+      <Pane fx:id="headerPane" prefHeight="44.0" prefWidth="1216.0">
+         <children>
+            <Label fx:id="salesScreenLabel" layoutX="569.0" layoutY="11.0" prefHeight="25.0" prefWidth="118.0" text="شاشة المشتريات">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Label>
+            <HBox fx:id="headerHBox" alignment="CENTER_LEFT" layoutX="14.0" layoutY="7.0" spacing="10.0" />
+            <ImageView fx:id="dateIcon" fitHeight="28.0" fitWidth="28.0" layoutX="822.0" layoutY="9.0">
+               <image>
+                  <Image url="@../../../../../images/date.png" />
+               </image>
+            </ImageView>
+            <TextField fx:id="dateField" alignment="CENTER" layoutX="894.0" layoutY="11.0" prefHeight="25.0" prefWidth="78.0" text="2019-07-07" />
+            <Label fx:id="dateLabel" layoutX="858.0" layoutY="15.0" prefHeight="17.0" prefWidth="40.0" text="Date :" />
+            <ImageView fx:id="timeIcon" fitHeight="28.0" fitWidth="28.0" layoutX="994.0" layoutY="10.0">
+               <image>
+                  <Image url="@../../../../../images/time.png" />
+               </image>
+            </ImageView>
+            <TextField fx:id="timeField" alignment="CENTER" layoutX="1066.0" layoutY="12.0" prefHeight="25.0" prefWidth="92.0" text="03:56:09: PM" />
+            <Label fx:id="timeLabel" layoutX="1030.0" layoutY="16.0" prefHeight="17.0" prefWidth="40.0" text="Time :" />
+         </children>
+      </Pane>
+      <Pane fx:id="searchPane" layoutY="63.0" prefHeight="70.0" prefWidth="1209.0">
+         <children>
+            <TextField fx:id="productSearchField" layoutX="14.0" layoutY="19.0" prefHeight="34.0" prefWidth="209.0" />
+            <Button fx:id="barcodeButton" layoutX="231.0" layoutY="19.0" onAction="#handleBarcodeButtonAction" prefHeight="25.0" prefWidth="78.0" style="-fx-border-color: #a1a1a1;">
+               <graphic>
+                  <ImageView fx:id="barcodeIcon" fitHeight="24.0" fitWidth="50.0">
+                     <image>
+                        <Image url="@../../../../../images/barcode.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Label fx:id="quantityLabel" layoutX="555.0" layoutY="22.0" prefHeight="17.0" prefWidth="52.0" text="الكمية :">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <TextField fx:id="quantityField" layoutX="339.0" layoutY="19.0" prefHeight="32.0" prefWidth="209.0" />
+         </children>
+      </Pane>
+      <TableView fx:id="salesTable" layoutX="14.0" layoutY="133.0" prefHeight="272.0" prefWidth="991.0" style="-fx-border-color: #404040;">
+         <columns>
+            <TableColumn fx:id="colNumber" prefWidth="138.3999900817871" text="الرقم" />
+            <TableColumn fx:id="colBarcode" prefWidth="138.3999900817871" text="Barcode" />
+            <TableColumn fx:id="colProductName" prefWidth="328.7999725341797" text="اسم المنتج" />
+            <TableColumn fx:id="colQuantity" prefWidth="156.00006103515625" text="الكمية" />
+            <TableColumn fx:id="colPrice" prefWidth="160.79995727539062" text="السعر" />
+            <TableColumn fx:id="colTotalPrice" prefWidth="205.5999755859375" text="السعر الاجمالي" />
+         </columns>
+      </TableView>
+      <VBox fx:id="sidebarVBox" alignment="CENTER" layoutX="1038.0" layoutY="193.0" prefHeight="152.0" prefWidth="150.0" style="-fx-border-color: #404040;">
+         <children>
+            <Pane fx:id="imagePane" prefHeight="152.0" prefWidth="152.0" style="-fx-border-color: #404040;">
+               <children>
+                  <ImageView fx:id="productImageView" fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../../images/image.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </Pane>
+         </children>
+      </VBox>
+      <Pane fx:id="totalsPane" layoutX="958.0" layoutY="413.0" prefHeight="294.0" prefWidth="250.0" style="-fx-background-color: #d1d1d1; -fx-border-color: #404040;">
+         <children>
+            <Label fx:id="subtotalLabel" alignment="CENTER" layoutX="5.0" layoutY="20.0" prefHeight="34.0" prefWidth="234.0" style="-fx-background-color: #259aa1;" text="المجموع الفرعي :">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+            </Label>
+            <Label fx:id="discountLabel" alignment="CENTER" layoutX="5.0" layoutY="64.0" prefHeight="34.0" prefWidth="234.0" style="-fx-background-color: #8456e8;" text="مبلغ الخصم :">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+            </Label>
+            <Label fx:id="debtLabel" alignment="CENTER" layoutX="6.0" layoutY="107.0" prefHeight="34.0" prefWidth="234.0" style="-fx-background-color: #09b300;" text="الديون :">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+            </Label>
+            <Label fx:id="totalLabel" alignment="CENTER" layoutX="8.0" layoutY="210.0" prefHeight="70.0" prefWidth="234.0" style="-fx-background-color: red;" text="المبلغ الاجمالي الكلي :">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+            </Label>
+            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="6.0" layoutY="147.0" prefHeight="57.0" prefWidth="234.0" style="-fx-background-color: #faa2ea;" text="المبلغ الاجمالي الكلي باللغة العربية">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+      <Pane fx:id="valuesPane" layoutX="544.0" layoutY="413.0" prefHeight="294.0" prefWidth="407.0" style="-fx-background-color: #d1d1d1; -fx-border-color: #404040;">
+         <children>
+            <TextField fx:id="subtotalField" alignment="CENTER" editable="false" layoutX="9.0" layoutY="18.0" prefHeight="30.0" prefWidth="387.0" promptText="0.00 DZ" style="-fx-background-color: #259aa1;">
+               <font>
+                  <Font name="System Bold" size="17.0" />
+               </font>
+            </TextField>
+            <TextField fx:id="discountField" alignment="CENTER" editable="false" layoutX="9.0" layoutY="63.0" prefHeight="30.0" prefWidth="387.0" promptText="0.00 DZ" style="-fx-background-color: #8456e8;">
+               <font>
+                  <Font name="System Bold" size="17.0" />
+               </font>
+            </TextField>
+            <TextField fx:id="debtField" alignment="CENTER" editable="false" layoutX="9.0" layoutY="106.0" prefHeight="30.0" prefWidth="387.0" promptText="0.00 DZ" style="-fx-background-color: #09b300;">
+               <font>
+                  <Font name="System Bold" size="17.0" />
+               </font>
+            </TextField>
+            <TextField fx:id="totalField" alignment="CENTER" editable="false" layoutX="10.0" layoutY="210.0" prefHeight="70.0" prefWidth="387.0" promptText="0.00 DZ">
+               <font>
+                  <Font name="System Bold" size="30.0" />
+               </font>
+            </TextField>
+            <TextField fx:id="ArabicTotalField" alignment="CENTER" editable="false" layoutX="9.0" layoutY="147.0" prefHeight="57.0" prefWidth="387.0" style="-fx-background-color: #faa2ea;" />
+         </children>
+      </Pane>
+      <Pane fx:id="settingsPane" layoutX="15.0" layoutY="413.0" prefHeight="138.0" prefWidth="519.0" style="-fx-background-color: #d1d1d1; -fx-border-color: #404040;">
+         <children>
+            <Label fx:id="debtLabel2" alignment="CENTER_RIGHT" layoutX="433.0" layoutY="14.0" prefHeight="17.0" prefWidth="72.0" text="الديون :">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <TextField fx:id="debtField2" layoutX="278.0" layoutY="10.0" prefHeight="25.0" prefWidth="150.0" promptText="0">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </TextField>
+            <Label fx:id="taxLabel" alignment="CENTER_RIGHT" layoutX="427.0" layoutY="56.0" prefHeight="17.0" prefWidth="78.0" text="تكلفة الشحن  : ">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <MenuButton fx:id="taxMenuButton" layoutX="278.0" layoutY="52.0" prefHeight="25.0" prefWidth="111.0" text="MenuButton" />
+            <Label fx:id="discountRateLabel" alignment="CENTER_RIGHT" layoutX="427.0" layoutY="101.0" prefHeight="17.0" prefWidth="78.0" text="معدل الخصم :">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <MenuButton fx:id="discountMenuButton" layoutX="278.0" layoutY="97.0" prefHeight="25.0" prefWidth="111.0" text="MenuButton" />
+            <Label fx:id="discountPercentLabel" layoutX="400.0" layoutY="97.0">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Label>
+            <Button fx:id="payButton" layoutX="14.0" layoutY="8.0" prefHeight="115.0" prefWidth="243.0" style="-fx-border-color: #a1a1a1;" text="اثبات المشتريات">
+               <graphic>
+                  <ImageView fx:id="payIcon" fitHeight="40.0" fitWidth="40.0">
+                     <image>
+                        <Image url="@../../../../../images/pay.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Button>
+         </children>
+      </Pane>
+      <Pane fx:id="buttonsPane" layoutX="15.0" layoutY="556.0" prefHeight="152.0" prefWidth="519.0" style="-fx-background-color: #d1d1d1; -fx-border-color: #404040;">
+         <children>
+            <Button fx:id="addButton" layoutX="14.0" layoutY="12.0" onAction="#handleAddButtonAction" prefHeight="32.0" prefWidth="111.0" style="-fx-border-color: #a1a1a1;" text="اضافة">
+               <graphic>
+                  <ImageView fx:id="addIcon" fitHeight="28.0" fitWidth="28.0">
+                     <image>
+                        <Image url="@../../../../../images/add.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="billButton" layoutX="140.0" layoutY="57.0" prefHeight="32.0" prefWidth="111.0" style="-fx-border-color: #a1a1a1;" text=" الفاتورة">
+               <graphic>
+                  <ImageView fx:id="billIcon" fitHeight="28.0" fitWidth="28.0">
+                     <image>
+                        <Image url="@../../../../../images/bill.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="printButton" layoutX="267.0" layoutY="57.0" prefHeight="32.0" prefWidth="111.0" style="-fx-border-color: #a1a1a1;" text="طباعة">
+               <graphic>
+                  <ImageView fx:id="printIcon" fitHeight="28.0" fitWidth="28.0">
+                     <image>
+                        <Image url="@../../../../../images/printer.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="saveButton" layoutX="394.0" layoutY="12.0" prefHeight="38.0" prefWidth="111.0" style="-fx-border-color: #a1a1a1;" text="حفظ">
+               <graphic>
+                  <ImageView fx:id="saveIcon" fitHeight="28.0" fitWidth="28.0">
+                     <image>
+                        <Image url="@../../../../../images/saveas.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="clearListButton" layoutX="14.0" layoutY="57.0" prefHeight="38.0" prefWidth="111.0" style="-fx-border-color: #a1a1a1;" text="حذف القائمة">
+               <graphic>
+                  <ImageView fx:id="clearListIcon" fitHeight="28.0" fitWidth="28.0">
+                     <image>
+                        <Image url="@../../../../../images/delete-list.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="refreshButton" layoutX="394.0" layoutY="57.0" prefHeight="32.0" prefWidth="111.0" style="-fx-border-color: #a1a1a1;" text="تحديث">
+               <graphic>
+                  <ImageView fx:id="refreshIcon" fitHeight="28.0" fitWidth="28.0">
+                     <image>
+                        <Image url="@../../../../../images/cycle.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="billsReportButton" layoutX="140.0" layoutY="102.0" prefHeight="32.0" prefWidth="111.0" style="-fx-border-color: #a1a1a1;" text="كشف فواتير">
+               <graphic>
+                  <ImageView fx:id="billsReportIcon" fitHeight="28.0" fitWidth="28.0">
+                     <image>
+                        <Image url="@../../../../../images/report-file.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="searchButton" layoutX="14.0" layoutY="102.0" prefHeight="32.0" prefWidth="111.0" style="-fx-border-color: #a1a1a1;" text="البحث">
+               <graphic>
+                  <ImageView fx:id="searchIcon" fitHeight="28.0" fitWidth="28.0">
+                     <image>
+                        <Image url="@../../../../../images/search.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="helpButton" layoutX="394.0" layoutY="102.0" prefHeight="38.0" prefWidth="111.0" style="-fx-border-color: #a1a1a1;" text="المساعدة">
+               <graphic>
+                  <ImageView fx:id="helpIcon" fitHeight="28.0" fitWidth="28.0">
+                     <image>
+                        <Image url="@../../../../../images/help.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="calculButton" layoutX="267.0" layoutY="102.0" prefHeight="32.0" prefWidth="111.0" style="-fx-border-color: #a1a1a1;" text="الحاسبة ">
+               <graphic>
+                  <ImageView fx:id="calculIcon" fitHeight="28.0" fitWidth="28.0">
+                     <image>
+                        <Image url="@../../../../../images/calculator.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="deleteButton" layoutX="267.0" layoutY="12.0" prefHeight="32.0" prefWidth="111.0" style="-fx-border-color: #a1a1a1;" text="حذف">
+               <graphic>
+                  <ImageView fx:id="deleteIcon" fitHeight="28.0" fitWidth="28.0">
+                     <image>
+                        <Image url="@../../../../../images/delete.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="editButton" layoutX="140.0" layoutY="12.0" prefHeight="38.0" prefWidth="111.0" style="-fx-border-color: #a1a1a1;" text="تعديل ">
+               <graphic>
+                  <ImageView fx:id="editIcon" fitHeight="28.0" fitWidth="28.0">
+                     <image>
+                        <Image url="@../../../../../images/edit-quantity.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

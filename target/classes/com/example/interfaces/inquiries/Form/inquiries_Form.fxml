@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.AreaChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="675.0" prefWidth="912.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.library.controller.inquiries.InquiriesFormController">
+    <children>
+        <TabPane prefHeight="675.0" prefWidth="912.0" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <!-- تبويب المبيعات -->
+                <Tab text="المبيعات">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="571.0" prefWidth="998.0">
+                            <children>
+                                <!-- مستطيلات إحصائية -->
+                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="71.0" layoutX="257.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="188.0" />
+                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="71.0" layoutX="479.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="188.0" />
+                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="71.0" layoutX="699.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="188.0" />
+
+                                <!-- عناوين -->
+                                <Label layoutX="290.0" layoutY="22.0" prefHeight="20.0" prefWidth="123.0" text="عدد المبيعات اليومية">
+                                    <font><Font size="14.0" /></font>
+                                </Label>
+                                <Label layoutX="501.0" layoutY="22.0" prefHeight="20.0" prefWidth="156.0" text="صافي اجمالي الربح اليومي">
+                                    <font><Font size="14.0" /></font>
+                                </Label>
+                                <Label layoutX="735.0" layoutY="22.0" prefHeight="20.0" prefWidth="116.0" text="عدد الفواتير المخزنة">
+                                    <font><Font size="14.0" /></font>
+                                </Label>
+
+                                <!-- قيم المستطيلات -->
+                                <Label fx:id="lblDailySalesCount" alignment="CENTER" layoutX="281.0" layoutY="49.0" prefHeight="30.0" prefWidth="142.0" text="0 DZ">
+                                    <font><Font size="18.0" /></font>
+                                </Label>
+                                <Label fx:id="lblDailyProfit" alignment="CENTER" layoutX="492.0" layoutY="50.0" prefHeight="30.0" prefWidth="149.0" text="0 DZ">
+                                    <font><Font size="18.0" /></font>
+                                </Label>
+                                <Label fx:id="lblInvoicesCount" alignment="CENTER" layoutX="711.0" layoutY="49.0" prefHeight="30.0" prefWidth="149.0" text="0 فاتورة">
+                                    <font><Font size="18.0" /></font>
+                                </Label>
+
+                                <!-- الرسوم البيانية -->
+                                <PieChart fx:id="pieBestSellers" layoutX="558.0" layoutY="113.0" prefHeight="240.0" prefWidth="330.0" />
+                                <AreaChart fx:id="dailyAreaChart" layoutX="23.0" layoutY="113.0" prefHeight="240.0" prefWidth="500.0">
+                                    <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
+                                    <yAxis><NumberAxis side="LEFT" /></yAxis>
+                                </AreaChart>
+                                <LineChart fx:id="monthlyLineChart" layoutX="29.0" layoutY="353.0" prefHeight="266.0" prefWidth="858.0">
+                                    <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
+                                    <yAxis><NumberAxis side="LEFT" /></yAxis>
+                                </LineChart>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+
+                <!-- تبويب المشتريات -->
+                <Tab text="المشتريات">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="571.0" prefWidth="998.0">
+                            <children>
+                                <!-- Rectangles -->
+                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="71.0" layoutX="257.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="188.0" />
+                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="71.0" layoutX="479.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="188.0" />
+                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="71.0" layoutX="699.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="188.0" />
+
+                                <!-- Labels (Titles) -->
+                                <Label layoutX="284.0" layoutY="22.0" prefHeight="20.0" prefWidth="136.0" text="عدد المشتريات اليومية">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label layoutX="496.0" layoutY="22.0" prefHeight="20.0" prefWidth="161.0" text="صافي اجمالي تكلفة اليومي">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label layoutX="756.0" layoutY="22.0" prefHeight="20.0" prefWidth="73.0" text="عدد فواتير ">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+
+                                <!-- Dynamic Labels -->
+                                <Label fx:id="lblDailyPurchasesCount" alignment="CENTER" layoutX="281.0" layoutY="49.0" prefHeight="30.0" prefWidth="142.0" text="0 عملية">
+                                    <font>
+                                        <Font size="18.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="lblDailyPurchaseCost" alignment="CENTER" layoutX="492.0" layoutY="50.0" prefHeight="30.0" prefWidth="149.0" text="0 DZ">
+                                    <font>
+                                        <Font size="18.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="lblPurchaseInvoicesCount" alignment="CENTER" layoutX="711.0" layoutY="49.0" prefHeight="30.0" prefWidth="149.0" text="0 فاتورة">
+                                    <font>
+                                        <Font size="18.0" />
+                                    </font>
+                                </Label>
+
+                                <!-- Charts -->
+                                <PieChart fx:id="pieTopPurchasedProducts" layoutX="558.0" layoutY="113.0" prefHeight="240.0" prefWidth="330.0" />
+                                <AreaChart fx:id="dailyPurchaseAreaChart" layoutX="23.0" layoutY="113.0" prefHeight="240.0" prefWidth="500.0">
+                                    <xAxis>
+                                        <CategoryAxis side="BOTTOM" />
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis side="LEFT" />
+                                    </yAxis>
+                                </AreaChart>
+                                <LineChart fx:id="monthlyPurchaseLineChart" layoutX="29.0" layoutY="353.0" prefHeight="266.0" prefWidth="858.0">
+                                    <xAxis>
+                                        <CategoryAxis side="BOTTOM" />
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis side="LEFT" />
+                                    </yAxis>
+                                </LineChart>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+
+                <!-- تبويب المخزون -->
+                <Tab text="المخزون">
+                    <content>
+                        <AnchorPane>
+                            <children>
+                                <PieChart fx:id="pieValidVsExpired" layoutX="37.0" layoutY="14.0" prefHeight="226.0" prefWidth="253.0" />
+                                <PieChart fx:id="pieBestSellersStock" layoutX="329.0" layoutY="14.0" prefHeight="226.0" prefWidth="253.0" />
+                                <PieChart fx:id="pieStockLevels" layoutX="620.0" layoutY="14.0" prefHeight="226.0" prefWidth="253.0" />
+                                <PieChart fx:id="pieLowStock" layoutX="164.0" layoutY="340.0" prefHeight="226.0" prefWidth="253.0" />
+                                <PieChart fx:id="pieStockValue" layoutX="493.0" layoutY="340.0" prefHeight="226.0" prefWidth="253.0" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+
+                <!-- تبويب العملاء -->
+                <Tab text="العملاء">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="571.0" prefWidth="998.0">
+                            <children>
+                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="71.0" layoutX="53.0" layoutY="13.0" stroke="BLACK" strokeType="INSIDE" width="188.0" />
+                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="71.0" layoutX="268.0" layoutY="13.0" stroke="BLACK" strokeType="INSIDE" width="188.0" />
+                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="71.0" layoutX="479.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="188.0" />
+                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="71.0" layoutX="699.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="188.0" />
+
+                                <Label layoutX="86.0" layoutY="22.0" prefHeight="20.0" prefWidth="130.0" text="عدد العملاء النظاميين">
+                                    <font><Font size="14.0" /></font>
+                                </Label>
+                                <Label layoutX="302.0" layoutY="22.0" prefHeight="20.0" prefWidth="122.0" text="عدد العملاء مديونيين">
+                                    <font><Font size="14.0" /></font>
+                                </Label>
+                                <Label layoutX="511.0" layoutY="22.0" prefHeight="20.0" prefWidth="123.0" text="صافي اجمالي الديون">
+                                    <font><Font size="14.0" /></font>
+                                </Label>
+                                <Label layoutX="735.0" layoutY="22.0" prefHeight="20.0" prefWidth="116.0" text="عدد الفواتير المخزنة">
+                                    <font><Font size="14.0" /></font>
+                                </Label>
+
+                                <Label fx:id="lblRegularClients" alignment="CENTER" layoutX="77.0" layoutY="49.0" prefHeight="30.0" prefWidth="142.0" text="0 عميل">
+                                    <font><Font size="18.0" /></font>
+                                </Label>
+                                <Label fx:id="lblDebtorClients" alignment="CENTER" layoutX="292.0" layoutY="48.0" prefHeight="30.0" prefWidth="142.0" text="0 عميل">
+                                    <font><Font size="18.0" /></font>
+                                </Label>
+                                <Label fx:id="lblTotalDebt" alignment="CENTER" layoutX="492.0" layoutY="50.0" prefHeight="30.0" prefWidth="149.0" text="0 DZ">
+                                    <font><Font size="18.0" /></font>
+                                </Label>
+                                <Label fx:id="lblInvoicesCount2" alignment="CENTER" layoutX="711.0" layoutY="49.0" prefHeight="30.0" prefWidth="149.0" text="0 فاتورة">
+                                    <font><Font size="18.0" /></font>
+                                </Label>
+
+                                <PieChart fx:id="pieClientsStatus" layoutX="558.0" layoutY="113.0" prefHeight="240.0" prefWidth="330.0" />
+                                <AreaChart fx:id="areaDailySales" layoutX="23.0" layoutY="113.0" prefHeight="240.0" prefWidth="500.0">
+                                    <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
+                                    <yAxis><NumberAxis side="LEFT" /></yAxis>
+                                </AreaChart>
+                                <LineChart fx:id="lineMonthlySales" layoutX="29.0" layoutY="353.0" prefHeight="266.0" prefWidth="858.0">
+                                    <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
+                                    <yAxis><NumberAxis side="LEFT" /></yAxis>
+                                </LineChart>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
+</AnchorPane>

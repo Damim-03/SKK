@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="522.0" prefWidth="824.0" spacing="0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.library.controller.client.clientController">
+   <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="10" style="-fx-padding: 10;">
+      <children>
+         <StackPane HBox.hgrow="ALWAYS">
+            <children>
+               <Label alignment="CENTER" prefHeight="48.0" prefWidth="143.0" text="العملاء">
+                  <font>
+                     <Font name="Segoe UI Bold" size="26.0" />
+                  </font>
+                  <graphic>
+                     <ImageView fitHeight="48.0" fitWidth="48.0" preserveRatio="true">
+                        <image>
+                           <Image url="@../../../../../images/client.png" />
+                        </image>
+                     </ImageView>
+                  </graphic>
+               </Label>
+            </children>
+         </StackPane>
+      </children>
+   </HBox>
+
+    <!-- Centered Grid -->
+    <StackPane VBox.vgrow="ALWAYS">
+        <GridPane alignment="CENTER" hgap="60" vgap="40">
+            <columnConstraints>
+                <ColumnConstraints />
+                <ColumnConstraints />
+                <ColumnConstraints />
+            </columnConstraints>
+
+            <rowConstraints>
+                <RowConstraints />
+                <RowConstraints />
+            </rowConstraints>
+
+            <Button fx:id="addClientButton" contentDisplay="TOP" onAction="#handleaddClientButtonAction" prefHeight="142.0" prefWidth="159.0" text="اضافة عميل">
+                <font>
+                    <Font size="19.0" />
+                </font>
+                <graphic>
+                    <ImageView fitHeight="70.0" fitWidth="70.0">
+                        <image>
+                            <Image url="@../../../../../images/add_client.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <Button fx:id="purchaseClientButton" contentDisplay="TOP" onAction="#handlepurchaseClientButtonAction" prefHeight="142.0" prefWidth="159.0" text="مبيعات العملاء" GridPane.columnIndex="1">
+                <font>
+                    <Font size="19.0" />
+                </font>
+                <graphic>
+                    <ImageView>
+                        <image>
+                            <Image url="@../../../../../images/purchase.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <Button fx:id="searchClientButton" contentDisplay="TOP" onAction="#handlesearchClientButtonAction" prefHeight="142.0" prefWidth="159.0" text="عرض العملاء" GridPane.columnIndex="2">
+                <font>
+                    <Font size="19.0" />
+                </font>
+                <graphic>
+                    <ImageView fitHeight="70.0" fitWidth="70.0">
+                        <image>
+                            <Image url="@../../../../../images/search-client.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <Button fx:id="payButton" contentDisplay="TOP" onAction="#handlepayClientButtonAction" prefHeight="142.0" prefWidth="159.0" text="تسديد الدين" GridPane.rowIndex="1">
+                <font>
+                    <Font size="19.0" />
+                </font>
+                <graphic>
+                    <ImageView fitHeight="70.0" fitWidth="70.0">
+                        <image>
+                            <Image url="@../../../../../images/pay.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <Button fx:id="settingsClientButton" contentDisplay="TOP" onAction="#handlesettingsClientButtonAction" prefHeight="142.0" prefWidth="159.0" text="خصائص العملاء" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <font>
+                    <Font size="19.0" />
+                </font>
+                <graphic>
+                    <ImageView fitHeight="70.0" fitWidth="70.0">
+                        <image>
+                            <Image url="@../../../../../images/settings.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <Button fx:id="recordsClientButton" contentDisplay="TOP" onAction="#handlerecordsClientButtonAction" prefHeight="142.0" prefWidth="159.0" text="سجلات المبيعات" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                <font>
+                    <Font size="19.0" />
+                </font>
+                <graphic>
+                    <ImageView fitHeight="70.0" fitWidth="70.0">
+                        <image>
+                            <Image url="@../../../../../images/records.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+        </GridPane>
+    </StackPane>
+</VBox>
